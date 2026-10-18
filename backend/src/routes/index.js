@@ -11,6 +11,7 @@ import {
 import { dashboard } from '../controllers/dashboard.controller.js'
 import { ejecutarReto, enviarReto, listarRetos, obtenerReto } from '../controllers/desafio.controller.js'
 import { actualizarPerfil, perfil, ranking } from '../controllers/gamificacion.controller.js'
+import { salud } from '../controllers/salud.controller.js'
 import { me } from '../controllers/usuario.controller.js'
 import { authenticate } from '../middleware/authenticate.js'
 import { limitarPorUsuario } from '../middleware/limiteUso.js'
@@ -25,9 +26,7 @@ const limiteEnvio = limitarPorUsuario({ nombre: 'envío', maximo: 30, ventanaMs:
 // Toda ruta privada: sesión válida + límite general.
 const privado = [authenticate, limiteGeneral]
 
-router.get('/health', (_req, res) => {
-  res.json({ status: 'ok' })
-})
+router.get('/health', salud)
 
 router.get('/me', ...privado, me)
 router.get('/dashboard', ...privado, dashboard)

@@ -20,16 +20,30 @@ let ejecutor = null
 export function validarConfiguracionEjecutor() {
   if (env.RUNNER === 'local' && env.NODE_ENV === 'production') {
     throw new Error(
-      'RUNNER=local no está permitido en producción: no aísla CPU, hilos ni el sistema. Configura un ejecutor con contenedor.',
+      'RUNNER=local no está permitido en producción: no aísla CPU, hilos ni el sistema. Usa RUNNER=contenedor dentro de la imagen Docker del backend.',
     )
+  }
+  if (env.RUNNER === 'contenedor') {
+    // El contenedor es la barrera exterior: fuera de Linux no hay contenedor, y como root un
+    // fallo de la Guardia daría control total de la imagen.
+    if (process.platform !== 'linux') throw new Error('RUNNER=contenedor solo funciona dentro de la imagen Docker (Linux).')
+    if (process.getuid?.() === 0) throw new Error('RUNNER=contenedor no puede correr como root: usa el usuario sin privilegios de la imagen.')
   }
 }
 
 function obtenerEjecutor() {
   if (ejecutor) return ejecutor
   validarConfiguracionEjecutor()
-  if (env.RUNNER === 'local') ejecutor = crearEjecutorLocal({ javaHome: env.JAVA_HOME })
-  else throw new Error(`Ejecutor desconocido: ${env.RUNNER}`)
+  if (env.RUNNER === 'local' || env.RUNNER === 'contenedor') {
+    ejecutor = crearEjecutorLocal({
+      javaHome: env.JAVA_HOME,
+      limites: {
+        casosEnParalelo: env.RUNNER_CASOS_EN_PARALELO,
+        compilacionMs: env.RUNNER_COMPILACION_MS,
+        ejecucionMs: env.RUNNER_EJECUCION_MS,
+      },
+    })
+  } else throw new Error(`Ejecutor desconocido: ${env.RUNNER}`)
   return ejecutor
 }
 
