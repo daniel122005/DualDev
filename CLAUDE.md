@@ -79,6 +79,11 @@ Copia en `design/figma-make/src/` (solo lectura, NO es parte de la app; es mock 
 - No agregar librerías innecesarias; no duplicar componentes; no refactors grandes sin avisar.
 - Tras cada fase: ejecutar lint/build/tests reales y reportar trazabilidad RF/RNF.
 
+## Repositorio
+
+- GitHub: https://github.com/daniel122005/DualDev (**PÚBLICO**, decisión del usuario 2026-10-18). Rama principal `main` (rastrea `origin/main`).
+- Nunca versionar `.env` ni llaves (verificar antes de cada push: el repo es público). Commits solo cuando el usuario lo pida.
+
 ## Estado actual
 
 - **Fase 0 (análisis): completada** (2026-10-17). Repositorio vacío, proyecto desde cero.
