@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ProgressBar from '@/components/ProgressBar'
 import StatChip from '@/components/StatChip'
 import { usePerfil } from '@/hooks/usePerfil'
-import { api } from '@/services/api'
+import { api, leerCache } from '@/services/api'
 import type { DashboardData } from '@/types/api'
 import { ACTIVIDAD_ICONO, estiloModulo, formatoXp, haceCuanto, LOGRO_ICONO, LOGRO_ICONO_POR_DEFECTO } from '@/utils/disenio'
 
@@ -19,7 +19,7 @@ const LOGROS_VISIBLES = 6
 export default function Dashboard() {
   const navigate = useNavigate()
   const { perfil, error: errorPerfil } = usePerfil()
-  const [data, setData] = useState<DashboardData | null>(null)
+  const [data, setData] = useState<DashboardData | null>(() => leerCache<DashboardData>('/dashboard'))
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {

@@ -2,19 +2,19 @@
 import * as gam from '../repositories/gamificacion.repository.js'
 import { diaBogota } from '../utils/fecha.js'
 import { HttpError } from '../utils/httpError.js'
-import { metricasDe, sincronizarLogros } from './logros.service.js'
+import { logrosObtenidos, metricasDe } from './logros.service.js'
 
 export async function obtenerPerfil(idUsuario) {
-  const m = await metricasDe(idUsuario)
-  await sincronizarLogros(idUsuario, { metricas: m }) // por si un logro por tiempo (racha, ranking) quedó pendiente
-
-  const [usuario, catalogo, mios] = await Promise.all([
+  // Una sola tanda de consultas en paralelo.
+  const [m, usuario, catalogo, mios] = await Promise.all([
+    metricasDe(idUsuario),
     gam.obtenerUsuario(idUsuario),
     gam.catalogoLogros(),
     gam.logrosDelUsuario(idUsuario),
   ])
   if (!usuario) throw new HttpError(404, 'Perfil no encontrado')
-  const obtenidos = new Map(mios.map((l) => [l.id_logro, l.fecha_obtencion]))
+  // Por si un logro por tiempo (racha, ranking) quedó pendiente.
+  const obtenidos = await logrosObtenidos(idUsuario, m, catalogo, mios)
 
   // Puntos ganados en cada módulo (ejercicios + lecciones).
   const moduloDeEjercicio = new Map(m.estado.ejercicios.map((e) => [e.id_ejercicio, e.id_modulo]))

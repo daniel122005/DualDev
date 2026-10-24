@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import CodeBlock from '@/components/CodeBlock'
 import LogrosNuevos from '@/components/LogrosNuevos'
 import { usePerfil } from '@/hooks/usePerfil'
-import { api } from '@/services/api'
+import { api, leerCache } from '@/services/api'
 import type { Leccion, LogroNuevo, ResultadoPuntos } from '@/types/api'
 
 type Pestana = 'explain' | 'code' | 'output'
@@ -28,7 +28,7 @@ export default function LessonScreen() {
   const idLeccion = Number(id)
   const navigate = useNavigate()
   const { recargarPerfil } = usePerfil()
-  const [leccion, setLeccion] = useState<Leccion | null>(null)
+  const [leccion, setLeccion] = useState<Leccion | null>(() => leerCache<Leccion>(`/lessons/${idLeccion}`))
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<Pestana>('explain')
   const [guardando, setGuardando] = useState(false)

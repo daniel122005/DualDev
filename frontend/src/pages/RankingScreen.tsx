@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { api } from '@/services/api'
+import { api, leerCache } from '@/services/api'
 import type { FilaRanking, RankingData } from '@/types/api'
 import { formatoXp } from '@/utils/disenio'
 
@@ -77,10 +77,10 @@ function Podio({ filas }: { filas: FilaRanking[] }) {
 export default function RankingScreen() {
   const navigate = useNavigate()
   const [filtro, setFiltro] = useState('global')
-  const [datos, setDatos] = useState<RankingData | null>(null)
-  const [modulos, setModulos] = useState<RankingData['modulos']>([])
+  const [datos, setDatos] = useState<RankingData | null>(() => leerCache<RankingData>('/ranking'))
+  const [modulos, setModulos] = useState<RankingData['modulos']>(() => leerCache<RankingData>('/ranking')?.modulos ?? [])
   const [error, setError] = useState<string | null>(null)
-  const [cargando, setCargando] = useState(true)
+  const [cargando, setCargando] = useState(() => leerCache('/ranking') === null)
 
   const filtros: Filtro[] = [
     { clave: 'global', etiqueta: 'Global', query: '' },

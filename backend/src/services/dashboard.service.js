@@ -1,21 +1,20 @@
 import * as aprendizaje from '../repositories/aprendizaje.repository.js'
 import * as gam from '../repositories/gamificacion.repository.js'
-import { metricasDe, sincronizarLogros } from './logros.service.js'
+import { logrosObtenidos, metricasDe } from './logros.service.js'
 
 const ACTIVIDADES_RECIENTES = 5
 
 export async function obtenerDashboard(idUsuario) {
-  const m = await metricasDe(idUsuario)
-  // Logros que dependen del tiempo o de otros (racha, ranking) se revisan también al entrar.
-  await sincronizarLogros(idUsuario, { metricas: m })
-
-  const [aciertos, desafios, catalogo, mios] = await Promise.all([
-    aprendizaje.obtenerAciertos(idUsuario),
-    aprendizaje.obtenerDesafiosCompletados(idUsuario),
+  // Una sola tanda de consultas en paralelo.
+  const [m, catalogo, mios, aciertos, desafios] = await Promise.all([
+    metricasDe(idUsuario),
     gam.catalogoLogros(),
     gam.logrosDelUsuario(idUsuario),
+    aprendizaje.obtenerAciertos(idUsuario),
+    aprendizaje.obtenerDesafiosCompletados(idUsuario),
   ])
-  const obtenidos = new Map(mios.map((l) => [l.id_logro, l.fecha_obtencion]))
+  // Logros que dependen del tiempo o de otros (racha, ranking) se revisan también al entrar.
+  const obtenidos = await logrosObtenidos(idUsuario, m, catalogo, mios)
 
   const actividad = [
     ...aciertos.map((a) => ({

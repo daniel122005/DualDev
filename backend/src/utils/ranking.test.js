@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { nombrePublico, ordenarRanking, puntosParaSubir } from './ranking.js'
+import { nombrePublico, ordenarRanking, posicionEnLista, puntosParaSubir } from './ranking.js'
 
 test('ordena por puntos y los empates comparten puesto', () => {
   const r = ordenarRanking([
@@ -28,4 +28,11 @@ test('puntos para subir: hasta superar al de arriba', () => {
   assert.equal(puntosParaSubir(r, 'b'), 711)
   assert.equal(puntosParaSubir(r, 'a'), null)
   assert.equal(puntosParaSubir(r, 'zzz'), null)
+})
+
+test('posicionEnLista: empates comparten puesto y cuenta quién tiene puntos', () => {
+  const filas = [{ puntos_acumulados: 300 }, { puntos_acumulados: 120 }, { puntos_acumulados: 120 }, { puntos_acumulados: 0 }]
+  assert.deepEqual(posicionEnLista(filas, 120), { posicion: 2, total: 4, con_puntos: 3 })
+  assert.deepEqual(posicionEnLista(filas, 0), { posicion: 4, total: 4, con_puntos: 3 })
+  assert.deepEqual(posicionEnLista(filas, 300), { posicion: 1, total: 4, con_puntos: 3 })
 })

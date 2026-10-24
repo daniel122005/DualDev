@@ -4,7 +4,7 @@ import { LogoMark } from '@/components/Logo'
 import Modal from '@/components/Modal'
 import ProgressBar from '@/components/ProgressBar'
 import { usePerfil } from '@/hooks/usePerfil'
-import { api } from '@/services/api'
+import { api, leerCache } from '@/services/api'
 import type { PerfilCompleto } from '@/types/api'
 import { estiloModulo, formatoXp, iniciales, LOGRO_ICONO, LOGRO_ICONO_POR_DEFECTO, haceCuanto } from '@/utils/disenio'
 
@@ -76,7 +76,7 @@ function EditarPerfil({ perfil, onCerrar, onGuardado }: { perfil: PerfilCompleto
 export default function ProfileScreen() {
   const navigate = useNavigate()
   const { recargarPerfil } = usePerfil()
-  const [perfil, setPerfil] = useState<PerfilCompleto | null>(null)
+  const [perfil, setPerfil] = useState<PerfilCompleto | null>(() => leerCache<PerfilCompleto>('/profile'))
   const [error, setError] = useState<string | null>(null)
   const [editando, setEditando] = useState(false)
 

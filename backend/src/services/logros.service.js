@@ -2,22 +2,24 @@
 import * as gam from '../repositories/gamificacion.repository.js'
 import { calcularRacha } from '../utils/fecha.js'
 import { contarPerfectos, logrosAlcanzados } from '../utils/logros.js'
+import { posicionEnLista } from '../utils/ranking.js'
 import { estadoCurso } from './curso.service.js'
 import { posicionGlobal, resumenDeNivel } from './progreso.service.js'
 
 // Todo lo que se sabe del avance de un estudiante. Lo usan los logros y el perfil.
-// Si ya se conocen los puntos (p. ej. los devolvió el registro del intento), el puesto en el ranking
-// se consulta en paralelo y se ahorra un viaje a la base de datos.
+// Todo va en UNA tanda de consultas en paralelo: si ya se conocen los puntos (p. ej. los devolvió el
+// registro del intento) el puesto se cuenta en la BD; si no, se traen los puntos de todos y se calcula aquí
+// (antes había que esperar los puntos propios y luego contar: un viaje más a la BD).
 export async function metricasDe(idUsuario, { ahora = new Date(), puntos = null } = {}) {
-  const [nivel, estado, intentos, lecciones, desafios, rankingAnticipado] = await Promise.all([
+  const [nivel, estado, intentos, lecciones, desafios, rankingOTodos] = await Promise.all([
     resumenDeNivel(idUsuario),
     estadoCurso(idUsuario),
     gam.intentosDelUsuario(idUsuario),
     gam.leccionesDelUsuario(idUsuario),
     gam.desafiosDelUsuario(idUsuario),
-    puntos === null ? null : posicionGlobal(puntos),
+    puntos === null ? gam.progresoDeTodos() : posicionGlobal(puntos),
   ])
-  const ranking = rankingAnticipado ?? (await posicionGlobal(nivel.puntos_acumulados))
+  const ranking = Array.isArray(rankingOTodos) ? posicionEnLista(rankingOTodos, nivel.puntos_acumulados) : rankingOTodos
   const desafiosCompletados = desafios.filter((d) => d.completado)
 
   return {
@@ -54,12 +56,24 @@ export async function sincronizarLogros(idUsuario, { metricas = null, puntos = n
     gam.catalogoLogros(),
     gam.logrosDelUsuario(idUsuario),
   ])
-  const tiene = new Set(actuales.map((l) => l.id_logro))
-  const faltan = logrosAlcanzados(catalogo, m.resumen).filter((l) => !tiene.has(l.id_logro))
-  if (faltan.length === 0) return []
-
-  const insertados = new Set((await gam.otorgarLogros(idUsuario, faltan.map((l) => l.id_logro))).map((l) => l.id_logro))
+  const { faltan, insertados } = await completarLogros(idUsuario, m.resumen, catalogo, actuales)
+  const ids = new Set(insertados.map((l) => l.id_logro))
   return faltan
-    .filter((l) => insertados.has(l.id_logro))
+    .filter((l) => ids.has(l.id_logro))
     .map(({ id_logro, codigo, nombre, descripcion, icono }) => ({ id_logro, codigo, nombre, descripcion, icono }))
+}
+
+// Para pantallas que muestran todos los logros (dashboard, perfil): reutiliza el catálogo y los logros
+// que ya se leyeron junto con las métricas, y solo escribe si falta alguno.
+// Devuelve Map id_logro -> fecha_obtencion (incluye los recién otorgados).
+export async function logrosObtenidos(idUsuario, metricas, catalogo, actuales) {
+  const { insertados } = await completarLogros(idUsuario, metricas.resumen, catalogo, actuales)
+  return new Map([...actuales, ...insertados].map((l) => [l.id_logro, l.fecha_obtencion]))
+}
+
+async function completarLogros(idUsuario, resumen, catalogo, actuales) {
+  const tiene = new Set(actuales.map((l) => l.id_logro))
+  const faltan = logrosAlcanzados(catalogo, resumen).filter((l) => !tiene.has(l.id_logro))
+  if (faltan.length === 0) return { faltan, insertados: [] }
+  return { faltan, insertados: await gam.otorgarLogros(idUsuario, faltan.map((l) => l.id_logro)) }
 }

@@ -1,6 +1,7 @@
 import type { Session } from '@supabase/supabase-js'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { AuthContext, type AuthContextValue } from '@/contexts/auth-context'
+import { asignarDueñoCache } from '@/services/api'
 import { supabase } from '@/services/supabaseClient'
 import { mensajeErrorAuth } from '@/utils/authErrors'
 
@@ -12,10 +13,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Recupera la sesión persistida por Supabase al recargar.
     supabase.auth.getSession().then(({ data }) => {
+      asignarDueñoCache(data.session?.user.id ?? null)
       setSession(data.session)
       setLoading(false)
     })
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      // Antes de pintar nada del nuevo usuario: la caché de respuestas nunca se comparte entre cuentas.
+      asignarDueñoCache(nextSession?.user.id ?? null)
       setSession(nextSession)
     })
     return () => data.subscription.unsubscribe()
@@ -44,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       async logout() {
         await supabase.auth.signOut()
+        asignarDueñoCache(null)
         setSession(null)
       },
     }),

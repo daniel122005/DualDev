@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { formatoRestante, useAhora } from '@/hooks/useCuentaRegresiva'
-import { api } from '@/services/api'
+import { api, leerCache } from '@/services/api'
 import type { RetoResumen, RetosData } from '@/types/api'
 import { DIFICULTAD_RETO, formatoXp, haceCuanto, PERIODO_RETO } from '@/utils/disenio'
 
@@ -120,7 +120,7 @@ function TarjetaReto({ reto, abierto, onToggle, ahora }: { reto: RetoResumen; ab
 }
 
 export default function ChallengesScreen() {
-  const [datos, setDatos] = useState<RetosData | null>(null)
+  const [datos, setDatos] = useState<RetosData | null>(() => leerCache<RetosData>('/challenges'))
   const [error, setError] = useState<string | null>(null)
   const [abierto, setAbierto] = useState<number | null>(null)
   const ahora = useAhora(Boolean(datos?.retos.some((r) => r.termina_en)))

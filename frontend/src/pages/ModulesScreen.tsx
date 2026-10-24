@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ProgressBar from '@/components/ProgressBar'
-import { api } from '@/services/api'
+import { api, leerCache } from '@/services/api'
 import type { ModuloListado } from '@/types/api'
 import { DIFICULTAD_MODULO, estiloModulo, formatoXp } from '@/utils/disenio'
 
@@ -15,7 +15,7 @@ function destino(m: ModuloListado): string | null {
 
 export default function ModulesScreen() {
   const navigate = useNavigate()
-  const [modulos, setModulos] = useState<ModuloListado[] | null>(null)
+  const [modulos, setModulos] = useState<ModuloListado[] | null>(() => leerCache<ModuloListado[]>('/modules'))
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {

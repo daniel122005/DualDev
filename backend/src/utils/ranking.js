@@ -30,3 +30,15 @@ export function puntosParaSubir(ranking, idUsuario) {
   const objetivo = Math.min(...arriba.map((f) => f.puntos))
   return objetivo - yo.puntos + 1
 }
+
+// Puesto en el ranking global a partir de los puntos de todos (misma regla que contar en la BD:
+// puesto = estudiantes con MÁS puntos + 1; los empates comparten puesto).
+export function posicionEnLista(filas, puntos) {
+  let mejores = 0
+  let conPuntos = 0
+  for (const f of filas) {
+    if (f.puntos_acumulados > puntos) mejores++
+    if (f.puntos_acumulados > 0) conPuntos++
+  }
+  return { posicion: mejores + 1, total: filas.length, con_puntos: conPuntos }
+}

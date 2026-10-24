@@ -1,21 +1,20 @@
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '@/contexts/AuthContext'
 import AppLayout from '@/layouts/AppLayout'
 import AuthScreen from '@/pages/AuthScreen'
+import {
+  ChallengeSolveScreen,
+  ChallengesScreen,
+  Dashboard,
+  LessonScreen,
+  ModulesScreen,
+  PracticaInicio,
+  PracticeScreen,
+  ProfileScreen,
+  RankingScreen,
+} from '@/routes/pantallas'
 import { ProtectedRoute, PublicOnlyRoute } from '@/routes/ProtectedRoute'
-
-// Las pantallas internas se descargan al entrar en ellas: el paquete inicial queda con lo del login
-// (React, router y supabase-js).
-const Dashboard = lazy(() => import('@/pages/Dashboard'))
-const ModulesScreen = lazy(() => import('@/pages/ModulesScreen'))
-const LessonScreen = lazy(() => import('@/pages/LessonScreen'))
-const PracticaInicio = lazy(() => import('@/pages/PracticaInicio'))
-const PracticeScreen = lazy(() => import('@/pages/PracticeScreen'))
-const RankingScreen = lazy(() => import('@/pages/RankingScreen'))
-const ProfileScreen = lazy(() => import('@/pages/ProfileScreen'))
-const ChallengesScreen = lazy(() => import('@/pages/ChallengesScreen'))
-const ChallengeSolveScreen = lazy(() => import('@/pages/ChallengeSolveScreen'))
 
 function Cargando() {
   return (
