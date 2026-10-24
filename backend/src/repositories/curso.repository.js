@@ -73,7 +73,7 @@ export async function obtenerEjercicioParaEvaluar(idEjercicio) {
   return check(
     await getSupabaseAdmin()
       .from('ejercicio')
-      .select(`${CAMPOS_EJERCICIO_PUBLICO}, solucion_esperada, explicacion`)
+      .select(`${CAMPOS_EJERCICIO_PUBLICO}, solucion_esperada, explicacion, errores_comunes`)
       .eq('id_ejercicio', idEjercicio)
       .maybeSingle(),
   )

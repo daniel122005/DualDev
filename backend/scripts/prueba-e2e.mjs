@@ -97,6 +97,7 @@ async function main() {
     const incorrecta = ejDet.body.opciones.find((o) => o !== correcta)
     const f1 = await e.post(`/exercises/${ejSel.id_ejercicio}/submit`, { respuesta: incorrecta })
     comprobar('RF-07', 'respuesta incorrecta con retroalimentación y pista', f1.body.correcto === false && Boolean(f1.body.pista))
+    comprobar('RF-07', 'la opción incorrecta explica por qué (tono profe)', f1.body.diagnostico?.tipo === 'respuesta' && f1.body.diagnostico.recuerda?.[0]?.texto?.length > 20)
     await espera(1100)
     const a1 = await e.post(`/exercises/${ejSel.id_ejercicio}/submit`, { respuesta: correcta })
     comprobar('RF-10', 'acierto suma los puntos del ejercicio', a1.body.correcto === true && a1.body.puntos_otorgados > 0)

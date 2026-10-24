@@ -36,7 +36,8 @@ test('varios errores, con symbol de variable y tipos incompatibles', () => {
   assert.match(errores[0].explicacion, /String/)
   assert.equal(errores[1].linea, 4)
   assert.equal(errores[1].tipo, 'Símbolo')
-  assert.match(errores[1].explicacion, /variable "y" no está declarada/)
+  assert.match(errores[1].explicacion, /variable "y" no existe/)
+  assert.deepEqual(errores[1].simbolo, { tipo: 'variable', nombre: 'y' })
 })
 
 test('el symbol de un error no se mezcla con el siguiente error', () => {

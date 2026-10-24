@@ -26,7 +26,7 @@ export async function obtenerEjercicio(idUsuario, idEjercicio) {
   ])
   const resuelto = estado.aciertos.has(idEjercicio)
   const fallidos = intentos.filter((i) => !i.es_correcto).length
-  const { casos_prueba, solucion_esperada, explicacion, ...publico } = ejercicio
+  const { casos_prueba, solucion_esperada, explicacion, errores_comunes: _errores, ...publico } = ejercicio
 
   return {
     ...publico,

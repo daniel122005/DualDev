@@ -29,7 +29,35 @@ test('predecir salida: compara líneas y no revela la respuesta', () => {
   assert.equal(evaluarRespuestaSimple(e, '3\r\n2\r\n1\r\n').correcto, true)
   const mal = evaluarRespuestaSimple(e, '3\n2\n0')
   assert.equal(mal.correcto, false)
-  assert.deepEqual(mal.diagnostico, { tipo: 'salida_distinta', linea: 3 })
+  assert.equal(mal.diagnostico.tipo, 'salida_distinta')
+  assert.equal(mal.diagnostico.linea, 3)
+  assert.doesNotMatch(JSON.stringify(mal.diagnostico), /"1"/)
+})
+
+test('predecir salida: explica la vuelta de más sin revelar la respuesta', () => {
+  const e = { tipo: 'salida', solucion_esperada: '1\n2\n3' }
+  const r = evaluarRespuestaSimple(e, '1\n2\n3\n4')
+  assert.match(r.diagnostico.recuerda[0].texto, /vuelta de más/)
+  const conError = { ...e, errores_comunes: [{ salida: '0\n1\n2', mensaje: 'Recuerda que i empieza en 1.' }] }
+  assert.equal(evaluarRespuestaSimple(conError, '0\n1\n2').diagnostico.recuerda[0].texto, 'Recuerda que i empieza en 1.')
+})
+
+test('selección: explica por qué la opción elegida es incorrecta', () => {
+  const e = {
+    tipo: 'seleccion',
+    opciones: ['4', '5', '6'],
+    solucion_esperada: '5',
+    errores_comunes: [{ respuesta: '4', mensaje: 'Recuerda que i empieza en 0.' }],
+  }
+  assert.deepEqual(evaluarRespuestaSimple(e, '4').diagnostico, { tipo: 'respuesta', recuerda: [{ linea: null, texto: 'Recuerda que i empieza en 0.' }] })
+  assert.equal(evaluarRespuestaSimple(e, '6').diagnostico, null)
+  assert.equal(evaluarRespuestaSimple(e, '5').diagnostico, null)
+})
+
+test('respuesta corta: ignora espacios y reconoce errores comunes', () => {
+  const e = { tipo: 'respuesta_corta', solucion_esperada: 'i <= 10', errores_comunes: [{ respuesta: 'i < 10', mensaje: 'Te falta el 10.' }] }
+  assert.equal(evaluarRespuestaSimple(e, 'i<=10').correcto, true)
+  assert.equal(evaluarRespuestaSimple(e, 'i<10').diagnostico.recuerda[0].texto, 'Te falta el 10.')
 })
 
 test('tipo código no se evalúa aquí', () => {

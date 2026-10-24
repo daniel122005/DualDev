@@ -231,6 +231,12 @@ export interface ErrorCompilacion {
   codigo?: string
 }
 
+// Explicación "tono profe" de por qué falló (qué pasó y por qué), opcionalmente ligada a una línea.
+export interface Recuerda {
+  linea: number | null
+  texto: string
+}
+
 export interface ErrorEjecucion {
   tipo: 'excepcion' | 'tiempo_agotado' | 'salida_excesiva' | 'terminacion'
   excepcion?: string
@@ -238,6 +244,7 @@ export interface ErrorEjecucion {
   linea?: number | null
   explicacion: string
   detalle?: string | null
+  recuerda?: Recuerda[]
 }
 
 export interface ResultadoEjecucion {
@@ -250,8 +257,14 @@ export interface ResultadoEjecucion {
 }
 
 export type Diagnostico =
-  | { tipo: 'compilacion'; errores: ErrorCompilacion[] }
-  | { tipo: 'excepcion' | 'tiempo_agotado' | 'salida_excesiva' | 'terminacion'; caso: number; visible: boolean; error: ErrorEjecucion }
+  | { tipo: 'compilacion'; errores: ErrorCompilacion[]; recuerda?: Recuerda[] }
+  | {
+      tipo: 'excepcion' | 'tiempo_agotado' | 'salida_excesiva' | 'terminacion'
+      caso: number
+      visible: boolean
+      error: ErrorEjecucion
+      recuerda?: Recuerda[]
+    }
   | {
       tipo: 'salida_distinta'
       caso?: number
@@ -262,8 +275,10 @@ export type Diagnostico =
       salida_obtenida?: string
       primera_diferencia?: { linea: number; esperada?: string | null; obtenida?: string | null }
       explicacion?: string
+      recuerda?: Recuerda[]
     }
-  | { tipo: 'estructura'; faltan: string[]; explicacion: string }
+  | { tipo: 'estructura'; faltan: string[]; explicacion: string; recuerda?: undefined }
+  | { tipo: 'respuesta'; recuerda: Recuerda[] }
 
 export interface ResultadoEnvio {
   correcto: boolean

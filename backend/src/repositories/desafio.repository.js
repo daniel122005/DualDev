@@ -29,7 +29,7 @@ export async function obtenerDesafioParaEvaluar(idDesafio) {
     await db()
       .from('desafio')
       .select(
-        'id_desafio, titulo, enunciado, tipo, dificultad, puntos_recompensa, periodo, disponible, disponible_desde, disponible_hasta, minutos_estimados, opciones, pistas, codigo_inicial, casos_prueba, requiere, solucion_esperada',
+        'id_desafio, titulo, enunciado, tipo, dificultad, puntos_recompensa, periodo, disponible, disponible_desde, disponible_hasta, minutos_estimados, opciones, pistas, codigo_inicial, casos_prueba, requiere, solucion_esperada, errores_comunes',
       )
       .eq('id_desafio', idDesafio)
       .maybeSingle(),

@@ -30,7 +30,7 @@ export default function Consola({ resultado, ejecutando }: { resultado: Resultad
               Entrada de ejemplo: <span className="font-mono">{resultado.entrada.replace(/\n/g, ' ⏎ ')}</span>
             </p>
           )}
-          <pre className="m-0 font-mono text-sm whitespace-pre-wrap" style={{ color: '#7af0b4' }}>
+          <pre className="m-0 overflow-auto font-mono text-sm whitespace-pre-wrap" style={{ color: '#7af0b4', maxHeight: 260 }}>
             {resultado.salida || (resultado.error ? '' : '(el programa no imprimió nada)')}
           </pre>
           {resultado.error && (
@@ -42,6 +42,12 @@ export default function Consola({ resultado, ejecutando }: { resultado: Resultad
               <span style={{ color: 'var(--color-text)' }}>{resultado.error.explicacion}</span>
             </p>
           )}
+          {resultado.error?.recuerda?.map((r, i) => (
+            <p key={i} className="mt-2 text-xs" style={{ color: '#7af0b4' }}>
+              <span className="font-bold">📌 {r.linea ? `L.${r.linea} · ` : ''}</span>
+              <span style={{ color: 'var(--color-text)' }}>{r.texto}</span>
+            </p>
+          ))}
         </>
       )}
     </div>

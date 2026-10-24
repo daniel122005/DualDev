@@ -64,7 +64,8 @@ async function cargarReto(idUsuario, idDesafio, { paraEnviar = false, ahora = ne
 
 export async function obtenerReto(idUsuario, idDesafio) {
   const { desafio, resultado, terminaEn, vigente } = await cargarReto(idUsuario, idDesafio)
-  const { casos_prueba, solucion_esperada, puntos_recompensa, disponible, disponible_desde, disponible_hasta, ...publico } = desafio
+  const { casos_prueba, solucion_esperada, errores_comunes: _errores, puntos_recompensa, disponible, disponible_desde, disponible_hasta, ...publico } =
+    desafio
   const intentos = resultado?.intentos ?? 0
   const completado = Boolean(resultado?.completado)
 

@@ -25,9 +25,11 @@ export function compararSalidas(esperada, obtenida) {
 }
 
 // Quita comentarios y literales de texto para buscar palabras clave en el código real.
+// Conserva los saltos de línea para que los números de línea sigan coincidiendo.
 export function codigoSinComentariosNiTextos(codigo) {
   return codigo
-    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/\r\n?/g, '\n')
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
     .replace(/\/\/[^\n]*/g, ' ')
     .replace(/"(?:\\.|[^"\\\n])*"/g, '""')
     .replace(/'(?:\\.|[^'\\\n])*'/g, "''")

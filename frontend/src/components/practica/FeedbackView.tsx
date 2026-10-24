@@ -1,6 +1,6 @@
 import CodeBlock from '@/components/CodeBlock'
 import LogrosNuevos from '@/components/LogrosNuevos'
-import type { Diagnostico, ResultadoEnvio, TipoEjercicio } from '@/types/api'
+import type { Diagnostico, Recuerda, ResultadoEnvio, TipoEjercicio } from '@/types/api'
 import { archivoJava, formatoDuracion, formatoXp } from '@/utils/disenio'
 import { FALLOS_PARA_SOLUCION, lineasConError } from './feedback'
 
@@ -35,7 +35,36 @@ function ErrorItem({ etiqueta, tipo, texto }: { etiqueta: string; tipo: string; 
   )
 }
 
+// Explicaciones "tono profe": qué pasó y por qué. Van aparte de los errores para que se lean como consejo.
+function PorQuePaso({ recuerda }: { recuerda: Recuerda[] }) {
+  return (
+    <div className="card-border mb-4 p-5" style={{ borderColor: 'rgba(122,240,180,0.3)', background: 'rgba(30,212,138,0.06)' }}>
+      <p className="font-display mb-3 text-sm font-bold" style={{ color: '#7af0b4' }}>
+        📌 Por qué pasó
+      </p>
+      <ul className="m-0 flex list-none flex-col gap-3 p-0">
+        {recuerda.map((r, i) => (
+          <li key={i} className="flex items-start gap-3">
+            {r.linea && (
+              <span
+                className="shrink-0 rounded px-2 py-0.5 font-mono text-xs font-bold"
+                style={{ background: 'rgba(122,240,180,0.15)', color: '#7af0b4' }}
+              >
+                L.{r.linea}
+              </span>
+            )}
+            <p className="m-0 text-sm" style={{ color: 'var(--color-text)', lineHeight: 1.6 }}>
+              {r.texto}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function Errores({ d }: { d: Diagnostico }) {
+  if (d.tipo === 'respuesta') return null
   if (d.tipo === 'compilacion') {
     return (
       <>
@@ -131,6 +160,7 @@ export default function FeedbackView({
   const esCodigo = tipo === 'codigo'
   const superados = resultado.casos.filter((c) => c.correcto).length
   const faltanIntentos = Math.max(0, FALLOS_PARA_SOLUCION - resultado.intentos_fallidos)
+  const recuerda = resultado.diagnostico?.recuerda ?? []
 
   return (
     <div className="mx-auto max-w-3xl p-6" aria-live="polite">
@@ -199,7 +229,7 @@ export default function FeedbackView({
         </div>
       </div>
 
-      {!ok && resultado.diagnostico && (
+      {!ok && resultado.diagnostico && resultado.diagnostico.tipo !== 'respuesta' && (
         <div className="card-border mb-4 p-5" style={{ borderColor: 'rgba(251,113,133,0.35)' }}>
           <p className="font-display mb-3 text-sm font-bold" style={{ color: '#fb7185' }}>
             ❌ Errores encontrados
@@ -214,6 +244,8 @@ export default function FeedbackView({
           )}
         </div>
       )}
+
+      {!ok && recuerda.length > 0 && <PorQuePaso recuerda={recuerda} />}
 
       {!ok && (resultado.pista || !resultado.solucion) && (
         <div className="card-border mb-4 p-4" style={{ borderColor: 'rgba(251,191,36,0.3)', background: 'rgba(251,191,36,0.06)' }}>
