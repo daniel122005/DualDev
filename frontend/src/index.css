@@ -49,6 +49,8 @@ h1, h2, h3, .font-display { letter-spacing: -0.02em; }
 .font-display { font-family: var(--font-display); }
 .font-body { font-family: var(--font-body); }
 .font-mono { font-family: var(--font-mono); }
+/* Sin ligaduras: JetBrains Mono dibuja <= como ≤ y un principiante podría creer que debe escribir ese símbolo. */
+.font-mono, .code-block, code, pre { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
 
 .glow-green  { box-shadow: 0 0 36px rgba(30,212,138,0.35); }
 .glow-neon   { box-shadow: 0 0 36px rgba(182,255,60,0.3); }
@@ -169,6 +171,14 @@ input:focus, textarea:focus {
   border-color: #1ed48a;
   box-shadow: 0 0 0 4px rgba(30,212,138,0.15);
 }
+
+/* Editor de código: el texto del textarea es transparente y se ve la capa resaltada que va debajo. */
+.editor-codigo {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: var(--color-text);
+}
+.editor-codigo::selection { background: rgba(30,212,138,0.3); }
 
 .tab-active {
   background: linear-gradient(135deg, #0e9f6e, #1ed48a);
