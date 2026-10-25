@@ -69,7 +69,13 @@ Pásame la URL de Vercel y la de Render y lo pruebo de punta a punta (pantallas,
 
 - La imagen `backend/Dockerfile` trae Node 24 + JDK 17 y corre **sin root** con `RUNNER=contenedor`.
 - Cada programa de un estudiante es un proceso aparte con la Guardia (sin archivos, red, procesos ni
-  variables de entorno; máximo 64 hilos), entorno vacío y carpeta temporal propia.
+  variables de entorno; máximo 64 hilos), entorno vacío, carpeta temporal propia y, además, corre con
+  un usuario de Linux `sandbox` DISTINTO del que corre el backend (`node`): aunque el código rompa la
+  Guardia, no puede leer `/proc/<pid>/environ` del backend (la llave secreta) ni sus archivos, porque
+  ni siquiera es el mismo usuario del sistema. El backend verifica esto al arrancar (autoprueba) y se
+  niega a aceptar tráfico si no funciona.
 - Límites para 0,1 CPU (en `render.yaml`): 1 envío y 1 caso a la vez, 30 s para compilar, 8 s por caso.
-- **Limitación conocida (plan gratis):** todos los programas comparten el contenedor del backend en vez de
-  tener uno propio por ejecución. Para producción real: VPS con Docker y un contenedor por ejecución.
+- **Limitación conocida (plan gratis):** todos los programas siguen compartiendo el contenedor del
+  backend en vez de tener uno propio por ejecución (el usuario `sandbox` reduce el daño si la Guardia
+  falla, pero no sustituye a un contenedor por ejecución). Para producción real: VPS con Docker y un
+  contenedor por ejecución.

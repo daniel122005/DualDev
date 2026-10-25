@@ -21,6 +21,8 @@ services:
       # URL del frontend en Vercel, p. ej. https://dualdev.vercel.app (sin "/" al final).
       - key: CORS_ORIGIN
         sync: false
+      # RUNNER_SANDBOX_UID/GID no van aquí: ya quedan fijos en el Dockerfile (10001/10001), junto con
+      # el usuario "sandbox" que de verdad usa esos ids.
       # Servidor de 0,1 CPU: un envío a la vez, un caso a la vez y tiempos holgados para que un
       # programa correcto no se confunda con un ciclo infinito.
       - key: RUNNER_CONCURRENCIA

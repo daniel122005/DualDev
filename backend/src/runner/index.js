@@ -28,6 +28,14 @@ export function validarConfiguracionEjecutor() {
     // fallo de la Guardia daría control total de la imagen.
     if (process.platform !== 'linux') throw new Error('RUNNER=contenedor solo funciona dentro de la imagen Docker (Linux).')
     if (process.getuid?.() === 0) throw new Error('RUNNER=contenedor no puede correr como root: usa el usuario sin privilegios de la imagen.')
+    // El código del estudiante debe correr con OTRO usuario Linux, nunca con el del backend: así,
+    // aunque rompa la Guardia, no puede leer /proc/<pid>/environ del backend ni sus archivos.
+    if (env.RUNNER_SANDBOX_UID === undefined || env.RUNNER_SANDBOX_GID === undefined) {
+      throw new Error('RUNNER=contenedor necesita RUNNER_SANDBOX_UID y RUNNER_SANDBOX_GID (el usuario "sandbox" de la imagen).')
+    }
+    if (env.RUNNER_SANDBOX_UID === process.getuid?.()) {
+      throw new Error('RUNNER_SANDBOX_UID no puede ser el mismo usuario que corre el backend.')
+    }
   }
 }
 
@@ -42,6 +50,7 @@ function obtenerEjecutor() {
         compilacionMs: env.RUNNER_COMPILACION_MS,
         ejecucionMs: env.RUNNER_EJECUCION_MS,
       },
+      usuarioSandbox: env.RUNNER === 'contenedor' ? { uid: env.RUNNER_SANDBOX_UID, gid: env.RUNNER_SANDBOX_GID } : null,
     })
   } else throw new Error(`Ejecutor desconocido: ${env.RUNNER}`)
   return ejecutor
@@ -51,6 +60,13 @@ function obtenerEjecutor() {
 // pague ese segundo extra. Si falla, se reintenta en la primera ejecución.
 export async function calentarEjecutor() {
   await obtenerEjecutor().preparar?.()
+}
+
+// A diferencia de calentarEjecutor (si falla, se reintenta en la primera ejecución), esto debe
+// IMPEDIR que el servidor arranque: si el usuario sandbox no está realmente aislado, cualquier
+// envío de código corre con menos protección de la que se cree. Ver server.js.
+export async function verificarAislamientoEjecutor() {
+  await obtenerEjecutor().verificarAislamiento?.()
 }
 
 // Semáforo: cada envío levanta hasta LIMITES.casosEnParalelo JVM; no se permiten más de

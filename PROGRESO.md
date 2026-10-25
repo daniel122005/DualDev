@@ -62,16 +62,23 @@ El MCP de Supabase pasó a **modo escritura** (antes solo lectura) por decisión
 
 Advisors revisados: 2 notas `INFO` esperadas (RLS sin política en `ejercicio`/`desafio`, intencional) y 1 `WARN` nuevo: falta activar la protección de contraseñas filtradas (HaveIBeenPwned) en Supabase.
 
+## Endurecimiento del ejecutor: código listo, falta desplegar (2026-10-25)
+
+El código del estudiante ahora corre con un usuario de Linux (`sandbox`) distinto del que corre el backend (`node`). Así, aunque el código rompa la Guardia (el límite de Java), no puede leer la llave secreta del backend ni sus archivos, porque ni siquiera es el mismo usuario del sistema. El backend comprueba esto al arrancar y **se niega a aceptar tráfico si no funciona** (más estricto que un error que solo se reintenta).
+
+Se decidió no restringir el registro a un dominio institucional por ahora (proyecto semillero, no todos tienen correo institucional todavía).
+
+Falta: que Render reconstruya la imagen con este cambio (el próximo `git push` lo dispara solo) y confirmar en los logs que la autoprueba pasa.
+
+## Ajustes de Supabase pendientes
+
+1. Dashboard → Authentication → Providers → Email: activar **Confirm email** y poner **Minimum password length = 8**.
+2. La protección de contraseñas filtradas (HaveIBeenPwned) **no se puede activar**: es función del plan Pro, el proyecto está en el plan Free. Queda como limitación aceptada.
+
 ## Lo que sigue
 
-1. **Endurecer el ejecutor:** correr los programas de los estudiantes con otro usuario de Linux, para que no puedan leer las variables del backend aunque se rompa la Guardia. Ya hay un Linux real (Render) para probarlo.
-2. **Ajustes de Supabase para producción:**
-   - activar la confirmación de correo;
-   - restringir el registro (dominio institucional o invitación);
-   - contraseña mínima de 8 caracteres;
-   - activar la protección de contraseñas filtradas (hallazgo nuevo del Advisor).
-3. **Vigilar en producción** la petición que se colgó en 2 de 8 pruebas locales (62 s y 8 s); si aparece allá, poner un tiempo máximo a las llamadas a Supabase.
-4. Medir tiempos reales de envío de código bajo más carga (se esperaban 4–5 s por la CPU del plan gratis de Render) y correr `test:e2e` contra la URL de producción.
+1. **Vigilar en producción** la petición que se colgó en 2 de 8 pruebas locales (62 s y 8 s); si aparece allá, poner un tiempo máximo a las llamadas a Supabase.
+2. Medir tiempos reales de envío de código bajo más carga (se esperaban 4–5 s por la CPU del plan gratis de Render) y correr `test:e2e` contra la URL de producción.
 
 ## Para retomar con Claude
 

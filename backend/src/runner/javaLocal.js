@@ -7,11 +7,16 @@
 // NO limita CPU y depende del Security Manager (eliminado desde Java 24):
 // en producción debe usarse un ejecutor con contenedor. Ver runner/index.js.
 import { spawn } from 'node:child_process'
-import { rmSync } from 'node:fs'
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { existsSync, rmSync } from 'node:fs'
+import { chmod, mkdir, mkdtemp, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+
+// Quien de verdad cambia de usuario antes de ejecutar javac/java (ver crearEjecutorLocal). Viene con
+// util-linux (ya está en la imagen); solo necesita que se le dé la capacidad cap_setuid/cap_setgid
+// a ÉL, no al runtime de Node (que tiene mucha más superficie: V8 + todas las dependencias npm).
+export const SETPRIV = '/usr/bin/setpriv'
 
 export const LIMITES = {
   compilacionMs: 10_000,
@@ -70,6 +75,27 @@ const ARGS_JAVA = [
 // Solo lo imprescindible para que la JVM arranque en Windows.
 function entornoVacio() {
   return process.platform === 'win32' ? { SystemRoot: process.env.SystemRoot ?? 'C:\\Windows' } : {}
+}
+
+// Antepone setpriv cuando hay que correr como otro usuario (ver crearEjecutorLocal). --clear-groups
+// y --no-new-privs son por si acaso: nada de esto debería hacer falta para compilar/ejecutar Java,
+// así que quitarlo no le resta nada al estudiante.
+function conSandbox(usuarioSandbox, ejecutable, args) {
+  if (!usuarioSandbox) return { ejecutable, args }
+  return {
+    ejecutable: SETPRIV,
+    args: [`--reuid=${usuarioSandbox.uid}`, `--regid=${usuarioSandbox.gid}`, '--clear-groups', '--no-new-privs', '--', ejecutable, ...args],
+  }
+}
+
+// chmod no tiene opción recursiva (a diferencia de rm). Lo usamos para la carpeta de la Guardia:
+// que el usuario sandbox pueda LEER sus clases (las necesita en el classpath) pero nunca escribirlas.
+async function chmodRecursivo(ruta, modo) {
+  await chmod(ruta, modo)
+  const info = await stat(ruta)
+  if (!info.isDirectory()) return
+  const hijos = await readdir(ruta)
+  await Promise.all(hijos.map((h) => chmodRecursivo(path.join(ruta, h), modo)))
 }
 
 export function nombreClasePrincipal(codigo) {
@@ -134,8 +160,13 @@ function correr(ejecutable, args, { cwd, entrada = '', timeoutMs, maxBytes }) {
   })
 }
 
-export function crearEjecutorLocal({ javaHome, limites = {} }) {
+// usuarioSandbox: { uid, gid } del usuario Linux que corre el código del estudiante (producción,
+// RUNNER=contenedor). null en desarrollo: ahí no hay otro usuario y no tendría sentido.
+export function crearEjecutorLocal({ javaHome, limites = {}, usuarioSandbox = null }) {
   if (!javaHome) throw new Error('JAVA_HOME no está configurado: el ejecutor local necesita un JDK 17')
+  if (usuarioSandbox && !existsSync(SETPRIV)) {
+    throw new Error(`No se encontró ${SETPRIV} (setpriv, de util-linux): es quien cambia al usuario sandbox antes de compilar o ejecutar el código del estudiante.`)
+  }
   const lim = { ...LIMITES, ...limites }
   const bin = path.join(javaHome, 'bin')
   const javac = path.join(bin, process.platform === 'win32' ? 'javac.exe' : 'javac')
@@ -163,6 +194,10 @@ export function crearEjecutorLocal({ javaHome, limites = {} }) {
       // código del estudiante vive en otra carpeta y el control de acceso revisa cada marco de la pila.
       const politica = path.join(dir, 'guardia.policy')
       await writeFile(politica, `grant codeBase "${pathToFileURL(salida).href}/" {\n    permission java.security.AllPermission;\n};\n`, 'utf8')
+      // El código del estudiante corre como OTRO usuario (usuarioSandbox) y necesita LEER esta
+      // carpeta (está en su classpath y lee la política), pero nunca ESCRIBIRLA: solo "node" (dueño)
+      // puede modificarla, así que ni rompiendo la Guardia se puede suplantarla para la próxima vez.
+      if (usuarioSandbox) await chmodRecursivo(dir, 0o755)
       return { clases: salida, politica }
     })().catch((e) => {
       guardia = null // permitir reintentar
@@ -180,8 +215,13 @@ export function crearEjecutorLocal({ javaHome, limites = {} }) {
       const clase = nombreClasePrincipal(codigo)
       const archivo = `${clase}.java`
       await writeFile(path.join(dir, archivo), codigo, 'utf8')
+      // javac/java van a correr como usuarioSandbox (otro usuario Linux): necesitan poder escribir
+      // aquí (las .class) y leer el .java. La carpeta es de un solo uso, al azar (mkdtemp) y se borra
+      // justo después, así que abrirla del todo no expone nada.
+      if (usuarioSandbox) await chmod(dir, 0o777)
 
-      const compilacion = await correr(javac, [...ARGS_JAVAC, '-d', dir, '-cp', dir, archivo], {
+      const comp = conSandbox(usuarioSandbox, javac, [...ARGS_JAVAC, '-d', dir, '-cp', dir, archivo])
+      const compilacion = await correr(comp.ejecutable, comp.args, {
         cwd: dir,
         timeoutMs: lim.compilacionMs,
         maxBytes: lim.salidaBytes,
@@ -196,7 +236,8 @@ export function crearEjecutorLocal({ javaHome, limites = {} }) {
       const classpath = [clasesGuardia, dir].join(path.delimiter)
       const correrCaso = async (entrada) => {
         // "=" (no "==") añade esta política a la estándar de Java en vez de reemplazarla.
-        const r = await correr(java, [`-Djava.security.policy=${politica}`, ...ARGS_JAVA, '-cp', classpath, clase], {
+        const ej = conSandbox(usuarioSandbox, java, [`-Djava.security.policy=${politica}`, ...ARGS_JAVA, '-cp', classpath, clase])
+        const r = await correr(ej.ejecutable, ej.args, {
           cwd: dir,
           entrada,
           timeoutMs: lim.ejecucionMs,
@@ -220,5 +261,36 @@ export function crearEjecutorLocal({ javaHome, limites = {} }) {
     }
   }
 
-  return { nombre: 'local', ejecutar, preparar: prepararGuardia }
+  // Se corre al arrancar (ver runner/index.js). No basta con que setpriv termine en 0: si la
+  // capacidad no está bien puesta, podría "funcionar" pero seguir corriendo como "node". Por eso
+  // comprobamos de quién quedó el archivo compilado, no solo si hubo error.
+  async function verificarAislamiento() {
+    if (!usuarioSandbox) return
+    const dir = await mkdtemp(path.join(tmpdir(), 'dualdev-autoprueba-'))
+    try {
+      const archivo = 'Autoprueba.java'
+      await writeFile(path.join(dir, archivo), 'public class Autoprueba { public static void main(String[] a) { System.out.println("ok"); } }', 'utf8')
+      await chmod(dir, 0o777)
+      const comp = conSandbox(usuarioSandbox, javac, [...ARGS_JAVAC, '-d', dir, '-cp', dir, archivo])
+      const r = await correr(comp.ejecutable, comp.args, { cwd: dir, timeoutMs: lim.compilacionMs, maxBytes: lim.salidaBytes })
+      if (r.fallo || r.codigo !== 0) {
+        throw new Error(`no se pudo compilar el programa de prueba (código ${r.codigo}): ${r.stderr || r.fallo?.message}`)
+      }
+      const propietario = await stat(path.join(dir, 'Autoprueba.class'))
+      if (propietario.uid !== usuarioSandbox.uid) {
+        throw new Error(
+          `el archivo compilado quedó con uid ${propietario.uid}, se esperaba ${usuarioSandbox.uid}: el código del estudiante NO está corriendo como el usuario sandbox. Revisa que ${SETPRIV} tenga cap_setuid/cap_setgid (setcap en el Dockerfile).`,
+        )
+      }
+    } finally {
+      await rm(dir, { recursive: true, force: true })
+    }
+  }
+
+  return {
+    nombre: 'local',
+    ejecutar,
+    preparar: prepararGuardia,
+    verificarAislamiento,
+  }
 }

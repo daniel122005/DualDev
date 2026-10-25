@@ -13,6 +13,11 @@ const schema = z.object({
   //    programas se ejecutan ahí como procesos hijos con la Guardia, sin root y sin secretos.
   RUNNER: z.enum(['local', 'contenedor']).default('local'),
   JAVA_HOME: z.string().optional(),
+  // Usuario Linux (uid/gid) con el que corre el código del estudiante en "contenedor", DISTINTO del
+  // usuario del backend: si el código escapa de la Guardia, no puede leer /proc/<pid>/environ del
+  // backend (la llave secreta) ni sus archivos, porque ni siquiera es el mismo usuario del sistema.
+  RUNNER_SANDBOX_UID: z.coerce.number().int().min(1).optional(),
+  RUNNER_SANDBOX_GID: z.coerce.number().int().min(1).optional(),
   RUNNER_CONCURRENCIA: z.coerce.number().int().min(1).max(16).default(2),
   // Límites ajustables según la CPU del servidor (en uno de 0,1 CPU todo tarda ~10 veces más y un
   // programa correcto no debe confundirse con un ciclo infinito).
