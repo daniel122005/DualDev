@@ -13,10 +13,11 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-// Quien de verdad cambia de usuario antes de ejecutar javac/java (ver crearEjecutorLocal). Viene con
-// util-linux (ya está en la imagen); solo necesita que se le dé la capacidad cap_setuid/cap_setgid
-// a ÉL, no al runtime de Node (que tiene mucha más superficie: V8 + todas las dependencias npm).
-export const SETPRIV = '/usr/bin/setpriv'
+// Quien de verdad cambia de usuario antes de ejecutar (o matar) javac/java del estudiante. Binario
+// propio y mínimo (docker/sandboxexec.c): el usuario destino está escrito en SU código, nunca se
+// recibe como argumento, así que aunque el backend se comprometa por completo, invocarlo solo puede
+// terminar en el usuario sandbox, nunca en root ni en ningún otro usuario.
+export const SANDBOXEXEC = '/usr/local/bin/sandboxexec'
 
 export const LIMITES = {
   compilacionMs: 10_000,
@@ -77,15 +78,10 @@ function entornoVacio() {
   return process.platform === 'win32' ? { SystemRoot: process.env.SystemRoot ?? 'C:\\Windows' } : {}
 }
 
-// Antepone setpriv cuando hay que correr como otro usuario (ver crearEjecutorLocal). --clear-groups
-// y --no-new-privs son por si acaso: nada de esto debería hacer falta para compilar/ejecutar Java,
-// así que quitarlo no le resta nada al estudiante.
+// Antepone sandboxexec cuando hay que correr como el usuario sandbox (ver crearEjecutorLocal).
 function conSandbox(usuarioSandbox, ejecutable, args) {
   if (!usuarioSandbox) return { ejecutable, args }
-  return {
-    ejecutable: SETPRIV,
-    args: [`--reuid=${usuarioSandbox.uid}`, `--regid=${usuarioSandbox.gid}`, '--clear-groups', '--no-new-privs', '--', ejecutable, ...args],
-  }
+  return { ejecutable: SANDBOXEXEC, args: [ejecutable, ...args] }
 }
 
 // chmod no tiene opción recursiva (a diferencia de rm). Lo usamos para la carpeta de la Guardia:
@@ -105,7 +101,12 @@ export function nombreClasePrincipal(codigo) {
   return cualquiera ? cualquiera[1] : 'Main'
 }
 
-function correr(ejecutable, args, { cwd, entrada = '', timeoutMs, maxBytes }) {
+// usuarioSandbox: si el proceso corre como el usuario sandbox (porque ejecutable/args ya vienen
+// envueltos con sandboxexec, ver conSandbox), Node ("node") NO puede mandarle señales directamente:
+// en Linux, un proceso solo puede matar a otro de SU MISMO usuario (o con privilegio extra), y
+// matarlo así fallaría en silencio (EPERM) dejándolo corriendo de más. Por eso la señal también se
+// manda a través de sandboxexec: sale con el mismo usuario del proceso al que hay que matar.
+function correr(ejecutable, args, { cwd, entrada = '', timeoutMs, maxBytes, usuarioSandbox = null }) {
   return new Promise((resolve) => {
     const inicio = Date.now()
     const hijo = spawn(ejecutable, args, { cwd, env: entornoVacio(), windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'] })
@@ -118,7 +119,13 @@ function correr(ejecutable, args, { cwd, entrada = '', timeoutMs, maxBytes }) {
     let terminado = false
 
     const matar = () => {
-      if (!terminado) hijo.kill('SIGKILL')
+      if (terminado) return
+      if (usuarioSandbox) {
+        const k = spawn(SANDBOXEXEC, ['/bin/sh', '-c', `kill -9 ${hijo.pid}`], { env: entornoVacio(), stdio: 'ignore' })
+        k.on('error', () => {}) // best-effort; si esto falla, igual se corta por memoria/salida/CPU
+      } else {
+        hijo.kill('SIGKILL')
+      }
     }
     const timer = setTimeout(() => {
       tiempoAgotado = true
@@ -164,8 +171,8 @@ function correr(ejecutable, args, { cwd, entrada = '', timeoutMs, maxBytes }) {
 // RUNNER=contenedor). null en desarrollo: ahí no hay otro usuario y no tendría sentido.
 export function crearEjecutorLocal({ javaHome, limites = {}, usuarioSandbox = null }) {
   if (!javaHome) throw new Error('JAVA_HOME no está configurado: el ejecutor local necesita un JDK 17')
-  if (usuarioSandbox && !existsSync(SETPRIV)) {
-    throw new Error(`No se encontró ${SETPRIV} (setpriv, de util-linux): es quien cambia al usuario sandbox antes de compilar o ejecutar el código del estudiante.`)
+  if (usuarioSandbox && !existsSync(SANDBOXEXEC)) {
+    throw new Error(`No se encontró ${SANDBOXEXEC}: es quien cambia al usuario sandbox antes de compilar, ejecutar o matar el proceso del estudiante.`)
   }
   const lim = { ...LIMITES, ...limites }
   const bin = path.join(javaHome, 'bin')
@@ -225,6 +232,7 @@ export function crearEjecutorLocal({ javaHome, limites = {}, usuarioSandbox = nu
         cwd: dir,
         timeoutMs: lim.compilacionMs,
         maxBytes: lim.salidaBytes,
+        usuarioSandbox,
       })
       if (compilacion.fallo) throw new Error(`No se pudo iniciar javac: ${compilacion.fallo.message}`)
       if (compilacion.codigo !== 0 || compilacion.tiempoAgotado) {
@@ -242,6 +250,7 @@ export function crearEjecutorLocal({ javaHome, limites = {}, usuarioSandbox = nu
           entrada,
           timeoutMs: lim.ejecucionMs,
           maxBytes: lim.salidaBytes,
+          usuarioSandbox,
         })
         if (r.fallo) throw new Error(`No se pudo iniciar java: ${r.fallo.message}`)
         return { entrada, ...r }
@@ -261,7 +270,7 @@ export function crearEjecutorLocal({ javaHome, limites = {}, usuarioSandbox = nu
     }
   }
 
-  // Se corre al arrancar (ver runner/index.js). No basta con que setpriv termine en 0: si la
+  // Se corre al arrancar (ver runner/index.js). No basta con que sandboxexec termine en 0: si la
   // capacidad no está bien puesta, podría "funcionar" pero seguir corriendo como "node". Por eso
   // comprobamos de quién quedó el archivo compilado, no solo si hubo error.
   async function verificarAislamiento() {
@@ -272,14 +281,14 @@ export function crearEjecutorLocal({ javaHome, limites = {}, usuarioSandbox = nu
       await writeFile(path.join(dir, archivo), 'public class Autoprueba { public static void main(String[] a) { System.out.println("ok"); } }', 'utf8')
       await chmod(dir, 0o777)
       const comp = conSandbox(usuarioSandbox, javac, [...ARGS_JAVAC, '-d', dir, '-cp', dir, archivo])
-      const r = await correr(comp.ejecutable, comp.args, { cwd: dir, timeoutMs: lim.compilacionMs, maxBytes: lim.salidaBytes })
+      const r = await correr(comp.ejecutable, comp.args, { cwd: dir, timeoutMs: lim.compilacionMs, maxBytes: lim.salidaBytes, usuarioSandbox })
       if (r.fallo || r.codigo !== 0) {
         throw new Error(`no se pudo compilar el programa de prueba (código ${r.codigo}): ${r.stderr || r.fallo?.message}`)
       }
       const propietario = await stat(path.join(dir, 'Autoprueba.class'))
       if (propietario.uid !== usuarioSandbox.uid) {
         throw new Error(
-          `el archivo compilado quedó con uid ${propietario.uid}, se esperaba ${usuarioSandbox.uid}: el código del estudiante NO está corriendo como el usuario sandbox. Revisa que ${SETPRIV} tenga cap_setuid/cap_setgid (setcap en el Dockerfile).`,
+          `el archivo compilado quedó con uid ${propietario.uid}, se esperaba ${usuarioSandbox.uid}: el código del estudiante NO está corriendo como el usuario sandbox. Revisa que ${SANDBOXEXEC} tenga cap_setuid/cap_setgid (setcap en el Dockerfile).`,
         )
       }
     } finally {

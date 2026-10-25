@@ -66,6 +66,12 @@ Advisors revisados: 2 notas `INFO` esperadas (RLS sin política en `ejercicio`/`
 
 El código del estudiante ahora corre con un usuario de Linux (`sandbox`) distinto del que corre el backend (`node`). Así, aunque el código rompa la Guardia (el límite de Java), no puede leer la llave secreta del backend ni sus archivos, porque ni siquiera es el mismo usuario del sistema. El backend comprueba esto al arrancar y **se niega a aceptar tráfico si no funciona** (más estricto que un error que solo se reintenta).
 
+Una revisión de seguridad automática, corrida sola justo después del primer commit de este cambio, encontró 2 problemas reales que ya se corrigieron antes de desplegar nada:
+- **(Alto)** el corte por tiempo agotado dejaría de funcionar para el código del estudiante (Node, con el usuario del backend, no puede mandarle una señal de "mátate" a un proceso de otro usuario del sistema).
+- **(Medio)** la herramienta que cambiaba de usuario era demasiado general: con control total del backend, se podría haber pedido "cámbiame a root" en vez de a "sandbox".
+
+Se resolvieron los dos con la misma pieza: un programa propio y muy pequeño (`sandboxexec`) al que SOLO se le puede pedir "vuélvete sandbox", nunca otro usuario, y que también se usa para mandar la señal de matar.
+
 Se decidió no restringir el registro a un dominio institucional por ahora (proyecto semillero, no todos tienen correo institucional todavía).
 
 Falta: que Render reconstruya la imagen con este cambio (el próximo `git push` lo dispara solo) y confirmar en los logs que la autoprueba pasa.
