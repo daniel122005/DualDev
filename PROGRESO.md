@@ -17,7 +17,8 @@ Fases 0 a 8 completas (auth, dashboard, módulos, lecciones, práctica con Java 
 
 ## Lo que falta por mejorar (pendiente)
 
-1. **Confirmar en Render que el endurecimiento del ejecutor quedó bien.** Código subido (commits `43ec216`, `0010809`); falta ver en los logs de Render que la autoprueba de aislamiento pasa al arrancar, y probar en producción que un ciclo infinito real se sigue cortando (el fix del punto "ALTO" de abajo depende de esto).
+1. **🔴 El deploy en Render del endurecimiento del ejecutor FALLÓ (correo de Render, 2026-10-25 noche).** El backend sigue respondiendo en `https://dualdev-api.onrender.com/api/health` porque Render no cambia el tráfico a un deploy que no pasa — sigue corriendo la versión anterior (sin el usuario `sandbox`), así que la app no está caída, pero el endurecimiento todavía no quedó activo. **Para retomar:** abrir Render → `dualdev-api` → Events/Logs, ver el log del build/deploy fallido del commit `0010809` (o `43ec216` si fue ese) y pegarlo aquí para diagnosticar. Sospechosos más probables a revisar primero: el `Dockerfile` instala `gcc`/`libc6-dev` y compila `backend/docker/sandboxexec.c` con `setcap` — puede haber fallado el build de la imagen (paquete, permiso de `setcap` en el entorno de build de Render, o la ruta `/usr/local/bin`) o la autoprueba al arrancar (`verificarAislamientoEjecutor`, que hace que el contenedor se niegue a arrancar si el aislamiento no funciona — ESO ES A PROPÓSITO, pero si falla hay que ver por qué: falta `sandboxexec`, uid/gid no coinciden, etc.).
+2. Una vez con el log: corregir, subir y volver a verificar (salud, un envío de código normal, y un ciclo infinito real para confirmar que el corte por tiempo sigue funcionando con el usuario sandbox).
 2. **Ajustes de Supabase para producción** (dashboard → Authentication → Providers → Email):
    - activar **Confirm email**;
    - poner **Minimum password length = 8**;
