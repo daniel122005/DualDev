@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { api } from '@/services/api'
-import type { ModuloListado } from '@/types/api'
-
-interface ModuloDetalle {
-  ejercicios: { id_ejercicio: number; estado: 'resuelto' | 'intentado' | 'pendiente' }[]
-}
+import type { ModuloDetalle, ModuloListado } from '@/types/api'
 
 // "Práctica" del menú: lleva al primer ejercicio sin resolver del primer módulo abierto que no esté terminado.
 export default function PracticaInicio() {

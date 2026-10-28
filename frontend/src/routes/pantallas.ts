@@ -24,6 +24,7 @@ function diferida(cargar: () => Promise<{ default: ComponentType }>) {
 const pantallas = {
   Dashboard: diferida(() => import('@/pages/Dashboard')),
   ModulesScreen: diferida(() => import('@/pages/ModulesScreen')),
+  ModuleSummaryScreen: diferida(() => import('@/pages/ModuleSummaryScreen')),
   LessonScreen: diferida(() => import('@/pages/LessonScreen')),
   PracticaInicio: diferida(() => import('@/pages/PracticaInicio')),
   PracticeScreen: diferida(() => import('@/pages/PracticeScreen')),
@@ -35,6 +36,7 @@ const pantallas = {
 
 export const Dashboard = pantallas.Dashboard.Pantalla
 export const ModulesScreen = pantallas.ModulesScreen.Pantalla
+export const ModuleSummaryScreen = pantallas.ModuleSummaryScreen.Pantalla
 export const LessonScreen = pantallas.LessonScreen.Pantalla
 export const PracticaInicio = pantallas.PracticaInicio.Pantalla
 export const PracticeScreen = pantallas.PracticeScreen.Pantalla

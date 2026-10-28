@@ -9,6 +9,7 @@ import {
   Dashboard,
   LessonScreen,
   ModulesScreen,
+  ModuleSummaryScreen,
   PracticaInicio,
   PracticeScreen,
   ProfileScreen,
@@ -38,6 +39,7 @@ export default function App() {
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/modulos" element={<ModulesScreen />} />
+                <Route path="/modulos/:id/resumen" element={<ModuleSummaryScreen />} />
                 <Route path="/lecciones/:id" element={<LessonScreen />} />
                 <Route path="/practica" element={<PracticaInicio />} />
                 <Route path="/practica/:id" element={<PracticeScreen />} />

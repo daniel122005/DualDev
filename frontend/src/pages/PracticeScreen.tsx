@@ -169,7 +169,7 @@ export default function PracticeScreen() {
         accionExito={
           siguiente
             ? { texto: 'Siguiente ejercicio →', onClick: () => navigate(`/practica/${siguiente.id_ejercicio}`) }
-            : { texto: 'Volver a los módulos →', onClick: () => navigate('/modulos') }
+            : { texto: 'Ver resumen del módulo 🎉', onClick: () => navigate(`/modulos/${ejercicio.modulo.id_modulo}/resumen`) }
         }
         accionFallo={{
           texto: 'Repasar la lección →',
@@ -189,13 +189,36 @@ export default function PracticeScreen() {
       ? [ejecucion.error.linea]
       : []
 
+  const resueltos = ejercicio.ejercicios_del_modulo.filter((e) => e.resuelto).length
+  const totalModulo = ejercicio.ejercicios_del_modulo.length
+  const pctModulo = totalModulo ? Math.round((resueltos / totalModulo) * 100) : 0
+
   return (
     <div className="mx-auto max-w-5xl p-6">
-      <div className="mb-6">
-        <h1 className="font-display mb-1 text-2xl font-black">Zona de Práctica ⌨</h1>
-        <p style={{ color: 'var(--color-muted)', fontSize: 14 }}>
-          Módulo {ejercicio.modulo.orden} · {ejercicio.modulo.titulo} · Ejercicios
-        </p>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display mb-1 text-2xl font-black">Zona de Práctica ⌨</h1>
+          <p style={{ color: 'var(--color-muted)', fontSize: 14 }}>
+            Módulo {ejercicio.modulo.orden} · {ejercicio.modulo.titulo} · Ejercicios
+          </p>
+        </div>
+        <Link
+          to={`/modulos/${ejercicio.modulo.id_modulo}/resumen`}
+          className="card-border flex min-w-[220px] flex-col gap-1.5 px-4 py-2.5"
+          style={{ textDecoration: 'none', color: 'var(--color-text)' }}
+          title="Ver tu avance y la retroalimentación del módulo"
+        >
+          <span className="flex items-center justify-between gap-3 text-xs">
+            <span style={{ color: 'var(--color-muted)' }}>Avance del módulo</span>
+            <span className="font-display font-bold" style={{ color: '#b6ff3c' }}>
+              {resueltos}/{totalModulo}
+            </span>
+          </span>
+          <span className="progress-bar" style={{ height: 6 }} role="progressbar" aria-valuenow={pctModulo} aria-valuemin={0} aria-valuemax={100} aria-label="Ejercicios resueltos del módulo">
+            <span className="progress-fill block" style={{ width: `${pctModulo}%` }} />
+          </span>
+          <span className="text-[11px]" style={{ color: '#7af0b4' }}>📊 Ver resumen y retroalimentación →</span>
+        </Link>
       </div>
 
       <div className="grid gap-5 md:grid-cols-[260px_1fr]">
@@ -288,7 +311,7 @@ export default function PracticeScreen() {
             </button>
           </div>
 
-          {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} />}
+          {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} archivo={archivoJava(codigo)} onLimpiar={() => setEjecucion(null)} />}
         </div>
       </div>
     </div>

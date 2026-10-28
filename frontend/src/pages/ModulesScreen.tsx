@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ProgressBar from '@/components/ProgressBar'
 import { api, leerCache } from '@/services/api'
 import type { ModuloListado } from '@/types/api'
@@ -50,7 +50,7 @@ export default function ModulesScreen() {
           return (
             <li key={mod.id_modulo} className="flex items-start gap-4">
               {/* Punto de la línea de tiempo */}
-              <div className="flex flex-col items-center" style={{ paddingTop: 18 }} aria-hidden="true">
+              <div className="flex flex-col items-center self-stretch" style={{ paddingTop: 18, marginBottom: siguiente ? -34 : 0 }} aria-hidden="true">
                 <div
                   className="font-display flex items-center justify-center rounded-full text-sm font-black"
                   style={{
@@ -67,8 +67,10 @@ export default function ModulesScreen() {
                   <div
                     style={{
                       width: 2,
-                      height: 40,
+                      flex: 1,
+                      minHeight: 40,
                       marginTop: 4,
+                      marginBottom: 4,
                       background: mod.bloqueado
                         ? 'var(--color-border)'
                         : `linear-gradient(${color}, ${estiloModulo(siguiente.orden).color})`,
@@ -77,8 +79,9 @@ export default function ModulesScreen() {
                 )}
               </div>
 
+              <div className="min-w-0 flex-1">
               <button
-                className="card-border flex-1 p-5 text-left"
+                className="card-border w-full p-5 text-left"
                 style={{ cursor: mod.bloqueado ? 'not-allowed' : 'pointer', opacity: mod.bloqueado ? 0.5 : 1, border: `1px solid ${color}30` }}
                 onClick={() => !mod.bloqueado && ir && navigate(ir)}
                 aria-disabled={mod.bloqueado}
@@ -125,7 +128,7 @@ export default function ModulesScreen() {
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                        {mod.progreso}% completado
+                        {mod.progreso}% · {mod.lecciones_completadas}/{mod.total_lecciones} lecciones · {mod.ejercicios_resueltos}/{mod.total_ejercicios} ejercicios
                       </p>
                       <span className="text-xs font-bold" style={{ color: mod.completado ? '#1ed48a' : color }}>
                         {mod.completado ? '✓ Completado' : mod.progreso > 0 ? 'Continuar →' : 'Comenzar →'}
@@ -160,6 +163,12 @@ export default function ModulesScreen() {
                   </div>
                 )}
               </button>
+              {!mod.bloqueado && mod.progreso > 0 && (
+                <Link to={`/modulos/${mod.id_modulo}/resumen`} className="enlace-suave mt-2 ml-3 inline-flex min-h-[32px] items-center gap-1">
+                  📊 {mod.completado ? 'Ver resumen y retroalimentación' : 'Ver mi avance y retroalimentación'} →
+                </Link>
+              )}
+              </div>
             </li>
           )
         })}

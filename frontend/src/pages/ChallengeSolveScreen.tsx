@@ -267,7 +267,7 @@ export default function ChallengeSolveScreen() {
             </button>
           </div>
 
-          {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} />}
+          {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} archivo={archivoJava(codigo)} onLimpiar={() => setEjecucion(null)} />}
         </div>
       )}
     </div>

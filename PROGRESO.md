@@ -1,7 +1,7 @@
 # Progreso de DUALDEV
 
 **Archivo único de progreso y pendientes.** El detalle de arquitectura, stack, reglas y estructura de carpetas vive en `CLAUDE.md`; aquí va todo lo demás: qué se hizo, qué se decidió y qué falta.
-Última actualización: **2026-10-25**.
+Última actualización: **2026-10-27**.
 
 ## Dónde vamos
 
@@ -15,9 +15,19 @@
 
 Fases 0 a 8 completas (auth, dashboard, módulos, lecciones, práctica con Java real, logros, ranking, perfil, retos, pruebas y seguridad) — ver detalle en la sección de abajo. Las tres prioridades pedidas el 2026-10-18 (calidad de ejercicios + tono de profe, resaltado de sintaxis, rapidez) están completas y verificadas. El despliegue a Vercel + Render + Supabase está hecho y probado de punta a punta en producción real.
 
+## Correcciones pedidas por la profesora (2026-10-27)
+
+Hecho en el frontend y en `supabase/seed.sql` (sin cambios de backend, porque Render no puede desplegar mientras falle la autoprueba del usuario `sandbox`):
+- **Progreso visible y retroalimentación por sección:** pantalla nueva `/modulos/:id/resumen` (`ModuleSummaryScreen.tsx` + `utils/retroalimentacion.ts`, usa el `GET /modules/:id` que ya existía): anillo de avance, insignia, lecciones/ejercicios/por corregir/XP, retroalimentación "tono profe" por tipo de ejercicio (conceptos, leer código, escribir programas), lista de ejercicios con estado, autoevaluación del estudiante (😕/🙂/😎 + nota; **solo en el navegador**, no llega al profe) y siguiente paso. Se llega desde Módulos, Dashboard, la barra "Avance del módulo" de Práctica y automáticamente al resolver el último ejercicio del módulo.
+- **Editor tipo IDE** (`CodeEditor.tsx` + `utils/plantillasJava.ts`): `for`/`while`/`do`/`if`/`ifelse`/`sout`/`scan`/`leer`/`main` + Tab arman la estructura con la sangría de la línea; Tab salta entre campos; Enter conserva la sangría y cierra la llave; Shift+Tab quita sangría; `Esc` y luego Tab sale del editor; barra "Insertar" clicable (sirve en celular); resalta la línea actual. Usa `execCommand('insertText')` para que Ctrl+Z siga funcionando.
+- **Consola nueva** (`Consola.tsx`): estado (compilando / sin errores / error de compilación / tiempo agotado), comando `$ java Clase`, entrada visible, salida numerada, copiar y limpiar.
+- **Lecciones con formato** (`TextoLeccion.tsx`): `**negrita**`, `` `código` ``, viñetas, pasos numerados y tablas (para pruebas de escritorio), sin librerías ni HTML crudo.
+- **Contenido:** las 4 lecciones de "Introducción a ciclos" reescritas con ese formato + lección nueva "Prueba de escritorio"; **23 ejercicios nuevos** de más complejidad (33 → 56): factorial con `long`, divisores, mayor/menor con negativos, invertir número, Collatz, palíndromo, adivina el número, centinela -1, cajero con menú, primos, pirámide, tablero, etc. Todas las soluciones se verificaron con el ejecutor Java real (casos visibles y ocultos, código inicial que compila y no resuelve, patrones de error que no se activan con la solución) y el seed completo se aplicó dos veces en PGlite sin error.
+- **Pendiente:** cargar el `seed.sql` en Supabase producción (hasta entonces la app muestra el contenido viejo). Al cargarlo, a 1 módulo del único estudiante real le baja el % por debajo del 50 % y vuelve a bloquear el siguiente hasta que resuelva un par de ejercicios más (medido el 2026-10-27).
+
 ## Lo que falta por mejorar (pendiente)
 
-1. **🔴 El deploy en Render del endurecimiento del ejecutor FALLÓ (correo de Render, 2026-10-25 noche).** El backend sigue respondiendo en `https://dualdev-api.onrender.com/api/health` porque Render no cambia el tráfico a un deploy que no pasa — sigue corriendo la versión anterior (sin el usuario `sandbox`), así que la app no está caída, pero el endurecimiento todavía no quedó activo. **Para retomar:** abrir Render → `dualdev-api` → Events/Logs, ver el log del build/deploy fallido del commit `0010809` (o `43ec216` si fue ese) y pegarlo aquí para diagnosticar. Sospechosos más probables a revisar primero: el `Dockerfile` instala `gcc`/`libc6-dev` y compila `backend/docker/sandboxexec.c` con `setcap` — puede haber fallado el build de la imagen (paquete, permiso de `setcap` en el entorno de build de Render, o la ruta `/usr/local/bin`) o la autoprueba al arrancar (`verificarAislamientoEjecutor`, que hace que el contenedor se niegue a arrancar si el aislamiento no funciona — ESO ES A PROPÓSITO, pero si falla hay que ver por qué: falta `sandboxexec`, uid/gid no coinciden, etc.).
+1. **🔴 El deploy en Render del endurecimiento del ejecutor FALLÓ (correo de Render, 2026-10-25 noche).** Log revisado el 2026-10-27: el build pasa; falla al arrancar con `setgroups: Operation not permitted` (`sandboxexec.c:37`). Hipótesis: Render no deja CAP_SETUID/CAP_SETGID en el contenedor o monta `nosuid`. Se subió un diagnóstico temporal (`0cb998f`, líneas `[diagnostico-temporal]` en el log de arranque) para confirmarlo; luego decidir si se revierte el usuario sandbox. **Mientras tanto Render no despliega NINGÚN cambio de backend.** El backend sigue respondiendo en `https://dualdev-api.onrender.com/api/health` porque Render no cambia el tráfico a un deploy que no pasa — sigue corriendo la versión anterior (sin el usuario `sandbox`), así que la app no está caída, pero el endurecimiento todavía no quedó activo. **Para retomar:** abrir Render → `dualdev-api` → Events/Logs, ver el log del build/deploy fallido del commit `0010809` (o `43ec216` si fue ese) y pegarlo aquí para diagnosticar. Sospechosos más probables a revisar primero: el `Dockerfile` instala `gcc`/`libc6-dev` y compila `backend/docker/sandboxexec.c` con `setcap` — puede haber fallado el build de la imagen (paquete, permiso de `setcap` en el entorno de build de Render, o la ruta `/usr/local/bin`) o la autoprueba al arrancar (`verificarAislamientoEjecutor`, que hace que el contenedor se niegue a arrancar si el aislamiento no funciona — ESO ES A PROPÓSITO, pero si falla hay que ver por qué: falta `sandboxexec`, uid/gid no coinciden, etc.).
 2. Una vez con el log: corregir, subir y volver a verificar (salud, un envío de código normal, y un ciclo infinito real para confirmar que el corte por tiempo sigue funcionando con el usuario sandbox).
 2. **Ajustes de Supabase para producción** (dashboard → Authentication → Providers → Email):
    - activar **Confirm email**;
@@ -81,7 +91,8 @@ Cada error debe decir qué pasó y por qué, nunca solo "incorrecto" (motor en `
 | — Revisión del skill de Supabase | Permisos explícitos para proyectos nuevos de Supabase (cambio de política de Supabase del 2026-04-28). |
 | — 3 prioridades del usuario (2026-10-18) | (a) Calidad de ejercicios + errores con tono de profe; (b) resaltado de sintaxis Java sin librerías; (c) rapidez (consultas en una tanda, precarga, caché en el cliente). Completas y verificadas el 2026-10-24. |
 | — Despliegue | Vercel + Render + Supabase + cron-job.org. Completo y verificado en producción el 2026-10-25. |
-| — Endurecimiento del ejecutor | Usuario Linux `sandbox` vía `sandboxexec`. Código subido el 2026-10-25, pendiente de confirmar en Render (ver pendientes arriba). |
+| — Endurecimiento del ejecutor | Usuario Linux `sandbox` vía `sandboxexec`. Código subido el 2026-10-25; en Render falla al arrancar con `setgroups: Operation not permitted` (probable: Render quita CAP_SETUID/SETGID). Diagnóstico temporal en `server.js` (commit `0cb998f`), falta leer su log. |
+| — Correcciones de la profesora (2026-10-27) | Resumen y retroalimentación por módulo, editor tipo IDE, consola nueva, lecciones con formato, 23 ejercicios nuevos. Ver sección arriba. |
 
 El detalle técnico exhaustivo de cada fase (archivos exactos, migraciones, decisiones de esquema, resultados de pruebas puntuales) queda en el historial de commits y en los propios archivos de código; este documento se enfoca en lo que no se puede derivar solo de leer el repo.
 

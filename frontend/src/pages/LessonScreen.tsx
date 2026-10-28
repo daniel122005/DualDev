@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import CodeBlock from '@/components/CodeBlock'
 import LogrosNuevos from '@/components/LogrosNuevos'
+import TextoLeccion from '@/components/TextoLeccion'
 import { usePerfil } from '@/hooks/usePerfil'
 import { api, leerCache } from '@/services/api'
 import type { Leccion, LogroNuevo, ResultadoPuntos } from '@/types/api'
@@ -180,7 +181,7 @@ export default function LessonScreen() {
 
           {tab === 'explain' && (
             <div className="card-border flex flex-col gap-4 p-5">
-              <p className="text-sm leading-relaxed whitespace-pre-line">{leccion.explicacion}</p>
+              <TextoLeccion texto={leccion.explicacion} />
               {leccion.tip && (
                 <div
                   className="rounded-xl p-3 text-xs"

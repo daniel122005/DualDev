@@ -132,7 +132,8 @@ export default function Dashboard() {
                   key={m.id_modulo}
                   className="card-border w-full p-4 text-left"
                   style={{ cursor: m.bloqueado ? 'not-allowed' : 'pointer', border: `1px solid ${color}33`, opacity: m.bloqueado ? 0.55 : 1 }}
-                  onClick={() => !m.bloqueado && navigate('/modulos')}
+                  onClick={() => !m.bloqueado && navigate(m.progreso > 0 ? `/modulos/${m.id_modulo}/resumen` : '/modulos')}
+                  title={m.progreso > 0 ? 'Ver tu avance y retroalimentación de este módulo' : undefined}
                   aria-disabled={m.bloqueado}
                 >
                   <div className="mb-3 flex items-center gap-3">
@@ -146,7 +147,7 @@ export default function Dashboard() {
                     <div className="flex-1">
                       <p className="font-display text-sm font-bold">{m.titulo}</p>
                       <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                        {m.total_lecciones} lecciones · {m.total_ejercicios} ejercicios
+                        {m.lecciones_completadas}/{m.total_lecciones} lecciones · {m.ejercicios_resueltos}/{m.total_ejercicios} ejercicios
                       </p>
                     </div>
                     {m.completado && (
@@ -156,8 +157,9 @@ export default function Dashboard() {
                     )}
                   </div>
                   <ProgressBar value={m.progreso} color={color} label={`Progreso en ${m.titulo}`} />
-                  <p className="mt-1 text-xs" style={{ color: 'var(--color-muted)' }}>
-                    {m.progreso}%
+                  <p className="mt-1 flex justify-between text-xs" style={{ color: 'var(--color-muted)' }}>
+                    <span>{m.progreso}%</span>
+                    {!m.bloqueado && m.progreso > 0 && <span style={{ color: '#7af0b4' }}>📊 Ver avance →</span>}
                   </p>
                 </button>
               )

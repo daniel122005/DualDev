@@ -58,6 +58,23 @@ export interface ModuloListado extends ModuloResumen {
   lecciones: { id_contenido: number; titulo: string; completada: boolean }[]
 }
 
+export type EstadoEjercicio = 'resuelto' | 'intentado' | 'pendiente'
+
+// GET /modules/:id
+export interface ModuloDetalle extends ModuloResumen {
+  puntos_totales: number
+  lecciones: { id_contenido: number; titulo: string; orden: number; minutos_estimados: number; puntos: number; completada: boolean }[]
+  ejercicios: {
+    id_ejercicio: number
+    titulo: string
+    tipo: TipoEjercicio
+    dificultad: DificultadEjercicio
+    puntos: number
+    orden: number
+    estado: EstadoEjercicio
+  }[]
+}
+
 export interface Leccion {
   id_contenido: number
   id_modulo: number

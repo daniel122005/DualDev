@@ -38,7 +38,15 @@ select m.id_modulo, c.titulo, c.explicacion, c.codigo, c.salida, c.tip, c.minuto
 from (values
   -- Módulo 1 · Introducción
   (1, '¿Por qué necesitamos ciclos?',
-   $t$Imagina que tienes que imprimir "Hola" tres veces. Podrías copiar la misma línea tres veces, pero ¿y si fueran mil? Un ciclo (también llamado bucle) repite un bloque de instrucciones por ti, sin copiar y pegar. Cada repetición se llama iteración (de forma informal, una "vuelta"). En el ejemplo, los dos bloques hacen lo mismo y por eso "Hola" sale seis veces: tres del bloque sin ciclo y tres del ciclo. La diferencia es que el ciclo sirve igual para 3, para 100 o para 1000 repeticiones: solo cambias un número.$t$,
+   $t$Imagina que debes imprimir "Hola" tres veces. Podrías copiar la misma línea tres veces… pero ¿y si fueran **mil**? Un **ciclo** (también llamado bucle) repite un bloque de instrucciones por ti, sin copiar y pegar.
+
+- Cada repetición se llama **iteración** (de forma informal, una "vuelta").
+- El mismo ciclo sirve para 3, para 100 o para 1000 repeticiones: solo cambias un número.
+- El código queda corto y, si hay un error, lo corriges en un solo lugar.
+
+En el ejemplo, los dos bloques hacen lo mismo y por eso "Hola" sale **seis** veces: tres del bloque sin ciclo y tres del ciclo `for`.
+
+Los ciclos están en todas partes: un reloj que cuenta segundos, un juego que se repite hasta que pierdes, un cajero que muestra el menú hasta que eliges salir.$t$,
    $j$// Sin ciclo: una línea por cada "Hola"
 System.out.println("Hola");
 System.out.println("Hola");
@@ -51,7 +59,16 @@ for (int i = 0; i < 3; i++) {
    E'Hola\nHola\nHola\nHola\nHola\nHola',
    'Si te encuentras copiando y pegando la misma línea muchas veces, probablemente necesitas un ciclo.', 5, 1),
   (1, 'Partes de un ciclo',
-   $t$Piensa en dar vueltas a la cancha del colegio: empiezas en la vuelta 1, sigues corriendo mientras no hayas completado 3, corres una vuelta y la cuentas. Todo ciclo tiene esas cuatro partes: la inicialización (dónde empieza la variable de control: int i = 1), la condición (mientras sea verdadera, se repite: i <= 3), el cuerpo (lo que se repite, entre llaves { }) y la actualización (cómo cambia la variable en cada vuelta: i++). Si falta la actualización, la condición nunca cambia y el ciclo no termina nunca.$t$,
+   $t$Piensa en dar vueltas a la cancha del colegio: empiezas en la vuelta 1, sigues corriendo mientras no hayas completado 3, corres una vuelta y la cuentas. Todo ciclo tiene esas **cuatro partes**:
+
+1. **Inicialización**: dónde empieza la variable de control → `int i = 1`
+2. **Condición**: mientras sea verdadera, se repite → `i <= 3`
+3. **Cuerpo**: lo que se repite, entre llaves `{ }`
+4. **Actualización**: cómo cambia la variable en cada vuelta → `i++` (igual a `i = i + 1`)
+
+El orden en que se ejecutan es: inicialización (una sola vez) → condición → cuerpo → actualización → condición → cuerpo… hasta que la condición sea **falsa**.
+
+Si falta la actualización, la condición nunca cambia y el ciclo **no termina nunca**: eso se llama ciclo infinito.$t$,
    $j$int i = 1;                 // inicialización
 while (i <= 3) {           // condición
     System.out.println(i); // cuerpo
@@ -60,7 +77,15 @@ while (i <= 3) {           // condición
    E'1\n2\n3',
    'Antes de escribir un ciclo, responde tres preguntas: ¿desde dónde empiezo?, ¿hasta cuándo repito? y ¿cómo avanzo?', 6, 2),
   (1, 'Leer datos con Scanner',
-   $t$Muchos ejercicios dicen "Lee un número n". Para leer datos en Java se usa Scanner, en tres pasos: 1) lo importas, escribiendo import java.util.Scanner; en la primera línea; 2) lo creas dentro del main: Scanner sc = new Scanner(System.in); 3) lees cada número con sc.nextInt(). Cada vez que llamas a nextInt() se toma el SIGUIENTE número de la entrada. En DualDev la entrada la escribe el sistema cuando prueba tu programa: tú solo la lees y la usas. Por eso tu programa debe funcionar con cualquier número, no solo con el del ejemplo.$t$,
+   $t$Muchos ejercicios dicen "Lee un número n". Para leer datos en Java se usa **Scanner**, en tres pasos:
+
+1. Impórtalo en la primera línea: `import java.util.Scanner;`
+2. Créalo dentro del main: `Scanner sc = new Scanner(System.in);`
+3. Lee cada número con `sc.nextInt()` y guárdalo en una variable: `int n = sc.nextInt();`
+
+Cada vez que llamas a `sc.nextInt()` se toma el **siguiente** número de la entrada, en orden. Si la entrada es `5 3 0`, el primer `nextInt()` da 5, el segundo 3 y el tercero 0.
+
+En DualDev la entrada la escribe el sistema cuando prueba tu programa: tú solo la lees y la usas. Por eso tu programa debe funcionar con **cualquier** número, no solo con el del ejemplo.$t$,
    $j$import java.util.Scanner;
 
 public class Saludo {
@@ -71,9 +96,21 @@ public class Saludo {
     }
 }$j$,
    'Tienes 16 años',
-   'La salida de ejemplo corresponde a la entrada 16. El signo + une textos y variables: lo que va entre comillas se imprime tal cual y la variable se reemplaza por su valor.', 7, 3),
+   'La salida de ejemplo corresponde a la entrada 16. El signo + une textos y variables: lo que va entre comillas se imprime tal cual. Atajo del editor: escribe scan y presiona Tab para crear el Scanner, y leer + Tab para leer un número.', 7, 3),
   (1, 'Los tres ciclos de Java',
-   $t$Java tiene tres ciclos: for (cuando sabes cuántas veces vas a repetir), while (repite mientras una condición sea verdadera) y do-while (como while, pero da al menos una vuelta). Los tres pueden resolver los mismos problemas; elegir el adecuado hace que tu código se entienda mejor. En el ejemplo, los tres cuentan del 1 al 3.$t$,
+   $t$Java tiene **tres ciclos**. Los tres pueden resolver los mismos problemas; elegir el adecuado hace que tu código se entienda mejor:
+
+| Ciclo | Úsalo cuando… | Vueltas mínimas |
+|---|---|---|
+| `for` | sabes cuántas veces vas a repetir | 0 |
+| `while` | repites mientras algo sea verdadero | 0 |
+| `do-while` | debe hacerse al menos una vez (menús, validar datos) | 1 |
+
+En el ejemplo, los tres cuentan del 1 al 3. Fíjate dónde va cada parte:
+
+- En el `for` las tres partes van juntas en una sola línea.
+- En el `while` y el `do-while` la inicialización va **antes** y la actualización va **dentro** del cuerpo.
+- El `do-while` revisa la condición al **final** y termina con punto y coma.$t$,
    $j$for (int i = 1; i <= 3; i++) {
     System.out.println("for " + i);
 }
@@ -90,7 +127,32 @@ do {
     k++;
 } while (k <= 3);$j$,
    E'for 1\nfor 2\nfor 3\nwhile 1\nwhile 2\nwhile 3\ndo-while 1\ndo-while 2\ndo-while 3',
-   'No te preocupes si todavía no entiendes los tres: cada uno tiene su propio módulo.', 6, 4),
+   'No te preocupes si todavía no entiendes los tres: cada uno tiene su propio módulo. Atajo del editor: escribe for, while o do y presiona Tab, y DualDev arma la estructura completa.', 6, 4),
+  (1, 'Prueba de escritorio',
+   $t$Una **prueba de escritorio** es ejecutar el programa "a mano", como si tú fueras el computador. Es la mejor herramienta para entender un ciclo y para encontrar errores sin adivinar.
+
+1. Haz una tabla con una columna por cada variable y otra para lo que se imprime.
+2. Escribe los valores iniciales (lo que pasa antes del ciclo).
+3. En cada vuelta: revisa la condición, ejecuta el cuerpo línea por línea y anota los valores nuevos.
+4. Cuando la condición sea **falsa**, el ciclo termina: la tabla te muestra todo lo que se imprimió.
+
+Así queda la prueba de escritorio del ejemplo:
+
+| Vuelta | i | ¿i <= 3? | suma | Imprime |
+|---|---|---|---|---|
+| 1 | 1 | sí | 0 + 1 = 1 | 1 |
+| 2 | 2 | sí | 1 + 2 = 3 | 3 |
+| 3 | 3 | sí | 3 + 3 = 6 | 6 |
+| — | 4 | no | 6 | (termina) |
+
+Cuando un ejercicio te pida "predecir la salida", haz esta tabla antes de responder: casi todos los errores de una vuelta de más o de menos aparecen enseguida.$t$,
+   $j$int suma = 0;
+for (int i = 1; i <= 3; i++) {
+    suma = suma + i;   // agrega i a lo que ya había
+    System.out.println(suma);
+}$j$,
+   E'1\n3\n6',
+   'La última fila (i = 4) no imprime nada: la condición se revisa ANTES del cuerpo y 4 <= 3 es falso.', 8, 5),
 
   -- Módulo 2 · for
   (2, 'Estructura del for',
@@ -1034,6 +1096,964 @@ public class Ejercicio {
     {"salida":"1 1 1\n2 2 2\n3 3 3","mensaje":"Imprimiste solo el número de fila. Recuerda que cada casilla es fila por columna: i * j."},
     {"patron":"print\\(\\s*i\\s*\\+\\s*j\\b","mensaje":"Recuerda que i + j SUMA; la cuadrícula de multiplicar necesita i * j."}
    ]$e$, 8)
+) as e(modulo_orden, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion, pistas, explicacion,
+       codigo_inicial, casos, requiere, errores, orden)
+join public.modulo m on m.orden = e.modulo_orden
+on conflict (id_modulo, orden) do update
+  set titulo = excluded.titulo, enunciado = excluded.enunciado, tipo = excluded.tipo,
+      dificultad = excluded.dificultad, puntos = excluded.puntos, opciones = excluded.opciones,
+      solucion_esperada = excluded.solucion_esperada, pistas = excluded.pistas,
+      explicacion = excluded.explicacion, codigo_inicial = excluded.codigo_inicial,
+      casos_prueba = excluded.casos_prueba, requiere = excluded.requiere,
+      errores_comunes = excluded.errores_comunes;
+
+-- ---------------------------------------------------------------------------
+-- Ejercicios agregados el 2026-10-27: más práctica y más complejidad en cada tema
+-- (prueba de escritorio, factorial, divisores, mayor/menor, invertir, Collatz, palíndromos,
+-- menú de cajero, primos, pirámides y tablero). Cada solución se verificó con el ejecutor Java real.
+-- ---------------------------------------------------------------------------
+insert into public.ejercicio
+  (id_modulo, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion_esperada,
+   pistas, explicacion, codigo_inicial, casos_prueba, requiere, errores_comunes, orden)
+select m.id_modulo, e.titulo, e.enunciado, e.tipo, e.dificultad, e.puntos, e.opciones::jsonb, e.solucion,
+       e.pistas::jsonb, e.explicacion, e.codigo_inicial, e.casos::jsonb, coalesce(e.requiere, '[]')::jsonb,
+       coalesce(e.errores, '[]')::jsonb, e.orden
+from (values
+  (1,
+   $t$Prueba de escritorio$t$,
+   $t$Haz la prueba de escritorio de este código (anota i y total en cada vuelta) y escribe lo que imprime, una línea por vuelta.
+
+int i = 1;
+int total = 0;
+while (i <= 4) {
+    total = total + i;
+    System.out.println(i + " -> " + total);
+    i++;
+}$t$,
+   'salida',
+   'media',
+   60,
+   null,
+   $t$1 -> 1
+2 -> 3
+3 -> 6
+4 -> 10$t$,
+   $t$["Haz una tabla con tres columnas: i, total y lo que se imprime.","total guarda lo que llevaba ANTES y le suma i: en la vuelta 2 es 1 + 2."]$t$,
+   $t$total acumula: 0+1 = 1, 1+2 = 3, 3+3 = 6 y 6+4 = 10. Cuando i vale 5, 5 <= 4 es falso y el ciclo termina.$t$,
+   null,
+   null,
+   null,
+   $t$[{"salida":"1 -> 1\n2 -> 2\n3 -> 3\n4 -> 4","mensaje":"Escribiste i en las dos columnas. Recuerda que total = total + i SUMA lo que ya llevaba total: en la vuelta 2 total pasa de 1 a 1 + 2 = 3."},{"salida":"1 -> 1\n2 -> 3\n3 -> 6","mensaje":"Te faltó una vuelta. Recuerda que <= incluye el límite: con i = 4, 4 <= 4 es verdadero y se imprime una línea más."},{"salida":"1 -> 1\n2 -> 3\n3 -> 6\n4 -> 10\n5 -> 15","mensaje":"Sobra una vuelta. Recuerda que antes de cada vuelta se revisa la condición: con i = 5, 5 <= 4 es falso y el ciclo termina."},{"salida":"1 -> 0\n2 -> 1\n3 -> 3\n4 -> 6","mensaje":"Imprimiste total ANTES de sumarle i. Recuerda que el código se ejecuta en orden: primero total = total + i y después el println."}]$t$,
+   6),
+  (1,
+   $t$Cuenta las vueltas$t$,
+   $t$¿Cuántas veces se imprime "Hola" con este ciclo? Escribe solo el número.
+
+for (int i = 5; i <= 20; i += 5) {
+    System.out.println("Hola");
+}$t$,
+   'respuesta_corta',
+   'media',
+   60,
+   null,
+   $t$4$t$,
+   $t$["Escribe los valores que toma i: empieza en 5 y sube de 5 en 5.","¿20 <= 20 es verdadero?"]$t$,
+   $t$i toma los valores 5, 10, 15 y 20 (cuatro vueltas). Con i = 25 la condición 25 <= 20 es falsa.$t$,
+   null,
+   null,
+   null,
+   $t$[{"respuesta":"3","mensaje":"Te faltó contar una vuelta. Recuerda que <= incluye el límite: cuando i vale 20, 20 <= 20 es verdadero y se imprime una vez más."},{"respuesta":"5","mensaje":"Contaste una vuelta de más. Los valores de i son 5, 10, 15 y 20; con 25 la condición ya es falsa."},{"respuesta":"20|16|15","mensaje":"Recuerda que i += 5 hace que i suba de 5 en 5, no de 1 en 1. Escribe los valores que toma i y cuéntalos."}]$t$,
+   7),
+  (1,
+   $t$¿Qué ciclo usarías?$t$,
+   $t$Un programa debe pedir la contraseña y volver a pedirla mientras sea incorrecta. Siempre la pide AL MENOS una vez. ¿Qué ciclo es el más adecuado?$t$,
+   'seleccion',
+   'media',
+   60,
+   $t$["for","while","do-while","No se necesita un ciclo"]$t$,
+   $t$do-while$t$,
+   $t$["¿Cuántas veces como mínimo se pide la contraseña?","Hay un ciclo que revisa la condición DESPUÉS de dar la vuelta."]$t$,
+   $t$do-while ejecuta el cuerpo primero y revisa la condición al final, así que siempre pide la contraseña al menos una vez. Es el ciclo típico para validar datos.$t$,
+   null,
+   null,
+   null,
+   $t$[{"respuesta":"for","mensaje":"for es ideal cuando sabes de antemano cuántas vueltas darás, pero aquí no lo sabes: depende de cuándo el usuario acierte. Recuerda que el ciclo que siempre da al menos una vuelta es do-while."},{"respuesta":"while","mensaje":"while sirve, pero revisa la condición ANTES de la primera vuelta, así que tendrías que pedir la contraseña una vez fuera del ciclo. Recuerda que do-while pide primero y pregunta después."},{"respuesta":"No se necesita un ciclo","mensaje":"Si el usuario se equivoca hay que volver a pedirla, quizás muchas veces: eso es repetir. Recuerda que cuando no sabes cuántas veces repetirás, necesitas while o do-while."}]$t$,
+   8),
+  (1,
+   $t$Saludo repetido$t$,
+   $t$Lee un número n y muestra n saludos numerados con este formato exacto:
+Hola #1
+Hola #2
+...
+
+Ejemplo: si la entrada es 3, la salida es
+Hola #1
+Hola #2
+Hola #3$t$,
+   'codigo',
+   'facil',
+   40,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for (int i = 1; i <= n; i++) {
+            System.out.println("Hola #" + i);
+        }
+    }
+}$t$,
+   $t$["Usa un for que vaya de 1 hasta n: for (int i = 1; i <= n; i++)","Une el texto con la variable del ciclo: \"Hola #\" + i"]$t$,
+   $t$El ciclo da n vueltas y en cada una imprime el número de la vuelta (i) pegado al texto.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: repite el saludo n veces (atajo: escribe for y presiona Tab)
+
+    }
+}$t$,
+   $t$[{"entrada":"3","salida":"Hola #1\nHola #2\nHola #3","visible":true},{"entrada":"1","salida":"Hola #1","visible":false},{"entrada":"5","salida":"Hola #1\nHola #2\nHola #3\nHola #4\nHola #5","visible":false}]$t$,
+   $t$[]$t$,
+   $t$[{"salida":"Hola #1\nHola #1\nHola #1","mensaje":"Siempre imprimes #1. Recuerda usar la variable del ciclo: \"Hola #\" + i cambia en cada vuelta."},{"salida":"Hola #i\nHola #i\nHola #i","mensaje":"Pusiste la i dentro de las comillas, así que se imprime la letra. Recuerda: \"Hola #\" + i, con la variable fuera de las comillas."},{"salida":"Hola #0\nHola #1\nHola #2","mensaje":"Empezaste en 0. Recuerda que el primer saludo es #1: inicializa con int i = 1 y usa i <= n."},{"patron":"i\\s*<=?\\s*3\\s*;","mensaje":"Usaste el 3 del ejemplo en la condición. Recuerda que n cambia en cada prueba: la condición debe ser i <= n."}]$t$,
+   9),
+  (2,
+   $t$Saltos de 3$t$,
+   $t$¿Qué imprime este código? Ojo: usa print, no println.
+
+for (int i = 2; i <= 14; i += 3) {
+    System.out.print(i + " ");
+}$t$,
+   'salida',
+   'media',
+   60,
+   null,
+   $t$2 5 8 11 14$t$,
+   $t$["i empieza en 2 y sube de 3 en 3.","print deja todo en la MISMA línea."]$t$,
+   $t$i toma 2, 5, 8, 11 y 14 (14 <= 14 es verdadero). Con 17 el ciclo termina. Como es print, todo queda en una sola línea.$t$,
+   null,
+   null,
+   null,
+   $t$[{"salida":"2 5 8 11","mensaje":"Te faltó el 14. Recuerda que <= incluye el límite: 14 <= 14 es verdadero."},{"salida":"2\n5\n8\n11\n14","mensaje":"Los números son correctos, pero print NO salta de línea (eso lo hace println). Recuerda: todo queda en una sola línea separado por espacios."},{"salida":"2 3 4 5 6 7 8 9 10 11 12 13 14","mensaje":"Recuerda que i += 3 suma 3 en cada vuelta, no 1."},{"salida":"2 5 8 11 14 17","mensaje":"Sobra el 17. Recuerda que antes de imprimir se revisa la condición: 17 <= 14 es falso."}]$t$,
+   10),
+  (2,
+   $t$Factorial$t$,
+   $t$El factorial de n (se escribe n!) es la multiplicación 1 · 2 · 3 · … · n. Por definición, 0! = 1.
+Lee n (entre 0 y 15) y muestra el resultado con este formato exacto:
+5! = 120
+
+Usa long en vez de int para el resultado: el factorial crece muy rápido y no cabe en un int.$t$,
+   'codigo',
+   'media',
+   60,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        long factorial = 1;
+        for (int i = 1; i <= n; i++) {
+            factorial *= i;
+        }
+        System.out.println(n + "! = " + factorial);
+    }
+}$t$,
+   $t$["Un acumulador para multiplicar empieza en 1, no en 0.","Dentro del ciclo: factorial *= i; (es lo mismo que factorial = factorial * i;)","Declara el acumulador como long: long factorial = 1;"]$t$,
+   $t$El acumulador empieza en 1 (el neutro de la multiplicación) y en cada vuelta se multiplica por i. Con n = 0 el ciclo no da vueltas y queda 1, que es justo 0!.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: calcula n! con un acumulador que multiplica y muestra "n! = resultado"
+
+    }
+}$t$,
+   $t$[{"entrada":"5","salida":"5! = 120","visible":true},{"entrada":"0","salida":"0! = 1","visible":false},{"entrada":"1","salida":"1! = 1","visible":false},{"entrada":"10","salida":"10! = 3628800","visible":false},{"entrada":"15","salida":"15! = 1307674368000","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"salida":"5! = 0","mensaje":"El resultado es 0 porque el acumulador empezó en 0, y 0 por cualquier número da 0. Recuerda que para MULTIPLICAR el acumulador empieza en 1."},{"salida":"5! = 15","mensaje":"Sumaste en vez de multiplicar (1+2+3+4+5 = 15). Recuerda que el factorial MULTIPLICA: factorial *= i."},{"salida":"5! = 24","mensaje":"Te faltó multiplicar por el propio n. Recuerda que la condición debe ser i <= n para incluir el último."},{"salida":"15! = 2004310016","mensaje":"Con 15 el resultado no cabe en un int y \"da la vuelta\" a un número equivocado (desbordamiento). Recuerda declarar el acumulador como long."}]$t$,
+   11),
+  (2,
+   $t$Pares e impares$t$,
+   $t$Lee n y, usando UN SOLO ciclo for del 1 al n, suma por separado los pares y los impares. Muestra:
+Pares = ...
+Impares = ...
+
+Ejemplo: si la entrada es 10, la salida es
+Pares = 30
+Impares = 25$t$,
+   'codigo',
+   'media',
+   60,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int pares = 0;
+        int impares = 0;
+        for (int i = 1; i <= n; i++) {
+            if (i % 2 == 0) {
+                pares += i;
+            } else {
+                impares += i;
+            }
+        }
+        System.out.println("Pares = " + pares);
+        System.out.println("Impares = " + impares);
+    }
+}$t$,
+   $t$["Necesitas DOS acumuladores, los dos empiezan en 0 antes del ciclo.","Dentro del ciclo usa if (i % 2 == 0) para decidir a cuál sumar.","Imprime los dos resultados después de cerrar el ciclo."]$t$,
+   $t$Un solo recorrido del 1 al n; el % decide en cada vuelta a qué acumulador va el número.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: suma pares e impares por separado en un solo ciclo
+
+    }
+}$t$,
+   $t$[{"entrada":"10","salida":"Pares = 30\nImpares = 25","visible":true},{"entrada":"1","salida":"Pares = 0\nImpares = 1","visible":false},{"entrada":"7","salida":"Pares = 12\nImpares = 16","visible":false},{"entrada":"20","salida":"Pares = 110\nImpares = 100","visible":false}]$t$,
+   $t$["for","if"]$t$,
+   $t$[{"salida":"Pares = 25\nImpares = 30","mensaje":"Los acumuladores quedaron al revés. Recuerda que i % 2 == 0 es verdadero para los PARES."},{"salida":"Pares = 55\nImpares = 55","mensaje":"Sumaste todos los números a los dos acumuladores. Recuerda que el if decide: si es par va a pares, si no (else) va a impares."},{"patron":"for[\\s\\S]*\\{[^}]*int\\s+(pares|impares)\\s*=\\s*0","mensaje":"Declaraste un acumulador DENTRO del ciclo, así que vuelve a 0 en cada vuelta. Recuerda declararlos antes del for."}]$t$,
+   12),
+  (2,
+   $t$Divisores de un número$t$,
+   $t$Un divisor de n es un número que divide a n sin dejar residuo. Lee n (n ≥ 1), imprime sus divisores de menor a mayor, uno por línea, y al final cuántos son con este formato:
+Total: ...
+
+Ejemplo: si la entrada es 12, la salida es
+1
+2
+3
+4
+6
+12
+Total: 6$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int total = 0;
+        for (int d = 1; d <= n; d++) {
+            if (n % d == 0) {
+                System.out.println(d);
+                total++;
+            }
+        }
+        System.out.println("Total: " + total);
+    }
+}$t$,
+   $t$["Prueba cada candidato d del 1 al n.","d es divisor si n % d == 0 (fíjate: es n % d, no d % n).","Usa un contador que aumente solo cuando encuentras un divisor."]$t$,
+   $t$El ciclo prueba todos los candidatos; el % dice si la división es exacta. El contador solo crece cuando el if se cumple.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: prueba cada número del 1 al n y muestra los que dividen a n; al final, cuántos fueron
+
+    }
+}$t$,
+   $t$[{"entrada":"12","salida":"1\n2\n3\n4\n6\n12\nTotal: 6","visible":true},{"entrada":"7","salida":"1\n7\nTotal: 2","visible":false},{"entrada":"1","salida":"1\nTotal: 1","visible":false},{"entrada":"36","salida":"1\n2\n3\n4\n6\n9\n12\n18\n36\nTotal: 9","visible":false}]$t$,
+   $t$["for","if"]$t$,
+   $t$[{"salida":"1\n2\n3\n4\n6\nTotal: 5","mensaje":"Te faltó el propio n. Recuerda que todo número se divide a sí mismo: el ciclo debe llegar hasta d <= n."},{"salida":"12\nTotal: 1","mensaje":"Solo encontraste el 12. Revisa el orden del %: el divisor es d cuando n % d == 0 (el número grande va a la izquierda)."},{"salida":"1\n2\n3\n4\n6\n12\nTotal: 12","mensaje":"El total cuenta todas las vueltas, no solo los divisores. Recuerda que el contador debe ir DENTRO del if."}]$t$,
+   13),
+  (2,
+   $t$Mayor y menor$t$,
+   $t$Lee n y luego n números enteros (pueden ser negativos). Muestra el mayor y el menor con este formato:
+Mayor = ...
+Menor = ...
+
+Ejemplo: si la entrada es
+5
+4 -2 9 0 3
+la salida es
+Mayor = 9
+Menor = -2$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int primero = sc.nextInt();
+        int mayor = primero;
+        int menor = primero;
+        for (int i = 2; i <= n; i++) {
+            int x = sc.nextInt();
+            if (x > mayor) {
+                mayor = x;
+            }
+            if (x < menor) {
+                menor = x;
+            }
+        }
+        System.out.println("Mayor = " + mayor);
+        System.out.println("Menor = " + menor);
+    }
+}$t$,
+   $t$["Truco: el PRIMER número leído es, por ahora, el mayor y el menor a la vez.","Luego lee los demás dentro del ciclo y compara cada uno con mayor y con menor.","Si empiezas mayor en 0, falla cuando todos los números son negativos."]$t$,
+   $t$Empezar con el primer número evita suponer valores (como 0) que podrían no estar en la lista. Cada número nuevo se compara con el mayor y el menor que se llevan.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: lee los n números y guarda el mayor y el menor
+
+    }
+}$t$,
+   $t$[{"entrada":"5\n4 -2 9 0 3","salida":"Mayor = 9\nMenor = -2","visible":true},{"entrada":"1\n7","salida":"Mayor = 7\nMenor = 7","visible":false},{"entrada":"4\n-5 -1 -8 -3","salida":"Mayor = -1\nMenor = -8","visible":false},{"entrada":"3\n100 50 75","salida":"Mayor = 100\nMenor = 50","visible":false}]$t$,
+   $t$["for","if"]$t$,
+   $t$[{"salida":"Mayor = 0\nMenor = -8","mensaje":"Empezaste mayor en 0, pero todos los números eran negativos: ninguno supera al 0. Recuerda inicializar mayor y menor con el PRIMER número leído."},{"salida":"Mayor = 100\nMenor = 0","mensaje":"Empezaste menor en 0, pero todos los números eran positivos: ninguno es menor que 0. Recuerda inicializar mayor y menor con el PRIMER número leído."},{"salida":"Mayor = 9\nMenor = 9","mensaje":"El menor salió igual al mayor. Revisa la segunda comparación: para el menor la pregunta es x < menor."}]$t$,
+   14),
+  (3,
+   $t$Mitades$t$,
+   $t$¿Qué imprime este código? Recuerda cómo divide Java dos números enteros.
+
+int n = 20;
+while (n > 0) {
+    System.out.println(n);
+    n = n / 2;
+}$t$,
+   'salida',
+   'media',
+   60,
+   null,
+   $t$20
+10
+5
+2
+1$t$,
+   $t$["5 / 2 entre enteros no es 2.5: Java descarta los decimales.","¿Qué pasa con 1 / 2?"]$t$,
+   $t$20, 10, 5, 2 (5/2 = 2) y 1 (2/2 = 1). Luego 1/2 = 0, la condición 0 > 0 es falsa y el ciclo termina sin imprimir el 0.$t$,
+   null,
+   null,
+   null,
+   $t$[{"salida":"20\n10\n5\n2.5\n1.25","mensaje":"Recuerda que n es int: dividir dos enteros descarta los decimales, así que 5 / 2 es 2, no 2.5."},{"salida":"20\n10\n5\n2\n1\n0","mensaje":"Sobra el 0. Cuando n vale 0, la condición 0 > 0 es falsa y el ciclo termina antes de imprimirlo."},{"salida":"20\n10\n5","mensaje":"Te detuviste en 5, pero el ciclo sigue mientras n > 0: 5 / 2 da 2 (sin decimales) y 2 / 2 da 1."}]$t$,
+   7),
+  (3,
+   $t$Potencias de 2$t$,
+   $t$Lee n (n ≥ 1) e imprime todas las potencias de 2 que sean menores o iguales a n, una por línea, empezando en 1.
+
+Ejemplo: si la entrada es 20, la salida es
+1
+2
+4
+8
+16$t$,
+   'codigo',
+   'media',
+   60,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int potencia = 1;
+        while (potencia <= n) {
+            System.out.println(potencia);
+            potencia *= 2;
+        }
+    }
+}$t$,
+   $t$["No sabes cuántas vueltas serán: por eso es un while.","Empieza con potencia = 1 y en cada vuelta multiplícala por 2.","La condición es potencia <= n."]$t$,
+   $t$La variable se duplica en cada vuelta y el while se detiene apenas supera a n.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: imprime 1, 2, 4, 8… mientras no pasen de n (usa while)
+
+    }
+}$t$,
+   $t$[{"entrada":"20","salida":"1\n2\n4\n8\n16","visible":true},{"entrada":"1","salida":"1","visible":false},{"entrada":"64","salida":"1\n2\n4\n8\n16\n32\n64","visible":false},{"entrada":"100","salida":"1\n2\n4\n8\n16\n32\n64","visible":false}]$t$,
+   $t$["while"]$t$,
+   $t$[{"salida":"1\n2\n4\n8\n16\n32","mensaje":"Con 64 te faltó el 64. Recuerda que la condición debe incluir el límite: potencia <= n."},{"salida":"2\n4\n8\n16","mensaje":"Te faltó el 1 (2 elevado a 0). Recuerda empezar con potencia = 1 e imprimir antes de multiplicar."}]$t$,
+   8),
+  (3,
+   $t$Invertir un número$t$,
+   $t$Lee un número entero n (n > 0) y muestra el número con sus dígitos al revés.
+Si termina en ceros, esos ceros desaparecen al invertirlo (1000 → 1).
+
+Ejemplo: si la entrada es 1234, la salida es
+4321$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int invertido = 0;
+        while (n > 0) {
+            int digito = n % 10;
+            invertido = invertido * 10 + digito;
+            n = n / 10;
+        }
+        System.out.println(invertido);
+    }
+}$t$,
+   $t$["n % 10 te da el último dígito; n / 10 lo quita.","Para \"pegar\" un dígito al final de invertido: invertido = invertido * 10 + digito;","Repite mientras n > 0."]$t$,
+   $t$En cada vuelta se saca el último dígito de n y se agrega a la derecha de invertido (multiplicar por 10 corre los dígitos una posición).$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: saca el último dígito con % 10 y quítalo con / 10, armando el número invertido
+
+    }
+}$t$,
+   $t$[{"entrada":"1234","salida":"4321","visible":true},{"entrada":"7","salida":"7","visible":false},{"entrada":"1000","salida":"1","visible":false},{"entrada":"90210","salida":"1209","visible":false}]$t$,
+   $t$["while"]$t$,
+   $t$[{"salida":"4\n3\n2\n1","mensaje":"Los dígitos están bien, pero imprimiste uno por línea. Recuerda que hay que ARMAR un solo número: invertido = invertido * 10 + digito, y se imprime al final."},{"salida":"10","mensaje":"Sumaste los dígitos (1+2+3+4 = 10). Para invertir, multiplica por 10 antes de sumar: invertido = invertido * 10 + digito."},{"salida":"0","mensaje":"Salió 0: revisa que dentro del ciclo actualices invertido con invertido * 10 + digito y que el resultado se imprima DESPUÉS del ciclo."}]$t$,
+   9),
+  (3,
+   $t$Secuencia de Collatz$t$,
+   $t$Empieza con un número n (n ≥ 1). Mientras n no sea 1: si n es par, divídelo entre 2; si es impar, conviértelo en 3·n + 1.
+Imprime cada valor de la secuencia, uno por línea (incluido el n inicial y el 1 final), y al final cuántos pasos se dieron:
+Pasos: ...
+
+Ejemplo: si la entrada es 6, la salida es
+6
+3
+10
+5
+16
+8
+4
+2
+1
+Pasos: 8$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int pasos = 0;
+        System.out.println(n);
+        while (n != 1) {
+            if (n % 2 == 0) {
+                n = n / 2;
+            } else {
+                n = 3 * n + 1;
+            }
+            System.out.println(n);
+            pasos++;
+        }
+        System.out.println("Pasos: " + pasos);
+    }
+}$t$,
+   $t$["Imprime el n inicial ANTES del ciclo.","La condición del while es n != 1.","Dentro: un if para par/impar, luego imprime el nuevo n y suma 1 a pasos."]$t$,
+   $t$Es un caso típico de while: no se sabe cuántas vueltas habrá. Cada vuelta cambia n según sea par o impar, y pasos cuenta las vueltas.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: aplica la regla mientras n != 1 e imprime cada valor; cuenta los pasos
+
+    }
+}$t$,
+   $t$[{"entrada":"6","salida":"6\n3\n10\n5\n16\n8\n4\n2\n1\nPasos: 8","visible":true},{"entrada":"1","salida":"1\nPasos: 0","visible":false},{"entrada":"3","salida":"3\n10\n5\n16\n8\n4\n2\n1\nPasos: 7","visible":false},{"entrada":"7","salida":"7\n22\n11\n34\n17\n52\n26\n13\n40\n20\n10\n5\n16\n8\n4\n2\n1\nPasos: 16","visible":false}]$t$,
+   $t$["while","if"]$t$,
+   $t$[{"salida":"3\n10\n5\n16\n8\n4\n2\n1\nPasos: 8","mensaje":"Te faltó imprimir el número inicial. Recuerda mostrar n una vez ANTES de empezar el ciclo."},{"salida":"6\n3\n10\n5\n16\n8\n4\n2\nPasos: 7","mensaje":"Te faltó el 1 final. Recuerda imprimir n justo después de cambiarlo, dentro del ciclo."},{"salida":"6\n3\n10\n5\n16\n8\n4\n2\n1\nPasos: 9","mensaje":"Contaste un paso de más. Los pasos son los cambios de n (las vueltas del while), no la cantidad de números impresos."}]$t$,
+   10),
+  (3,
+   $t$Número palíndromo$t$,
+   $t$Un número es palíndromo si se lee igual al derecho y al revés (121, 1221, 7). Lee n (n ≥ 0) y muestra exactamente una de estas frases:
+Es palíndromo
+No es palíndromo$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int original = n;
+        int invertido = 0;
+        while (n > 0) {
+            invertido = invertido * 10 + n % 10;
+            n = n / 10;
+        }
+        if (invertido == original) {
+            System.out.println("Es palíndromo");
+        } else {
+            System.out.println("No es palíndromo");
+        }
+    }
+}$t$,
+   $t$["Guarda una copia: int original = n; porque el ciclo va a cambiar n.","Invierte n con el mismo ciclo del ejercicio anterior.","Al final compara invertido == original."]$t$,
+   $t$El while destruye n mientras lo invierte; por eso se guarda una copia antes. Si el invertido es igual a la copia, es palíndromo.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: invierte el número (como en "Invertir un número") y compáralo con el original
+
+    }
+}$t$,
+   $t$[{"entrada":"121","salida":"Es palíndromo","visible":true},{"entrada":"123","salida":"No es palíndromo","visible":false},{"entrada":"7","salida":"Es palíndromo","visible":false},{"entrada":"1221","salida":"Es palíndromo","visible":false},{"entrada":"10","salida":"No es palíndromo","visible":false}]$t$,
+   $t$["while","if"]$t$,
+   $t$[{"patron":"invertido\\s*==\\s*n\\b","mensaje":"Comparaste con n, pero el ciclo ya lo dejó en 0. Recuerda guardar una copia ANTES del ciclo (int original = n;) y comparar con ella."},{"salida":"Es palindromo","mensaje":"Revisa la tilde: el texto exacto es \"Es palíndromo\" (con í). Recuerda que la salida debe ser idéntica, letra por letra."}]$t$,
+   11),
+  (4,
+   $t$Bajando de a dos$t$,
+   $t$¿Qué imprime este código?
+
+int x = 5;
+do {
+    System.out.println(x);
+    x -= 2;
+} while (x > 0);$t$,
+   'salida',
+   'facil',
+   40,
+   null,
+   $t$5
+3
+1$t$,
+   $t$["x baja de 2 en 2.","Después de imprimir 1, x vale -1: ¿-1 > 0?"]$t$,
+   $t$Imprime 5, 3 y 1. Luego x vale -1, la condición -1 > 0 es falsa y el ciclo termina.$t$,
+   null,
+   null,
+   null,
+   $t$[{"salida":"5\n3\n1\n-1","mensaje":"Sobra el -1. Recuerda que la condición se revisa al final de cada vuelta: con x = -1, -1 > 0 es falso y ya no hay otra vuelta."},{"salida":"5\n3","mensaje":"Te faltó el 1. Con x = 1 la condición 1 > 0 todavía es verdadera, así que hay una vuelta más."},{"salida":"5\n4\n3\n2\n1","mensaje":"Recuerda que x -= 2 resta 2, no 1."}]$t$,
+   6),
+  (4,
+   $t$Adivina el número$t$,
+   $t$El número secreto es 7. Lee intentos uno por uno hasta que el usuario acierte. Por cada intento imprime:
+Más alto   (si el intento es menor que 7)
+Más bajo   (si es mayor que 7)
+¡Correcto! (si es 7)
+Al acertar, imprime cuántos intentos usó:
+Intentos: ...
+
+Ejemplo: si la entrada es 3 9 7, la salida es
+Más alto
+Más bajo
+¡Correcto!
+Intentos: 3$t$,
+   'codigo',
+   'media',
+   60,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int secreto = 7;
+        int intento;
+        int intentos = 0;
+        do {
+            intento = sc.nextInt();
+            intentos++;
+            if (intento < secreto) {
+                System.out.println("Más alto");
+            } else if (intento > secreto) {
+                System.out.println("Más bajo");
+            } else {
+                System.out.println("¡Correcto!");
+            }
+        } while (intento != secreto);
+        System.out.println("Intentos: " + intentos);
+    }
+}$t$,
+   $t$["Siempre se pide al menos un intento: por eso es do-while.","Declara intento ANTES del do para usarlo en el while del final.","La condición para repetir es intento != secreto."]$t$,
+   $t$El do-while pide un intento, da la pista y repite mientras no acierte. El contador intentos sube en cada vuelta.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int secreto = 7;
+        int intento;
+        int intentos = 0;
+        // TODO: con un do-while, lee intentos hasta acertar y da la pista en cada uno
+
+    }
+}$t$,
+   $t$[{"entrada":"3 9 7","salida":"Más alto\nMás bajo\n¡Correcto!\nIntentos: 3","visible":true},{"entrada":"7","salida":"¡Correcto!\nIntentos: 1","visible":false},{"entrada":"1 2 10 8 6 7","salida":"Más alto\nMás alto\nMás bajo\nMás bajo\nMás alto\n¡Correcto!\nIntentos: 6","visible":false}]$t$,
+   $t$["do-while","if"]$t$,
+   $t$[{"salida":"Más bajo\nMás alto\n¡Correcto!\nIntentos: 3","mensaje":"Las pistas quedaron al revés. Si el intento es MENOR que el secreto, el usuario debe probar uno más alto: \"Más alto\"."},{"salida":"Más alto\nMás bajo\n¡Correcto!\nIntentos: 2","mensaje":"Contaste un intento menos. Recuerda sumar 1 a intentos en CADA vuelta, también en la que acierta."},{"patron":"do\\s*\\{[^}]*int\\s+intento\\s*=","mensaje":"Declaraste intento dentro del do, así que el while del final no lo ve. Recuerda declararlo antes del do."}]$t$,
+   7),
+  (4,
+   $t$Contar hasta el -1$t$,
+   $t$Lee números hasta que llegue un -1 (el -1 solo marca el final: no se cuenta ni se suma). Muestra:
+Cantidad = ...
+Suma = ...
+
+Ejemplo: si la entrada es 4 6 10 -1, la salida es
+Cantidad = 3
+Suma = 20$t$,
+   'codigo',
+   'media',
+   60,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int numero;
+        int cantidad = 0;
+        int suma = 0;
+        do {
+            numero = sc.nextInt();
+            if (numero != -1) {
+                cantidad++;
+                suma += numero;
+            }
+        } while (numero != -1);
+        System.out.println("Cantidad = " + cantidad);
+        System.out.println("Suma = " + suma);
+    }
+}$t$,
+   $t$["El -1 se lee como los demás, pero no debe contarse: usa un if (numero != -1) dentro del ciclo.","La condición para repetir también es numero != -1."]$t$,
+   $t$El valor "centinela" (-1) se lee igual que los demás pero se excluye con un if. Así la entrada vacía (-1 de una) da 0 y 0.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int numero;
+        int cantidad = 0;
+        int suma = 0;
+        // TODO: lee números con do-while hasta el -1 (sin contarlo)
+
+    }
+}$t$,
+   $t$[{"entrada":"4 6 10 -1","salida":"Cantidad = 3\nSuma = 20","visible":true},{"entrada":"-1","salida":"Cantidad = 0\nSuma = 0","visible":false},{"entrada":"5 -1","salida":"Cantidad = 1\nSuma = 5","visible":false},{"entrada":"0 0 3 -1","salida":"Cantidad = 3\nSuma = 3","visible":false}]$t$,
+   $t$["do-while"]$t$,
+   $t$[{"salida":"Cantidad = 4\nSuma = 19","mensaje":"Contaste y sumaste el -1. Recuerda que el -1 solo marca el final: dentro del ciclo cuenta y suma solo si numero != -1."},{"salida":"Cantidad = 4\nSuma = 20","mensaje":"La suma está bien pero contaste el -1. Recuerda que el contador también va dentro del if (numero != -1)."},{"salida":"Cantidad = 3\nSuma = 19","mensaje":"Contaste bien pero sumaste el -1. Recuerda que la suma también va dentro del if (numero != -1)."}]$t$,
+   8),
+  (4,
+   $t$Cajero automático$t$,
+   $t$Simula un cajero con un menú. El saldo empieza en 0. Lee opciones hasta que llegue la opción 0:
+1 x → deposita x e imprime: Depósito: x
+2 x → si x es menor o igual al saldo, retira x e imprime: Retiro: x
+      si no, imprime: Saldo insuficiente
+3   → imprime: Saldo: ...
+0   → imprime: Adiós (y termina)
+Las opciones 1 y 2 siempre vienen seguidas del valor x.
+
+Ejemplo: si la entrada es 1 100 2 30 3 2 500 0, la salida es
+Depósito: 100
+Retiro: 30
+Saldo: 70
+Saldo insuficiente
+Adiós$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int saldo = 0;
+        int opcion;
+        do {
+            opcion = sc.nextInt();
+            if (opcion == 1) {
+                int x = sc.nextInt();
+                saldo += x;
+                System.out.println("Depósito: " + x);
+            } else if (opcion == 2) {
+                int x = sc.nextInt();
+                if (x <= saldo) {
+                    saldo -= x;
+                    System.out.println("Retiro: " + x);
+                } else {
+                    System.out.println("Saldo insuficiente");
+                }
+            } else if (opcion == 3) {
+                System.out.println("Saldo: " + saldo);
+            }
+        } while (opcion != 0);
+        System.out.println("Adiós");
+    }
+}$t$,
+   $t$["Un menú siempre se muestra al menos una vez: do-while.","Usa if / else if para cada opción; en la 1 y la 2 lee el valor x dentro de su bloque.","En el retiro, compara x <= saldo antes de restar."]$t$,
+   $t$El do-while lee una opción por vuelta; la cadena de if decide qué hacer. Retirar exactamente todo el saldo (x == saldo) está permitido.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int saldo = 0;
+        int opcion;
+        // TODO: menú con do-while hasta la opción 0
+
+    }
+}$t$,
+   $t$[{"entrada":"1 100 2 30 3 2 500 0","salida":"Depósito: 100\nRetiro: 30\nSaldo: 70\nSaldo insuficiente\nAdiós","visible":true},{"entrada":"0","salida":"Adiós","visible":false},{"entrada":"3 0","salida":"Saldo: 0\nAdiós","visible":false},{"entrada":"1 50 1 25 2 75 3 0","salida":"Depósito: 50\nDepósito: 25\nRetiro: 75\nSaldo: 0\nAdiós","visible":false}]$t$,
+   $t$["do-while","if"]$t$,
+   $t$[{"salida":"Depósito: 100\nRetiro: 30\nSaldo: 70\nRetiro: 500\nAdiós","mensaje":"Dejaste retirar más de lo que había. Recuerda revisar if (x <= saldo) antes de restar y, si no alcanza, imprimir \"Saldo insuficiente\"."},{"salida":"Depósito: 50\nDepósito: 25\nSaldo insuficiente\nSaldo: 75\nAdiós","mensaje":"Retirar exactamente todo el saldo debe estar permitido. Recuerda usar x <= saldo (menor O IGUAL), no x < saldo."}]$t$,
+   9),
+  (5,
+   $t$Triángulo invertido$t$,
+   $t$¿Qué figura imprime este código?
+
+for (int fila = 3; fila >= 1; fila--) {
+    for (int col = 1; col <= fila; col++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}$t$,
+   'salida',
+   'media',
+   60,
+   null,
+   $t$***
+**
+*$t$,
+   $t$["El ciclo externo va de 3 hacia abajo.","En cada fila, el interno imprime tantos * como el valor de fila."]$t$,
+   $t$fila vale 3, 2 y 1; en cada una el ciclo interno imprime fila asteriscos y luego println() salta de línea.$t$,
+   null,
+   null,
+   null,
+   $t$[{"salida":"*\n**\n***","mensaje":"La figura quedó al derecho. Recuerda que fila empieza en 3 y baja (fila--): la primera fila tiene 3 asteriscos."},{"salida":"******","mensaje":"Pusiste todo en una línea. Recuerda que el println() de afuera se ejecuta al terminar cada fila."},{"salida":"***\n***\n***","mensaje":"Recuerda que el ciclo interno llega hasta col <= fila, y fila cambia en cada vuelta: 3, 2, 1."}]$t$,
+   9),
+  (5,
+   $t$Suma hasta un negativo$t$,
+   $t$Lee n y luego n números. Súmalos en orden, pero si aparece un número negativo, detente de inmediato (sin sumarlo) usando break. Muestra:
+Suma = ...
+
+Ejemplo: si la entrada es
+5
+3 8 -2 4 1
+la salida es
+Suma = 11$t$,
+   'codigo',
+   'media',
+   60,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int suma = 0;
+        for (int i = 1; i <= n; i++) {
+            int x = sc.nextInt();
+            if (x < 0) {
+                break;
+            }
+            suma += x;
+        }
+        System.out.println("Suma = " + suma);
+    }
+}$t$,
+   $t$["Lee cada número dentro del ciclo.","Antes de sumar, pregunta if (x < 0) y en ese caso usa break.","El 0 no es negativo: sí se suma (no cambia nada)."]$t$,
+   $t$break corta el ciclo en la primera vuelta con un negativo; lo que venga después ya no se suma.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: suma los números hasta encontrar un negativo (usa break)
+
+    }
+}$t$,
+   $t$[{"entrada":"5\n3 8 -2 4 1","salida":"Suma = 11","visible":true},{"entrada":"3\n1 2 3","salida":"Suma = 6","visible":false},{"entrada":"4\n-1 5 5 5","salida":"Suma = 0","visible":false},{"entrada":"2\n0 -9","salida":"Suma = 0","visible":false}]$t$,
+   $t$["for","break"]$t$,
+   $t$[{"salida":"Suma = 16","mensaje":"Saltaste el negativo pero seguiste sumando los demás (eso hace continue). Recuerda que break TERMINA el ciclo completo."},{"salida":"Suma = 14","mensaje":"Sumaste también el negativo. Recuerda poner el if con break ANTES de la suma."},{"salida":"Suma = 9","mensaje":"Sumaste el negativo y luego cortaste. Recuerda poner el if (x < 0) break; ANTES de suma += x."}]$t$,
+   10),
+  (5,
+   $t$Números primos hasta n$t$,
+   $t$Un número primo es mayor que 1 y solo se divide entre 1 y sí mismo (2, 3, 5, 7, 11…). Lee n e imprime todos los primos desde 2 hasta n, uno por línea. Si no hay ninguno, imprime:
+No hay primos
+
+Ejemplo: si la entrada es 10, la salida es
+2
+3
+5
+7$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int encontrados = 0;
+        for (int num = 2; num <= n; num++) {
+            boolean esPrimo = true;
+            for (int d = 2; d * d <= num; d++) {
+                if (num % d == 0) {
+                    esPrimo = false;
+                    break;
+                }
+            }
+            if (esPrimo) {
+                System.out.println(num);
+                encontrados++;
+            }
+        }
+        if (encontrados == 0) {
+            System.out.println("No hay primos");
+        }
+    }
+}$t$,
+   $t$["Ciclo externo: cada candidato num del 2 al n.","Ciclo interno: busca un divisor d entre 2 y num - 1. Si lo encuentras, no es primo (y puedes usar break).","Usa una variable boolean esPrimo que empiece en true para cada num."]$t$,
+   $t$El ciclo externo recorre candidatos y el interno busca divisores. Basta probar d mientras d * d <= num; break evita seguir buscando cuando ya se sabe que no es primo.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: para cada número del 2 al n, revisa con otro ciclo si tiene divisores
+
+    }
+}$t$,
+   $t$[{"entrada":"10","salida":"2\n3\n5\n7","visible":true},{"entrada":"2","salida":"2","visible":false},{"entrada":"1","salida":"No hay primos","visible":false},{"entrada":"30","salida":"2\n3\n5\n7\n11\n13\n17\n19\n23\n29","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"salida":"1\n2\n3\n5\n7","mensaje":"El 1 no es primo (los primos son mayores que 1). Recuerda empezar el ciclo externo en 2."},{"salida":"2\n3\n4\n5\n6\n7\n8\n9\n10","mensaje":"Imprimiste todos. Revisa que esPrimo vuelva a true al empezar CADA número y que el if (num % d == 0) lo cambie a false."},{"salida":"3\n5\n7","mensaje":"Te faltó el 2. Revisa el ciclo interno: si va desde 2 hasta num, al probar num % num siempre da 0. Busca divisores solo hasta num - 1."},{"patron":"boolean\\s+esPrimo\\s*=\\s*true\\s*;\\s*for\\s*\\(\\s*int\\s+num","mensaje":"Declaraste esPrimo una sola vez, antes del ciclo externo: cuando un número no es primo, se queda en false para siempre. Recuerda reiniciarlo en true al empezar cada número."}]$t$,
+   11),
+  (5,
+   $t$Pirámide de números$t$,
+   $t$Lee n e imprime n filas: la fila i tiene los números del 1 al i separados por un espacio.
+
+Ejemplo: si la entrada es 4, la salida es
+1
+1 2
+1 2 3
+1 2 3 4$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for (int fila = 1; fila <= n; fila++) {
+            for (int col = 1; col <= fila; col++) {
+                System.out.print(col + " ");
+            }
+            System.out.println();
+        }
+    }
+}$t$,
+   $t$["Ciclo externo: fila de 1 a n. Ciclo interno: col de 1 a fila.","Dentro del interno imprime col con print (no println).","El espacio al final de cada línea no importa."]$t$,
+   $t$Igual que el triángulo de asteriscos, pero en vez de "*" se imprime el valor de col.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: un ciclo para las filas y otro dentro para los números de cada fila
+
+    }
+}$t$,
+   $t$[{"entrada":"4","salida":"1\n1 2\n1 2 3\n1 2 3 4","visible":true},{"entrada":"1","salida":"1","visible":false},{"entrada":"6","salida":"1\n1 2\n1 2 3\n1 2 3 4\n1 2 3 4 5\n1 2 3 4 5 6","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"salida":"1\n2 2\n3 3 3\n4 4 4 4","mensaje":"Imprimiste el número de fila en cada casilla. Recuerda que en cada casilla va col (1, 2, 3…)."},{"salida":"1 1 2 1 2 3 1 2 3 4","mensaje":"Todo quedó en una línea. Recuerda el System.out.println(); después del ciclo interno para terminar cada fila."},{"salida":"1 2 3 4\n1 2 3 4\n1 2 3 4\n1 2 3 4","mensaje":"Todas las filas salieron iguales. Recuerda que el ciclo interno llega hasta col <= fila, no hasta n."}]$t$,
+   12),
+  (5,
+   $t$Tablero de ajedrez$t$,
+   $t$Lee n e imprime un tablero de n filas por n columnas. La casilla de arriba a la izquierda es #, y las casillas se alternan entre # y . (punto), sin espacios.
+
+Ejemplo: si la entrada es 4, la salida es
+#.#.
+.#.#
+#.#.
+.#.#$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for (int fila = 0; fila < n; fila++) {
+            for (int col = 0; col < n; col++) {
+                if ((fila + col) % 2 == 0) {
+                    System.out.print("#");
+                } else {
+                    System.out.print(".");
+                }
+            }
+            System.out.println();
+        }
+    }
+}$t$,
+   $t$["Dos ciclos anidados: filas por fuera, columnas por dentro.","Truco: si fila + col es par va #, si es impar va un punto.","Usa print para cada casilla y println() al terminar la fila."]$t$,
+   $t$Sumar fila y columna da un número que alterna entre par e impar al moverse en cualquier dirección: eso produce el patrón de tablero.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: recorre filas y columnas; decide # o . con (fila + col) % 2
+
+    }
+}$t$,
+   $t$[{"entrada":"4","salida":"#.#.\n.#.#\n#.#.\n.#.#","visible":true},{"entrada":"1","salida":"#","visible":false},{"entrada":"3","salida":"#.#\n.#.\n#.#","visible":false},{"entrada":"5","salida":"#.#.#\n.#.#.\n#.#.#\n.#.#.\n#.#.#","visible":false}]$t$,
+   $t$["for","if"]$t$,
+   $t$[{"salida":"#.#.\n#.#.\n#.#.\n#.#.","mensaje":"Todas las filas empiezan igual. Recuerda que el patrón depende de fila Y columna: usa (fila + col) % 2."},{"salida":".#.#\n#.#.\n.#.#\n#.#.","mensaje":"Quedó invertido: la primera casilla debe ser #. Revisa que (fila + col) % 2 == 0 imprima #."},{"salida":"# . # .\n. # . #\n# . # .\n. # . #","mensaje":"Sobran los espacios entre casillas. Recuerda imprimir solo \"#\" o \".\", sin espacio."}]$t$,
+   13)
 ) as e(modulo_orden, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion, pistas, explicacion,
        codigo_inicial, casos, requiere, errores, orden)
 join public.modulo m on m.orden = e.modulo_orden
