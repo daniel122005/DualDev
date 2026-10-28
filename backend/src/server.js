@@ -15,7 +15,10 @@ if (env.RUNNER === 'contenedor') {
     console.log('[diagnostico-temporal] getcap sandboxexec:', execSync('getcap /usr/local/bin/sandboxexec || true').toString().trim())
     console.log('[diagnostico-temporal] mount root:', execSync("mount | grep \" / \" || true").toString().trim())
     for (const linea of status.split('\n')) {
-      if (linea.startsWith('Cap')) console.log('[diagnostico-temporal]', linea.trim())
+      if (/^(Cap|NoNewPrivs|Seccomp|Uid|Gid)/.test(linea)) console.log('[diagnostico-temporal]', linea.trim())
+    }
+    for (const archivo of ['/proc/self/uid_map', '/proc/self/gid_map', '/proc/self/setgroups', '/proc/version']) {
+      console.log('[diagnostico-temporal]', archivo, '=>', execSync(`cat ${archivo} 2>&1 || true`).toString().trim())
     }
     const capBnd = status.match(/CapBnd:\s*(\S+)/)?.[1]
     if (capBnd) console.log('[diagnostico-temporal] CapBnd decoded:', execSync(`capsh --decode=${capBnd}`).toString().trim())

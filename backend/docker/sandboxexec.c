@@ -14,13 +14,33 @@
  *
  * Uso: sandboxexec <programa> [argumentos...]
  */
+#define _GNU_SOURCE
+#include <errno.h>
 #include <grp.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/prctl.h>
 #include <unistd.h>
 
 #define SANDBOX_UID 10001
 #define SANDBOX_GID 10001
+
+// DIAGNÓSTICO TEMPORAL (2026-10-27): si no se puede cambiar de usuario, muestra qué capacidades
+// recibió de verdad este proceso. Nunca ejecuta el programa pedido.
+static void diagnosticar(void) {
+    FILE *f = fopen("/proc/self/status", "r");
+    char linea[256];
+    if (!f) return;
+    while (fgets(linea, sizeof linea, f)) {
+        if (!strncmp(linea, "Cap", 3) || !strncmp(linea, "NoNewPrivs", 10) || !strncmp(linea, "Seccomp", 7) ||
+            !strncmp(linea, "Uid", 3) || !strncmp(linea, "Gid", 3)) {
+            fprintf(stderr, "[sandboxexec] %s", linea);
+        }
+    }
+    fclose(f);
+    fprintf(stderr, "[sandboxexec] setresgid: %s\n", setresgid(SANDBOX_GID, SANDBOX_GID, SANDBOX_GID) == 0 ? "ok" : strerror(errno));
+    fprintf(stderr, "[sandboxexec] setresuid: %s\n", setresuid(SANDBOX_UID, SANDBOX_UID, SANDBOX_UID) == 0 ? "ok" : strerror(errno));
+}
 
 int main(int argc, char **argv) {
     if (argc < 2) {
@@ -36,6 +56,7 @@ int main(int argc, char **argv) {
     }
     if (setgroups(0, NULL) != 0) {
         perror("setgroups");
+        diagnosticar();
         return 1;
     }
     // gid antes que uid: por costumbre (es obligatorio cuando el proceso es root; aquí no lo es,
