@@ -25,8 +25,8 @@
 #define SANDBOX_UID 10001
 #define SANDBOX_GID 10001
 
-// DIAGNÓSTICO TEMPORAL (2026-10-27): si no se puede cambiar de usuario, muestra qué capacidades
-// recibió de verdad este proceso. Nunca ejecuta el programa pedido.
+// Si no se puede cambiar de usuario, muestra qué capacidades recibió de verdad este proceso (el
+// backend lo deja en el log al arrancar). Nunca ejecuta el programa pedido.
 static void diagnosticar(void) {
     FILE *f = fopen("/proc/self/status", "r");
     char linea[256];

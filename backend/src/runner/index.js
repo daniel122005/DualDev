@@ -39,20 +39,30 @@ export function validarConfiguracionEjecutor() {
   }
 }
 
+// Si la plataforma no deja cambiar de usuario Linux (Render: setgroups → EPERM aunque sandboxexec
+// tenga cap_setuid/cap_setgid), el código del estudiante corre con el usuario del backend y la
+// Guardia (Security Manager) queda como barrera principal. Nunca se usa el usuario sandbox sin
+// haber verificado que de verdad funciona.
+let sandboxDisponible = env.RUNNER === 'contenedor'
+let aislamiento = env.RUNNER === 'contenedor' ? 'sin verificar' : 'no aplica (desarrollo)'
+
+function crearEjecutor(conSandbox) {
+  return crearEjecutorLocal({
+    javaHome: env.JAVA_HOME,
+    limites: {
+      casosEnParalelo: env.RUNNER_CASOS_EN_PARALELO,
+      compilacionMs: env.RUNNER_COMPILACION_MS,
+      ejecucionMs: env.RUNNER_EJECUCION_MS,
+    },
+    usuarioSandbox: conSandbox ? { uid: env.RUNNER_SANDBOX_UID, gid: env.RUNNER_SANDBOX_GID } : null,
+  })
+}
+
 function obtenerEjecutor() {
   if (ejecutor) return ejecutor
   validarConfiguracionEjecutor()
-  if (env.RUNNER === 'local' || env.RUNNER === 'contenedor') {
-    ejecutor = crearEjecutorLocal({
-      javaHome: env.JAVA_HOME,
-      limites: {
-        casosEnParalelo: env.RUNNER_CASOS_EN_PARALELO,
-        compilacionMs: env.RUNNER_COMPILACION_MS,
-        ejecucionMs: env.RUNNER_EJECUCION_MS,
-      },
-      usuarioSandbox: env.RUNNER === 'contenedor' ? { uid: env.RUNNER_SANDBOX_UID, gid: env.RUNNER_SANDBOX_GID } : null,
-    })
-  } else throw new Error(`Ejecutor desconocido: ${env.RUNNER}`)
+  if (env.RUNNER !== 'local' && env.RUNNER !== 'contenedor') throw new Error(`Ejecutor desconocido: ${env.RUNNER}`)
+  ejecutor = crearEjecutor(sandboxDisponible)
   return ejecutor
 }
 
@@ -62,11 +72,20 @@ export async function calentarEjecutor() {
   await obtenerEjecutor().preparar?.()
 }
 
-// A diferencia de calentarEjecutor (si falla, se reintenta en la primera ejecución), esto debe
-// IMPEDIR que el servidor arranque: si el usuario sandbox no está realmente aislado, cualquier
-// envío de código corre con menos protección de la que se cree. Ver server.js.
+// Se corre al arrancar, antes de aceptar tráfico. Si el usuario sandbox no funciona en esta
+// plataforma, se descarta (nunca se finge un aislamiento que no existe) y se sigue sin él.
 export async function verificarAislamientoEjecutor() {
-  await obtenerEjecutor().verificarAislamiento?.()
+  if (!sandboxDisponible) return aislamiento
+  try {
+    await obtenerEjecutor().verificarAislamiento?.()
+    aislamiento = 'usuario sandbox activo'
+  } catch (e) {
+    sandboxDisponible = false
+    ejecutor = crearEjecutor(false)
+    aislamiento = 'sin usuario sandbox (la plataforma no permite cambiar de usuario); solo la Guardia'
+    console.warn(`[ejecutor] El usuario sandbox no funciona aquí, se sigue sin él: ${e.message}`)
+  }
+  return aislamiento
 }
 
 // Semáforo: cada envío levanta hasta LIMITES.casosEnParalelo JVM; no se permiten más de
