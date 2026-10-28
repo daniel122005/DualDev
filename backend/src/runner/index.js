@@ -72,14 +72,19 @@ export async function calentarEjecutor() {
   await obtenerEjecutor().preparar?.()
 }
 
-// Se corre al arrancar, antes de aceptar tráfico. Si el usuario sandbox no funciona en esta
-// plataforma, se descarta (nunca se finge un aislamiento que no existe) y se sigue sin él.
+// Se corre al arrancar, antes de aceptar tráfico. Falla cerrada: si el usuario sandbox no funciona,
+// lanza (y server.js no arranca), salvo que RUNNER_PERMITIR_SIN_SANDBOX=true lo permita de forma
+// explícita. Nunca se finge un aislamiento que no existe.
 export async function verificarAislamientoEjecutor() {
   if (!sandboxDisponible) return aislamiento
   try {
     await obtenerEjecutor().verificarAislamiento?.()
     aislamiento = 'usuario sandbox activo'
   } catch (e) {
+    // Solo el caso conocido (la plataforma niega el cambio de usuario: EPERM en setgroups/setres*id).
+    // Cualquier otra falla (p. ej. el archivo compilado quedó con otro uid) no se tolera.
+    const permisoNegado = /(setgroups|setresgid|setresuid): Operation not permitted/.test(e.message)
+    if (!env.RUNNER_PERMITIR_SIN_SANDBOX || !permisoNegado) throw e
     sandboxDisponible = false
     ejecutor = crearEjecutor(false)
     aislamiento = 'sin usuario sandbox (la plataforma no permite cambiar de usuario); solo la Guardia'

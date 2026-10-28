@@ -8,7 +8,13 @@ ENV NODE_ENV=production \
     RUNNER=contenedor \
     JAVA_HOME=/opt/java/openjdk \
     RUNNER_SANDBOX_UID=10001 \
-    RUNNER_SANDBOX_GID=10001
+    RUNNER_SANDBOX_GID=10001 \
+    RUNNER_PERMITIR_SIN_SANDBOX=true
+# RUNNER_PERMITIR_SIN_SANDBOX=true (decisión 2026-10-27): Render no deja cambiar de usuario Linux
+# (setgroups -> EPERM aunque sandboxexec tenga cap_setuid/cap_setgid), así que ahí el código del
+# estudiante corre con el usuario del backend y la Guardia es la barrera principal, igual que antes
+# del 25/10. En una plataforma que sí lo permita, el usuario sandbox se activa solo. Quitar esta
+# línea vuelve a la falla cerrada (el servidor no arranca sin aislamiento).
 COPY --from=jdk /opt/java/openjdk /opt/java/openjdk
 
 # Usuario SIN PRIVILEGIOS para correr el código de los estudiantes, DISTINTO del usuario "node" que

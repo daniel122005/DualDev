@@ -18,6 +18,8 @@ const schema = z.object({
   // backend (la llave secreta) ni sus archivos, porque ni siquiera es el mismo usuario del sistema.
   RUNNER_SANDBOX_UID: z.coerce.number().int().min(1).optional(),
   RUNNER_SANDBOX_GID: z.coerce.number().int().min(1).optional(),
+  // Opt-in explícito: si el usuario sandbox no funciona, seguir solo con la Guardia en vez de no arrancar.
+  RUNNER_PERMITIR_SIN_SANDBOX: z.enum(['true', 'false']).default('false').transform((v) => v === 'true'),
   RUNNER_CONCURRENCIA: z.coerce.number().int().min(1).max(16).default(2),
   // Límites ajustables según la CPU del servidor (en uno de 0,1 CPU todo tarda ~10 veces más y un
   // programa correcto no debe confundirse con un ciclo infinito).
