@@ -308,7 +308,8 @@ kbd {
 }
 .texto-leccion table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; }
 .texto-leccion th { font-family: var(--font-display); font-size: 12px; color: #7af0b4; background: rgba(30,212,138,0.1); text-align: left; padding: 8px 10px; }
-.texto-leccion td { padding: 7px 10px; border-top: 1px solid var(--color-border); font-family: var(--font-mono); font-size: 12.5px; }
+.texto-leccion td { padding: 7px 10px; border-top: 1px solid var(--color-border); font-size: 13px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.texto-leccion td:first-child { font-weight: 600; color: var(--color-green-pale); }
 .texto-leccion tr:nth-child(even) td { background: rgba(122,240,180,0.03); }
 .tabla-scroll { overflow-x: auto; }
 

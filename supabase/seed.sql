@@ -156,7 +156,18 @@ for (int i = 1; i <= 3; i++) {
 
   -- Módulo 2 · for
   (2, 'Estructura del for',
-   $t$El for reúne las tres partes del ciclo en una sola línea: for (inicio; condición; actualización). Así se ejecuta: 1) int i = 1 se hace una sola vez, al empezar. 2) Se revisa la condición i <= 5: si es verdadera, entra. 3) Se ejecuta el cuerpo. 4) Se hace i++ y se vuelve al paso 2. Cuando i llega a 6, la condición es falsa y el programa sigue con lo que está después del ciclo.$t$,
+   $t$El `for` reúne las tres partes del ciclo en **una sola línea**:
+
+`for (inicio; condición; actualización) { cuerpo }`
+
+Así se ejecuta el ejemplo, paso a paso:
+
+1. `int i = 1` se hace **una sola vez**, al empezar.
+2. Se revisa la condición `i <= 5`: si es verdadera, entra al cuerpo.
+3. Se ejecuta el cuerpo (imprime el número).
+4. Se hace `i++` y se vuelve al paso 2.
+
+Cuando `i` llega a 6, la condición `6 <= 5` es **falsa**: el ciclo termina y el programa sigue con lo que está después (imprime "¡Ciclo terminado!").$t$,
    $j$public class ContadorFor {
     public static void main(String[] args) {
         for (int i = 1; i <= 5; i++) {
@@ -168,14 +179,44 @@ for (int i = 1; i <= 3; i++) {
    E'Número: 1\nNúmero: 2\nNúmero: 3\nNúmero: 4\nNúmero: 5\n¡Ciclo terminado!',
    'Las tres partes del for se separan con punto y coma, nunca con coma. El nombre i viene de "índice"; puedes usar el nombre que quieras.', 8, 1),
   (2, 'Contar hacia atrás y de a dos',
-   $t$Cambiando el inicio, la condición y la actualización puedes contar hacia atrás (i--) o saltar de a varios (i += 2, que es lo mismo que i = i + 2). La condición debe ir en la misma dirección que la actualización: si la variable baja, la condición suele usar >= o >; si sube, usa <= o <.$t$,
+   $t$Cambiando las tres partes del `for` puedes recorrer los números de muchas formas:
+
+| Quiero… | Inicio | Condición | Actualización |
+|---|---|---|---|
+| contar de 1 a 10 | `i = 1` | `i <= 10` | `i++` |
+| contar de 10 a 1 | `i = 10` | `i >= 1` | `i--` |
+| subir de 2 en 2 | `i = 0` | `i <= 10` | `i += 2` |
+| bajar de 2 en 2 | `i = 10` | `i >= 0` | `i -= 2` |
+
+`i += 2` es lo mismo que `i = i + 2`.
+
+La regla de oro: la condición debe ir en la **misma dirección** que la actualización. Si la variable **baja**, la condición usa `>=` o `>`; si **sube**, usa `<=` o `<`.$t$,
    $j$for (int i = 10; i >= 0; i -= 2) {
     System.out.println(i);
 }$j$,
    E'10\n8\n6\n4\n2\n0',
    'Si cuentas hacia atrás con i++ en vez de i--, la condición i >= 0 nunca se vuelve falsa: ciclo infinito.', 7, 2),
   (2, 'Acumuladores y contadores',
-   $t$Un contador cuenta cuántas veces pasa algo (contador++). Un acumulador guarda un resultado que crece en cada vuelta, como una suma (suma += i). Los dos se declaran ANTES del ciclo con un valor inicial (0 para contar o sumar, 1 para multiplicar) y se actualizan DENTRO del ciclo. El resultado se imprime DESPUÉS del ciclo, cuando ya terminó de acumular.$t$,
+   $t$Dos patrones que vas a usar en casi todos los ejercicios:
+
+- **Contador**: cuenta cuántas veces pasa algo → `contador++`
+- **Acumulador**: guarda un resultado que crece en cada vuelta, como una suma → `suma += i`
+
+Los dos siguen la misma receta:
+
+1. **Antes** del ciclo: decláralo con su valor inicial (0 para contar o sumar, **1** para multiplicar).
+2. **Dentro** del ciclo: actualízalo.
+3. **Después** del ciclo: imprime el resultado, cuando ya terminó de acumular.
+
+Prueba de escritorio del ejemplo:
+
+| Vuelta | i | suma |
+|---|---|---|
+| 1 | 1 | 0 + 1 = 1 |
+| 2 | 2 | 1 + 2 = 3 |
+| 3 | 3 | 3 + 3 = 6 |
+| … | … | … |
+| 10 | 10 | 45 + 10 = 55 |$t$,
    $j$int suma = 0;                  // antes del ciclo
 for (int i = 1; i <= 10; i++) {
     suma += i;                 // igual a: suma = suma + i;
@@ -184,7 +225,22 @@ System.out.println("Suma = " + suma);   // después del ciclo$j$,
    'Suma = 55',
    'Ojo: suma = i REEMPLAZA el valor; suma += i lo AGREGA. Y si declaras el acumulador dentro del ciclo, vuelve a 0 en cada vuelta.', 8, 3),
   (2, 'El operador % (residuo)',
-   $t$El operador % da el residuo de una división entera: 7 % 2 es 1 (porque 7 = 2·3 + 1) y 8 % 2 es 0. Dentro de un ciclo es muy útil: un número es par si n % 2 == 0, es múltiplo de 3 si n % 3 == 0, y n % 10 te da su último dígito (4096 % 10 es 6). Combinado con un if dentro del ciclo, te deja escoger en qué vueltas se hace algo.$t$,
+   $t$El operador `%` da el **residuo** de una división entera:
+
+- `7 % 2` es 1 (porque 7 = 2·3 + 1)
+- `8 % 2` es 0 (la división es exacta)
+- `4096 % 10` es 6 (el último dígito)
+
+Dentro de un ciclo sirve para **escoger** en qué vueltas se hace algo:
+
+| Pregunta | Condición |
+|---|---|
+| ¿n es par? | `n % 2 == 0` |
+| ¿n es impar? | `n % 2 != 0` |
+| ¿n es múltiplo de 3? | `n % 3 == 0` |
+| ¿d divide a n? | `n % d == 0` |
+
+En el ejemplo, el `if` dentro del ciclo solo deja imprimir los múltiplos de 3.$t$,
    $j$for (int i = 1; i <= 10; i++) {
     if (i % 3 == 0) {
         System.out.println(i + " es múltiplo de 3");
@@ -195,7 +251,22 @@ System.out.println("Suma = " + suma);   // después del ciclo$j$,
 
   -- Módulo 3 · while
   (3, 'Estructura del while',
-   $t$El while revisa la condición ANTES de cada vuelta: while (condición) { cuerpo }. Si desde el principio la condición es falsa, el cuerpo no se ejecuta ni una vez. Es ideal cuando no sabes cuántas vueltas vas a dar, por ejemplo al ir quitando dígitos a un número hasta que llegue a 0. A diferencia del for, la inicialización va antes del while y la actualización va dentro del cuerpo.$t$,
+   $t$El `while` revisa la condición **antes** de cada vuelta:
+
+`while (condición) { cuerpo }`
+
+- Si desde el principio la condición es falsa, el cuerpo **no se ejecuta ni una vez**.
+- La inicialización va **antes** del while y la actualización va **dentro** del cuerpo.
+- Es ideal cuando **no sabes** cuántas vueltas vas a dar.
+
+Prueba de escritorio del ejemplo:
+
+| Vuelta | n | ¿n > 0? | Imprime |
+|---|---|---|---|
+| 1 | 3 | sí | 3 |
+| 2 | 2 | sí | 2 |
+| 3 | 1 | sí | 1 |
+| — | 0 | no | (termina) |$t$,
    $j$int n = 3;           // inicialización
 while (n > 0) {      // condición
     System.out.println(n);
@@ -204,7 +275,13 @@ while (n > 0) {      // condición
    E'3\n2\n1',
    'Cuando n llega a 0, la condición 0 > 0 es falsa y el ciclo termina sin imprimir el 0.', 7, 1),
   (3, 'Ciclos infinitos',
-   $t$Si la condición nunca se vuelve falsa, el ciclo no termina. Los errores más comunes: olvidar actualizar la variable dentro del cuerpo, actualizarla en la dirección contraria (n++ cuando la condición espera que baje) o poner un punto y coma justo después de while (...). En DualDev, si tu programa tarda demasiado se detiene y te mostramos qué variable no está cambiando.$t$,
+   $t$Si la condición **nunca** se vuelve falsa, el ciclo no termina. Los tres errores más comunes:
+
+1. **Olvidar actualizar** la variable dentro del cuerpo (como en el ejemplo: falta `n--`).
+2. **Actualizar en la dirección contraria**: `n++` cuando la condición espera que `n` baje.
+3. **Poner punto y coma** justo después de `while (...)`: el ciclo queda vacío y repite "nada" para siempre.
+
+En DualDev, si tu programa tarda demasiado se detiene solo y te mostramos **qué variable no está cambiando**.$t$,
    $j$int n = 3;
 while (n > 0) {
     System.out.println(n);
@@ -213,7 +290,22 @@ while (n > 0) {
    null,
    'Pregúntate siempre: ¿qué línea dentro del ciclo hace que la condición termine siendo falsa?', 6, 2),
   (3, 'while vs for',
-   $t$Usa for cuando sabes de antemano cuántas vueltas darás (contar del 1 al 10). Usa while cuando la cantidad depende de algo que pasa durante el ciclo. Ejemplo: para contar los dígitos de un número, lo divides entre 10 (n = n / 10 quita el último dígito) hasta que llegue a 0; no sabes cuántas vueltas serán hasta que lo haces.$t$,
+   $t$| Usa… | cuando… | Ejemplo |
+|---|---|---|
+| `for` | sabes de antemano cuántas vueltas darás | contar del 1 al 10 |
+| `while` | la cantidad depende de algo que pasa en el ciclo | quitar dígitos hasta llegar a 0 |
+
+Ejemplo clásico de `while`: contar los dígitos de un número. Cada vuelta hace `numero = numero / 10`, que **quita el último dígito**, hasta que llega a 0:
+
+| Vuelta | numero | digitos |
+|---|---|---|
+| inicio | 4096 | 0 |
+| 1 | 409 | 1 |
+| 2 | 40 | 2 |
+| 3 | 4 | 3 |
+| 4 | 0 | 4 |
+
+No sabías que serían 4 vueltas hasta hacerlo: por eso es un `while`.$t$,
    $j$int numero = 4096;
 int digitos = 0;
 while (numero > 0) {
@@ -226,7 +318,19 @@ System.out.println("Dígitos: " + digitos);$j$,
 
   -- Módulo 4 · do-while
   (4, 'Estructura del do-while',
-   $t$El do-while revisa la condición DESPUÉS de ejecutar el cuerpo, por eso siempre da al menos una vuelta. Piensa en probar la sopa: primero la pruebas (cuerpo) y después decides si le falta sal (condición). Se escribe do { cuerpo } while (condición); y es el único ciclo que termina con punto y coma.$t$,
+   $t$El `do-while` revisa la condición **después** de ejecutar el cuerpo, por eso **siempre da al menos una vuelta**.
+
+Piensa en probar la sopa: primero la pruebas (cuerpo) y después decides si le falta sal (condición).
+
+`do { cuerpo } while (condición);`
+
+- Es el **único** ciclo que termina con punto y coma.
+- En el ejemplo, `10 < 10` es falso desde el inicio… y aun así imprime 10 una vez.
+
+| | `while` | `do-while` |
+|---|---|---|
+| Revisa la condición | antes del cuerpo | después del cuerpo |
+| Vueltas mínimas | 0 | 1 |$t$,
    $j$int x = 10;
 do {
     System.out.println(x);
@@ -235,7 +339,21 @@ do {
    '10',
    'Aunque la condición 10 < 10 es falsa desde el inicio, el cuerpo se ejecuta una vez.', 7, 1),
   (4, 'Cuándo usar do-while',
-   $t$El do-while es perfecto para menús y validaciones: primero pides o muestras algo, y luego decides si hay que repetir. Por ejemplo, pedir números hasta que el usuario escriba 0, o pedir una edad hasta que sea válida. La variable que usa la condición se declara ANTES del do, para que exista también en el while del final.$t$,
+   $t$El `do-while` es perfecto cuando **primero hay que hacer algo y después decidir** si se repite:
+
+- **Menús**: mostrar opciones hasta que el usuario elija salir.
+- **Validaciones**: pedir una edad hasta que sea válida.
+- **Centinelas**: leer números hasta que llegue un 0 (o un -1).
+
+Regla importante: la variable que usa la condición se declara **antes** del `do`, para que exista también en el `while` del final.
+
+Prueba de escritorio con la entrada 5, 3 y 0:
+
+| Vuelta | lee | suma | ¿numero != 0? |
+|---|---|---|---|
+| 1 | 5 | 5 | sí, repite |
+| 2 | 3 | 8 | sí, repite |
+| 3 | 0 | 8 | no, termina |$t$,
    $j$Scanner sc = new Scanner(System.in);
 int numero;            // declarada antes del do
 int suma = 0;
@@ -249,7 +367,20 @@ System.out.println("Total = " + suma);$j$,
 
   -- Módulo 5 · Ciclos combinados
   (5, 'break y continue',
-   $t$break termina el ciclo inmediatamente y el programa sigue con lo que está después del ciclo. continue se salta lo que falta de la vuelta actual y pasa a la siguiente (en un for, primero hace el i++). En el ejemplo, continue salta los pares y break corta el ciclo cuando i pasa de 7.$t$,
+   $t$Dos palabras que cambian el rumbo de un ciclo:
+
+| Palabra | Qué hace | Para recordarlo |
+|---|---|---|
+| `break` | termina el ciclo **inmediatamente** | "rompe" el ciclo |
+| `continue` | salta lo que falta de **esta** vuelta y pasa a la siguiente | "continúa" con la siguiente |
+
+En un `for`, `continue` igual hace el `i++` antes de la siguiente vuelta.
+
+En el ejemplo:
+
+- `continue` salta los pares (2, 4, 6…).
+- `break` corta el ciclo cuando `i` pasa de 7.
+- Por eso solo se imprimen 1, 3, 5 y 7.$t$,
    $j$for (int i = 1; i <= 10; i++) {
     if (i % 2 == 0) continue; // salta los pares
     if (i > 7) break;         // termina el ciclo al pasar de 7
@@ -258,7 +389,19 @@ System.out.println("Total = " + suma);$j$,
    E'1\n3\n5\n7',
    'Una forma de recordarlo: break "rompe" el ciclo; continue "continúa" con la siguiente vuelta.', 8, 1),
   (5, 'Ciclos anidados',
-   $t$Un ciclo puede ir dentro de otro. Por cada vuelta del ciclo externo, el interno da TODAS sus vueltas. Es como un reloj: por cada hora, el minutero da 60 vueltas. Se usan para tablas, cuadrículas y figuras con asteriscos: el externo recorre las filas y el interno lo que va en cada fila. Usa print para quedarte en la misma línea y println() al terminar cada fila.$t$,
+   $t$Un ciclo puede ir **dentro** de otro. Por cada vuelta del ciclo externo, el interno da **todas** sus vueltas. Es como un reloj: por cada hora, el minutero da 60 vueltas.
+
+- El ciclo **externo** recorre las **filas**.
+- El ciclo **interno** dibuja lo que va **en cada fila**.
+- Usa `print` para quedarte en la misma línea y `println()` al terminar cada fila.
+
+Prueba de escritorio del ejemplo:
+
+| fila | col toma… | Imprime |
+|---|---|---|
+| 1 | 1 | `*` |
+| 2 | 1, 2 | `**` |
+| 3 | 1, 2, 3 | `***` |$t$,
    $j$for (int fila = 1; fila <= 3; fila++) {
     for (int col = 1; col <= fila; col++) {
         System.out.print("*");
