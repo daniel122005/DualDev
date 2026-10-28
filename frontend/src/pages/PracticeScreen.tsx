@@ -5,6 +5,7 @@ import Consola from '@/components/practica/Consola'
 import ExerciseList from '@/components/practica/ExerciseList'
 import FeedbackView from '@/components/practica/FeedbackView'
 import { lineasConError } from '@/components/practica/feedback'
+import MiRespuesta from '@/components/practica/MiRespuesta'
 import RespuestaSimple from '@/components/practica/RespuestaSimple'
 import { usePerfil } from '@/hooks/usePerfil'
 import { api, ApiError } from '@/services/api'
@@ -65,8 +66,9 @@ export default function PracticeScreen() {
       .then((ej) => {
         if (!vigente) return
         setEjercicio(ej)
-        setCodigo(leerBorrador(ej.id_ejercicio) ?? ej.codigo_inicial ?? '')
-        setRespuesta('')
+        const miCodigo = ej.tipo === 'codigo' ? ej.mi_respuesta : null
+        setCodigo(leerBorrador(ej.id_ejercicio) ?? miCodigo ?? ej.codigo_inicial ?? '')
+        setRespuesta(ej.tipo !== 'codigo' ? (ej.mi_respuesta ?? '') : '')
         setEjecucion(null)
         setResultado(null)
         setError(null)
@@ -126,6 +128,8 @@ export default function PracticeScreen() {
           ...ejercicio,
           resuelto: true,
           solucion: r.solucion,
+          mi_respuesta: texto,
+          explicacion: r.explicacion ?? ejercicio.explicacion,
           ejercicios_del_modulo: ejercicio.ejercicios_del_modulo.map((e) =>
             e.id_ejercicio === idEjercicio ? { ...e, resuelto: true } : e,
           ),
@@ -274,6 +278,15 @@ export default function PracticeScreen() {
               </p>
             )}
           </div>
+
+          {ejercicio.resuelto && ejercicio.mi_respuesta && (
+            <MiRespuesta
+              tipo={ejercicio.tipo}
+              respuesta={ejercicio.mi_respuesta}
+              explicacion={ejercicio.explicacion}
+              onCargar={esCodigo ? () => cambiarCodigo(ejercicio.mi_respuesta ?? '') : undefined}
+            />
+          )}
 
           {esCodigo ? (
             <CodeEditor

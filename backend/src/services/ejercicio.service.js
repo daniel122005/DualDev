@@ -27,6 +27,10 @@ export async function obtenerEjercicio(idUsuario, idEjercicio) {
   const resuelto = estado.aciertos.has(idEjercicio)
   const fallidos = intentos.filter((i) => !i.es_correcto).length
   const { casos_prueba, solucion_esperada, explicacion, errores_comunes: _errores, ...publico } = ejercicio
+  // La respuesta correcta más reciente del propio estudiante (solo la suya: los intentos son por usuario).
+  const miAcierto = intentos
+    .filter((i) => i.es_correcto)
+    .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0]
 
   return {
     ...publico,
@@ -43,6 +47,7 @@ export async function obtenerEjercicio(idUsuario, idEjercicio) {
     // La solución solo se entrega cuando ya no sirve para "cobrar" sin pensar.
     solucion: resuelto || fallidos >= FALLOS_PARA_VER_SOLUCION ? solucion_esperada : null,
     explicacion: resuelto ? explicacion : null,
+    mi_respuesta: miAcierto?.respuesta ?? null,
   }
 }
 

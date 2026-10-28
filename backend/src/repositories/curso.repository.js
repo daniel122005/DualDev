@@ -83,7 +83,7 @@ export async function obtenerIntentosDeEjercicio(idUsuario, idEjercicio) {
   return check(
     await getSupabaseAdmin()
       .from('intento_ejercicio')
-      .select('es_correcto, puntos_otorgados, created_at')
+      .select('es_correcto, puntos_otorgados, created_at, respuesta')
       .eq('id_usuario', idUsuario)
       .eq('id_ejercicio', idEjercicio),
   )

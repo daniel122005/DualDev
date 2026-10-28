@@ -205,19 +205,22 @@ export default function LessonScreen() {
 
         {/* Derecha: verificación, recompensa y navegación */}
         <div className="flex flex-col gap-4">
-          <div className="card-border p-4">
-            <p className="font-display mb-3 text-xs font-bold" style={{ color: '#7af0b4' }}>
-              ✅ AUTO-VERIFICACIÓN
-            </p>
-            <div className="flex flex-col gap-2">
-              {AUTOVERIFICACION.map((q) => (
-                <label key={q} className="flex cursor-pointer items-center gap-2 text-xs">
-                  <input type="checkbox" style={{ accentColor: '#1ed48a' }} />
-                  <span style={{ color: 'var(--color-muted)' }}>{q}</span>
-                </label>
-              ))}
+          {/* Pedido por la profesora (2026-10-28): sin auto-verificación en Introducción a ciclos. */}
+          {leccion.modulo.orden !== 1 && (
+            <div className="card-border p-4">
+              <p className="font-display mb-3 text-xs font-bold" style={{ color: '#7af0b4' }}>
+                ✅ AUTO-VERIFICACIÓN
+              </p>
+              <div className="flex flex-col gap-2">
+                {AUTOVERIFICACION.map((q) => (
+                  <label key={q} className="flex cursor-pointer items-center gap-2 text-xs">
+                    <input type="checkbox" style={{ accentColor: '#1ed48a' }} />
+                    <span style={{ color: 'var(--color-muted)' }}>{q}</span>
+                  </label>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div
             className="rounded-2xl p-4 text-center"

@@ -237,6 +237,8 @@ export interface Ejercicio {
   intentos_fallidos: number
   solucion: string | null
   explicacion: string | null
+  // Última respuesta correcta del propio estudiante (null si no lo ha resuelto).
+  mi_respuesta?: string | null
 }
 
 export interface ErrorCompilacion {
