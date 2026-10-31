@@ -769,7 +769,7 @@ System.out.println(s);$t$, 'salida', 'media', 60,
     {"salida":"6","mensaje":"Te faltó sumar el 4. Recuerda que i <= 4 incluye el 4: s vale 1, 3, 6 y 10."},
     {"salida":"1\n3\n6\n10","mensaje":"Recuerda que el println está DESPUÉS del ciclo: se imprime una sola vez, con el valor final."},
     {"salida":"4","mensaje":"Recuerda que s += i suma el valor de i a lo que ya tenía s; no lo reemplaza."}
-   ]$e$, 3),
+   ]$e$, 5),
   (3, 'Despegue', $t$Lee un número n y usa un ciclo while para imprimir la cuenta regresiva desde n hasta 1. Al final imprime ¡Despegue!
 
 Ejemplo: si la entrada es 3, la salida es
@@ -808,7 +808,7 @@ public class Ejercicio {
    $e$[
     {"salida":"3\n¡Despegue!\n2\n¡Despegue!\n1\n¡Despegue!","mensaje":"El ¡Despegue! salió en cada vuelta. Recuerda que todo lo que está dentro de las llaves del while se repite: el mensaje va DESPUÉS de cerrar el ciclo."},
     {"salida":"3\n2\n1\n0\n¡Despegue!","mensaje":"Sobra el 0. Recuerda que la condición debe ser n > 0: con n >= 0 el ciclo da una vuelta más cuando n vale 0."}
-   ]$e$, 4),
+   ]$e$, 6),
   (3, 'Contar dígitos', $t$¿Cuántos dígitos tiene un número? Lee un número entero positivo y usa un ciclo while para contarlos: en cada vuelta quita el último dígito con n = n / 10 y suma 1 a un contador, hasta que n llegue a 0. Imprime solo la cantidad.
 
 Ejemplo: si la entrada es 4096, la salida es 4$t$, 'codigo', 'media', 60,
@@ -847,7 +847,7 @@ public class Ejercicio {
     {"salida":"0","mensaje":"El contador quedó en 0. Recuerda sumar 1 al contador (contador++;) DENTRO del ciclo."},
     {"salida":"4096","mensaje":"Imprimiste el número, no la cantidad de dígitos. Recuerda imprimir el contador, después del ciclo."},
     {"salida":"3","mensaje":"Te faltó contar un dígito. Recuerda que el ciclo debe seguir mientras n > 0: el último dígito también cuenta."}
-   ]$e$, 5),
+   ]$e$, 7),
   (3, 'Suma de dígitos', $t$Lee un número entero positivo y usa un ciclo while para calcular la suma de sus dígitos. Imprime solo el resultado.
 
 Ejemplo: para 1234 imprime 10 (porque 1 + 2 + 3 + 4 = 10).$t$, 'codigo', 'dificil', 100,
@@ -885,7 +885,7 @@ public class Ejercicio {
     {"patron":"\\bn\\s*=\\s*n\\s*%\\s*10","mensaje":"Recuerda que n % 10 te da el último dígito, pero no lo quita. Para quitarlo se usa n = n / 10; con n = n % 10, n nunca llega a 0."},
     {"salida":"1","mensaje":"Solo quedó un dígito: parece que escribes suma = n % 10, que REEMPLAZA el valor. Recuerda acumular con suma += n % 10."},
     {"salida":"0","mensaje":"La suma quedó en 0. Recuerda sumar el último dígito (suma += n % 10;) DENTRO del ciclo, antes de quitarlo."}
-   ]$e$, 6),
+   ]$e$, 10),
 
   -- =========================== Módulo 4 · do-while ===========================
   (4, 'Diferencia clave', '¿Cuál es la diferencia principal entre while y do-while?', 'seleccion', 'facil', 30,
@@ -1199,7 +1199,7 @@ public class Ejercicio {
    $e$[
     {"salida":"***\n***\n***","mensaje":"Te salió un cuadrado. Recuerda que en el triángulo cada fila tiene tantos asteriscos como su número: el ciclo interno debe llegar hasta fila (col <= fila), no hasta n."},
     {"salida":"*\n*\n*","mensaje":"Cada fila tiene un solo asterisco. Recuerda que el ciclo interno debe repetirse fila veces: for (int col = 1; col <= fila; col++)."}
-   ]$e$, 7),
+   ]$e$, 9),
   (5, 'Cuadrícula de multiplicar', $t$Lee un número n e imprime una cuadrícula de n filas y n columnas: en la fila i y la columna j va el resultado de i * j. Separa los números con un espacio.
 
 Ejemplo: si la entrada es 3, la salida es
@@ -1238,7 +1238,7 @@ public class Ejercicio {
    $e$[
     {"salida":"1 1 1\n2 2 2\n3 3 3","mensaje":"Imprimiste solo el número de fila. Recuerda que cada casilla es fila por columna: i * j."},
     {"patron":"print\\(\\s*i\\s*\\+\\s*j\\b","mensaje":"Recuerda que i + j SUMA; la cuadrícula de multiplicar necesita i * j."}
-   ]$e$, 8)
+   ]$e$, 10)
 ) as e(modulo_orden, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion, pistas, explicacion,
        codigo_inicial, casos, requiere, errores, orden)
 join public.modulo m on m.orden = e.modulo_orden
@@ -1287,7 +1287,7 @@ while (i <= 4) {
    null,
    null,
    $t$[{"salida":"1 -> 1\n2 -> 2\n3 -> 3\n4 -> 4","mensaje":"Escribiste i en las dos columnas. Recuerda que total = total + i SUMA lo que ya llevaba total: en la vuelta 2 total pasa de 1 a 1 + 2 = 3."},{"salida":"1 -> 1\n2 -> 3\n3 -> 6","mensaje":"Te faltó una vuelta. Recuerda que <= incluye el límite: con i = 4, 4 <= 4 es verdadero y se imprime una línea más."},{"salida":"1 -> 1\n2 -> 3\n3 -> 6\n4 -> 10\n5 -> 15","mensaje":"Sobra una vuelta. Recuerda que antes de cada vuelta se revisa la condición: con i = 5, 5 <= 4 es falso y el ciclo termina."},{"salida":"1 -> 0\n2 -> 1\n3 -> 3\n4 -> 6","mensaje":"Imprimiste total ANTES de sumarle i. Recuerda que el código se ejecuta en orden: primero total = total + i y después el println."}]$t$,
-   6),
+   7),
   (1,
    $t$Cuenta las vueltas$t$,
    $t$¿Cuántas veces se imprime "Hola" con este ciclo? Escribe solo el número.
@@ -1306,7 +1306,7 @@ for (int i = 5; i <= 20; i += 5) {
    null,
    null,
    $t$[{"respuesta":"3","mensaje":"Te faltó contar una vuelta. Recuerda que <= incluye el límite: cuando i vale 20, 20 <= 20 es verdadero y se imprime una vez más."},{"respuesta":"5","mensaje":"Contaste una vuelta de más. Los valores de i son 5, 10, 15 y 20; con 25 la condición ya es falsa."},{"respuesta":"20|16|15","mensaje":"Recuerda que i += 5 hace que i suba de 5 en 5, no de 1 en 1. Escribe los valores que toma i y cuéntalos."}]$t$,
-   7),
+   8),
   (1,
    $t$¿Qué ciclo usarías?$t$,
    $t$Un programa debe pedir la contraseña y volver a pedirla mientras sea incorrecta. Siempre la pide AL MENOS una vez. ¿Qué ciclo es el más adecuado?$t$,
@@ -1321,7 +1321,7 @@ for (int i = 5; i <= 20; i += 5) {
    null,
    null,
    $t$[{"respuesta":"for","mensaje":"for es ideal cuando sabes de antemano cuántas vueltas darás, pero aquí no lo sabes: depende de cuándo el usuario acierte. Recuerda que el ciclo que siempre da al menos una vuelta es do-while."},{"respuesta":"while","mensaje":"while sirve, pero revisa la condición ANTES de la primera vuelta, así que tendrías que pedir la contraseña una vez fuera del ciclo. Recuerda que do-while pide primero y pregunta después."},{"respuesta":"No se necesita un ciclo","mensaje":"Si el usuario se equivoca hay que volver a pedirla, quizás muchas veces: eso es repetir. Recuerda que cuando no sabes cuántas veces repetirás, necesitas while o do-while."}]$t$,
-   8),
+   9),
   (1,
    $t$Saludo repetido$t$,
    $t$Lee un número n y muestra n saludos numerados con este formato exacto:
@@ -1363,7 +1363,7 @@ public class Ejercicio {
    $t$[{"entrada":"3","salida":"Hola #1\nHola #2\nHola #3","visible":true},{"entrada":"1","salida":"Hola #1","visible":false},{"entrada":"5","salida":"Hola #1\nHola #2\nHola #3\nHola #4\nHola #5","visible":false}]$t$,
    $t$[]$t$,
    $t$[{"salida":"Hola #1\nHola #1\nHola #1","mensaje":"Siempre imprimes #1. Recuerda usar la variable del ciclo: \"Hola #\" + i cambia en cada vuelta."},{"salida":"Hola #i\nHola #i\nHola #i","mensaje":"Pusiste la i dentro de las comillas, así que se imprime la letra. Recuerda: \"Hola #\" + i, con la variable fuera de las comillas."},{"salida":"Hola #0\nHola #1\nHola #2","mensaje":"Empezaste en 0. Recuerda que el primer saludo es #1: inicializa con int i = 1 y usa i <= n."},{"patron":"i\\s*<=?\\s*3\\s*;","mensaje":"Usaste el 3 del ejemplo en la condición. Recuerda que n cambia en cada prueba: la condición debe ser i <= n."}]$t$,
-   9),
+   6),
   (2,
    $t$Saltos de 3$t$,
    $t$¿Qué imprime este código? Ojo: usa print, no println.
@@ -1598,7 +1598,7 @@ while (n > 0) {
    null,
    null,
    $t$[{"salida":"20\n10\n5\n2.5\n1.25","mensaje":"Recuerda que n es int: dividir dos enteros descarta los decimales, así que 5 / 2 es 2, no 2.5."},{"salida":"20\n10\n5\n2\n1\n0","mensaje":"Sobra el 0. Cuando n vale 0, la condición 0 > 0 es falsa y el ciclo termina antes de imprimirlo."},{"salida":"20\n10\n5","mensaje":"Te detuviste en 5, pero el ciclo sigue mientras n > 0: 5 / 2 da 2 (sin decimales) y 2 / 2 da 1."}]$t$,
-   7),
+   8),
   (3,
    $t$Potencias de 2$t$,
    $t$Lee n (n ≥ 1) e imprime todas las potencias de 2 que sean menores o iguales a n, una por línea, empezando en 1.
@@ -1641,7 +1641,7 @@ public class Ejercicio {
    $t$[{"entrada":"20","salida":"1\n2\n4\n8\n16","visible":true},{"entrada":"1","salida":"1","visible":false},{"entrada":"64","salida":"1\n2\n4\n8\n16\n32\n64","visible":false},{"entrada":"100","salida":"1\n2\n4\n8\n16\n32\n64","visible":false}]$t$,
    $t$["while"]$t$,
    $t$[{"salida":"1\n2\n4\n8\n16\n32","mensaje":"Con 64 te faltó el 64. Recuerda que la condición debe incluir el límite: potencia <= n."},{"salida":"2\n4\n8\n16","mensaje":"Te faltó el 1 (2 elevado a 0). Recuerda empezar con potencia = 1 e imprimir antes de multiplicar."}]$t$,
-   8),
+   9),
   (3,
    $t$Invertir un número$t$,
    $t$Lee un número entero n (n > 0) y muestra el número con sus dígitos al revés.
@@ -1683,7 +1683,7 @@ public class Ejercicio {
    $t$[{"entrada":"1234","salida":"4321","visible":true},{"entrada":"7","salida":"7","visible":false},{"entrada":"1000","salida":"1","visible":false},{"entrada":"90210","salida":"1209","visible":false}]$t$,
    $t$["while"]$t$,
    $t$[{"salida":"4\n3\n2\n1","mensaje":"Los dígitos están bien, pero imprimiste uno por línea. Recuerda que hay que ARMAR un solo número: invertido = invertido * 10 + digito, y se imprime al final."},{"salida":"10","mensaje":"Sumaste los dígitos (1+2+3+4 = 10). Para invertir, multiplica por 10 antes de sumar: invertido = invertido * 10 + digito."},{"salida":"0","mensaje":"Salió 0: revisa que dentro del ciclo actualices invertido con invertido * 10 + digito y que el resultado se imprima DESPUÉS del ciclo."}]$t$,
-   9),
+   11),
   (3,
    $t$Secuencia de Collatz$t$,
    $t$Empieza con un número n (n ≥ 1). Mientras n no sea 1: si n es par, divídelo entre 2; si es impar, conviértelo en 3·n + 1.
@@ -1740,7 +1740,7 @@ public class Ejercicio {
    $t$[{"entrada":"6","salida":"6\n3\n10\n5\n16\n8\n4\n2\n1\nPasos: 8","visible":true},{"entrada":"1","salida":"1\nPasos: 0","visible":false},{"entrada":"3","salida":"3\n10\n5\n16\n8\n4\n2\n1\nPasos: 7","visible":false},{"entrada":"7","salida":"7\n22\n11\n34\n17\n52\n26\n13\n40\n20\n10\n5\n16\n8\n4\n2\n1\nPasos: 16","visible":false}]$t$,
    $t$["while","if"]$t$,
    $t$[{"salida":"3\n10\n5\n16\n8\n4\n2\n1\nPasos: 8","mensaje":"Te faltó imprimir el número inicial. Recuerda mostrar n una vez ANTES de empezar el ciclo."},{"salida":"6\n3\n10\n5\n16\n8\n4\n2\nPasos: 7","mensaje":"Te faltó el 1 final. Recuerda imprimir n justo después de cambiarlo, dentro del ciclo."},{"salida":"6\n3\n10\n5\n16\n8\n4\n2\n1\nPasos: 9","mensaje":"Contaste un paso de más. Los pasos son los cambios de n (las vueltas del while), no la cantidad de números impresos."}]$t$,
-   10),
+   12),
   (3,
    $t$Número palíndromo$t$,
    $t$Un número es palíndromo si se lee igual al derecho y al revés (121, 1221, 7). Lee n (n ≥ 0) y muestra exactamente una de estas frases:
@@ -1784,7 +1784,7 @@ public class Ejercicio {
    $t$[{"entrada":"121","salida":"Es palíndromo","visible":true},{"entrada":"123","salida":"No es palíndromo","visible":false},{"entrada":"7","salida":"Es palíndromo","visible":false},{"entrada":"1221","salida":"Es palíndromo","visible":false},{"entrada":"10","salida":"No es palíndromo","visible":false}]$t$,
    $t$["while","if"]$t$,
    $t$[{"patron":"invertido\\s*==\\s*n\\b","mensaje":"Comparaste con n, pero el ciclo ya lo dejó en 0. Recuerda guardar una copia ANTES del ciclo (int original = n;) y comparar con ella."},{"salida":"Es palindromo","mensaje":"Revisa la tilde: el texto exacto es \"Es palíndromo\" (con í). Recuerda que la salida debe ser idéntica, letra por letra."}]$t$,
-   11),
+   13),
   (4,
    $t$Bajando de a dos$t$,
    $t$¿Qué imprime este código?
@@ -2004,7 +2004,7 @@ for (int fila = 3; fila >= 1; fila--) {
    null,
    null,
    $t$[{"salida":"*\n**\n***","mensaje":"La figura quedó al derecho. Recuerda que fila empieza en 3 y baja (fila--): la primera fila tiene 3 asteriscos."},{"salida":"******","mensaje":"Pusiste todo en una línea. Recuerda que el println() de afuera se ejecuta al terminar cada fila."},{"salida":"***\n***\n***","mensaje":"Recuerda que el ciclo interno llega hasta col <= fila, y fila cambia en cada vuelta: 3, 2, 1."}]$t$,
-   9),
+   7),
   (5,
    $t$Suma hasta un negativo$t$,
    $t$Lee n y luego n números. Súmalos en orden, pero si aparece un número negativo, detente de inmediato (sin sumarlo) usando break. Muestra:
@@ -2051,7 +2051,7 @@ public class Ejercicio {
    $t$[{"entrada":"5\n3 8 -2 4 1","salida":"Suma = 11","visible":true},{"entrada":"3\n1 2 3","salida":"Suma = 6","visible":false},{"entrada":"4\n-1 5 5 5","salida":"Suma = 0","visible":false},{"entrada":"2\n0 -9","salida":"Suma = 0","visible":false}]$t$,
    $t$["for","break"]$t$,
    $t$[{"salida":"Suma = 16","mensaje":"Saltaste el negativo pero seguiste sumando los demás (eso hace continue). Recuerda que break TERMINA el ciclo completo."},{"salida":"Suma = 14","mensaje":"Sumaste también el negativo. Recuerda poner el if con break ANTES de la suma."},{"salida":"Suma = 9","mensaje":"Sumaste el negativo y luego cortaste. Recuerda poner el if (x < 0) break; ANTES de suma += x."}]$t$,
-   10),
+   8),
   (5,
    $t$Números primos hasta n$t$,
    $t$Un número primo es mayor que 1 y solo se divide entre 1 y sí mismo (2, 3, 5, 7, 11…). Lee n e imprime todos los primos desde 2 hasta n, uno por línea. Si no hay ninguno, imprime:
@@ -2196,7 +2196,73 @@ public class Ejercicio {
    $t$[{"entrada":"4","salida":"#.#.\n.#.#\n#.#.\n.#.#","visible":true},{"entrada":"1","salida":"#","visible":false},{"entrada":"3","salida":"#.#\n.#.\n#.#","visible":false},{"entrada":"5","salida":"#.#.#\n.#.#.\n#.#.#\n.#.#.\n#.#.#","visible":false}]$t$,
    $t$["for","if"]$t$,
    $t$[{"salida":"#.#.\n#.#.\n#.#.\n#.#.","mensaje":"Todas las filas empiezan igual. Recuerda que el patrón depende de fila Y columna: usa (fila + col) % 2."},{"salida":".#.#\n#.#.\n.#.#\n#.#.","mensaje":"Quedó invertido: la primera casilla debe ser #. Revisa que (fila + col) % 2 == 0 imprima #."},{"salida":"# . # .\n. # . #\n# . # .\n. # . #","mensaje":"Sobran los espacios entre casillas. Recuerda imprimir solo \"#\" o \".\", sin espacio."}]$t$,
-   13)
+   13),
+  (3,
+   $t$Lo que hace avanzar el while$t$,
+   $t$Este ciclo debería imprimir 3, 2 y 1, pero le falta una línea: así como está, nunca termina.
+
+int n = 3;
+while (n > 0) {
+    System.out.println(n);
+    // falta una línea
+}
+
+¿Qué instrucción falta donde dice "falta una línea"? Escríbela tal como iría en el código.$t$,
+   'respuesta_corta',
+   'facil',
+   30,
+   null,
+   $t$n--;|n--|n = n - 1;|n = n - 1|n -= 1;|n -= 1|--n;|--n$t$,
+   $t$["Para que la condición n > 0 deje de cumplirse, n tiene que cambiar.","Dentro del ciclo hay que restarle 1 a n."]$t$,
+   $t$Un while solo termina si algo DENTRO del ciclo cambia la variable de la condición. Si n nunca baja, n > 0 siempre es verdadera y el programa se queda dando vueltas.$t$,
+   null,
+   null,
+   $t$[]$t$,
+   $t$[{"respuesta":"n++;|n++|n = n + 1;|n += 1","mensaje":"Con n++ el número CRECE y n > 0 nunca se vuelve falsa: el ciclo no terminaría nunca. Recuerda que la cuenta va hacia abajo: n--."},{"respuesta":"System.out.println(n);|System.out.println(n)","mensaje":"Eso imprime otra vez, pero no cambia n. Lo que falta es restarle 1 para acercarse a la condición: n--."},{"respuesta":"n = 0;|n = 0|n=0","mensaje":"Así el ciclo daría una sola vuelta y no imprimiría el 2 ni el 1. Recuerda bajar de a uno: n--."},{"respuesta":"break;|break","mensaje":"break corta el ciclo de golpe en la primera vuelta. Recuerda que aquí el ciclo debe terminar solo, cuando n llegue a 0: n--."}]$t$,
+   3),
+  (3,
+   $t$Contar hasta n con while$t$,
+   $t$Lee un número n y usa un ciclo while para imprimir los números del 1 hasta n, uno por línea.
+
+Ejemplo: si la entrada es 4, la salida es
+1
+2
+3
+4$t$,
+   'codigo',
+   'facil',
+   30,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int i = 1;
+        while (i <= n) {
+            System.out.println(i);
+            i++;
+        }
+    }
+}$t$,
+   $t$["En el while las tres partes van separadas: el contador se crea ANTES (int i = 1;).","La condición va en el while: while (i <= n)","El aumento va DENTRO del ciclo: i++;"]$t$,
+   $t$Lo que el for junta en una línea, el while lo pide en tres lugares: crear el contador antes, comparar en la condición y aumentarlo dentro del ciclo.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int i = 1;
+        // TODO: imprime del 1 hasta n con un ciclo while (atajo: escribe while y presiona Tab)
+
+    }
+}$t$,
+   $t$[{"entrada":"4","salida":"1\n2\n3\n4","visible":true},{"entrada":"1","salida":"1","visible":false},{"entrada":"7","salida":"1\n2\n3\n4\n5\n6\n7","visible":false}]$t$,
+   $t$["while"]$t$,
+   $t$[{"patron":"while\\s*\\(\\s*i\\s*<\\s*n\\s*\\)","mensaje":"Con i < n no se imprime el último número: para n = 4 llegarías hasta el 3. Recuerda que la condición es i <= n."},{"salida":"0\n1\n2\n3","mensaje":"Empezaste en 0. Recuerda que la cuenta empieza en 1: int i = 1;"},{"patron":"i\\s*<=?\\s*4\\s*\\)","mensaje":"Usaste el 4 del ejemplo en la condición. Recuerda que n cambia en cada prueba: hay que comparar con n, no con 4."}]$t$,
+   4),
 ) as e(modulo_orden, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion, pistas, explicacion,
        codigo_inicial, casos, requiere, errores, orden)
 join public.modulo m on m.orden = e.modulo_orden

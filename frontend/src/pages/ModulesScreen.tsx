@@ -6,6 +6,15 @@ import type { ModuloListado } from '@/types/api'
 import { DIFICULTAD_MODULO, estiloModulo, formatoXp } from '@/utils/disenio'
 
 const CHIPS_VISIBLES = 4
+const PROGRESO_PARA_DESBLOQUEAR = 50
+
+// Cuántas lecciones o ejercicios le faltan al módulo anterior para llegar al 50 % y abrir este.
+// El progreso cuenta lecciones y ejercicios por igual (backend: utils/modulos.js).
+function faltanParaAbrir(anterior: ModuloListado) {
+  const total = anterior.total_ejercicios + anterior.total_lecciones
+  const hechos = anterior.ejercicios_resueltos + anterior.lecciones_completadas
+  return Math.max(0, Math.ceil((total * PROGRESO_PARA_DESBLOQUEAR) / 100) - hechos)
+}
 
 // Lleva a la primera lección pendiente del módulo (o a la primera si ya terminó todas).
 function destino(m: ModuloListado): string | null {
@@ -44,6 +53,10 @@ export default function ModulesScreen() {
         {modulos?.map((mod, idx) => {
           const { icono, color } = estiloModulo(mod.orden)
           const siguiente = modulos[idx + 1]
+          const anterior = modulos[idx - 1]
+          // Solo el primer módulo bloqueado explica qué falta; los demás solo dicen de quién dependen,
+          // para no repetir cuatro veces la misma frase.
+          const esElSiguienteBloqueado = mod.bloqueado && Boolean(anterior) && !anterior.bloqueado
           const dif = DIFICULTAD_MODULO[mod.dificultad] ?? DIFICULTAD_MODULO.basico
           const hechas = mod.lecciones.filter((l) => l.completada).length
           const ir = destino(mod)
@@ -82,14 +95,21 @@ export default function ModulesScreen() {
               <div className="min-w-0 flex-1">
               <button
                 className="card-border w-full p-5 text-left"
-                style={{ cursor: mod.bloqueado ? 'not-allowed' : 'pointer', opacity: mod.bloqueado ? 0.5 : 1, border: `1px solid ${color}30` }}
+                /* Bloqueado se ve apagado, pero legible: a 0.5 el texto quedaba casi ilegible. */
+                style={{ cursor: mod.bloqueado ? 'not-allowed' : 'pointer', opacity: mod.bloqueado ? 0.78 : 1, border: `1px solid ${color}${mod.bloqueado ? '1a' : '30'}` }}
                 onClick={() => !mod.bloqueado && ir && navigate(ir)}
                 aria-disabled={mod.bloqueado}
                 title={mod.bloqueado ? 'Completa al menos el 50 % del módulo anterior para desbloquearlo' : undefined}
               >
                 <div className="mb-3 flex flex-col items-start justify-between gap-3 sm:flex-row sm:gap-4">
                   <div className="flex min-w-0 items-center gap-3">
-                    <span style={{ fontSize: 28 }} aria-hidden="true">
+                    {/* Ficha del mismo tamaño para todos: los emojis traen su propio fondo y los
+                        símbolos (∞) no, así que sin esto unos módulos se veían con recuadro y otros no. */}
+                    <span
+                      className="flex shrink-0 items-center justify-center rounded-2xl"
+                      style={{ width: 46, height: 46, fontSize: 22, background: `${color}1a`, border: `1px solid ${color}33` }}
+                      aria-hidden="true"
+                    >
                       {icono}
                     </span>
                     <div>
@@ -118,8 +138,12 @@ export default function ModulesScreen() {
                 </div>
 
                 {mod.bloqueado ? (
-                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                    🔒 Completa al menos el 50 % del módulo anterior para desbloquearlo.
+                  <p className="text-xs" style={{ color: esElSiguienteBloqueado ? '#fdba74' : 'var(--color-muted)' }}>
+                    {esElSiguienteBloqueado
+                      ? `🔒 Se abre cuando «${anterior.titulo}» llegue al 50 %: te faltan ${faltanParaAbrir(anterior)} ${
+                          faltanParaAbrir(anterior) === 1 ? 'lección o ejercicio' : 'lecciones o ejercicios'
+                        }.`
+                      : `🔒 Se abre después de «${anterior.titulo}».`}
                   </p>
                 ) : (
                   <>

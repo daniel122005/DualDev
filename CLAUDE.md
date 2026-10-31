@@ -14,7 +14,7 @@ Plataforma educativa de Java (ciclos `for`, `while`, `do-while`) para estudiante
 Scripts reales de cada `package.json`:
 
 - Frontend (`cd frontend`): `npm run dev` (http://localhost:5173), `npm run build`, `npm run lint` (oxlint), `npm run preview`
-- Backend (`cd backend`): `npm run dev` (node --watch, http://localhost:4000), `npm start`, `npm test` (node --test; 100 pruebas, 2 específicas de Linux quedan en `skip` en Windows: utilidades, ejecutor Java real, análisis "tono profe", configuración del ejecutor, limitador, caché), `npm run test:e2e` (con el backend corriendo: recorre RF-01..RF-12, seguridad, puntos duplicados con concurrencia y tiempos contra Supabase real; crea y borra estudiantes `dualdev.e2e.*`)
+- Backend (`cd backend`): `npm run dev` (node --watch, http://localhost:4000), `npm start`, `npm test` (node --test; 104 pruebas, 2 específicas de Linux quedan en `skip` en Windows: utilidades, ejecutor Java real, análisis "tono profe", configuración del ejecutor, limitador, caché), `npm run test:e2e` (con el backend corriendo: recorre RF-01..RF-12, seguridad, puntos duplicados con concurrencia y tiempos contra Supabase real; crea y borra estudiantes `dualdev.e2e.*`)
 
 Backend en ESM, Express 5. Lee `backend/.env` con `--env-file-if-exists` (no usa dotenv). Alias `@` → `frontend/src`.
 
