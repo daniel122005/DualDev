@@ -7,9 +7,9 @@ Todo en planes gratis y sin tarjeta:
 | Frontend | Vercel (Hobby) | `https://<proyecto>.vercel.app` |
 | Backend + Java | Render (Free, Docker) | `https://dualdev-api.onrender.com` |
 | BD + Auth | Supabase (Free) | la de siempre |
-| Mantener despierto | cron-job.org | — |
+| Mantener despierto | (ninguno: ver paso 5) | — |
 
-Orden: **Render → Vercel → volver a Render (CORS) → Supabase → cron-job.org**.
+Orden: **Render → Vercel → volver a Render (CORS) → Supabase**. El paso 5 (mantenerlo despierto) es opcional y hoy NO está hecho.
 Ten a mano los valores de `backend/.env` y `frontend/.env` (cópialos de ahí, **nunca** los subas a GitHub).
 
 ## 1. Backend en Render
@@ -48,9 +48,11 @@ Dashboard → **Authentication → URL Configuration**:
 - **Site URL:** tu URL de Vercel.
 - **Redirect URLs:** añade tu URL de Vercel.
 
-## 5. Mantenerlo despierto (cron-job.org)
+## 5. Mantenerlo despierto (OPCIONAL · hoy NO está hecho)
 
-Sin esto, Render apaga el backend tras 15 min sin visitas y Supabase pausa el proyecto tras ~7 días sin actividad.
+Sin esto, Render apaga el backend tras 15 min sin visitas: la primera petición después tarda ~50 s (las siguientes vuelven a ir rápido). Supabase pausa el proyecto tras ~7 días SIN NINGUNA actividad, cosa que no pasa mientras los estudiantes entren.
+
+**Estado (2026-10-30): no está montado**, por decisión del usuario (no quiere abrir cuenta en cron-job.org). Se asume el arranque lento de la primera visita; a cambio no hay riesgo de pasarse de las 750 horas gratis de Render. Si se quiere montar sin crear cuentas nuevas, la alternativa es un workflow programado de GitHub Actions en este mismo repositorio (al ser público, Actions es gratis) que llame a `/api/health`.
 
 1. Regístrate gratis en <https://cron-job.org>.
 2. **Create cronjob**:
