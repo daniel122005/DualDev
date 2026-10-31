@@ -146,6 +146,7 @@ export default function FeedbackView({
   onReintentar,
   accionExito,
   accionFallo,
+  enPanel = false,
 }: {
   resultado: ResultadoEnvio
   tipo: TipoEjercicio
@@ -155,6 +156,9 @@ export default function FeedbackView({
   onReintentar: () => void
   accionExito: Accion
   accionFallo: Accion
+  // true: va dentro de la columna de la práctica (el estudiante no pierde de vista el enunciado,
+  // la lista de ejercicios ni el avance del módulo). false: ocupa la página, como en los retos.
+  enPanel?: boolean
 }) {
   const ok = resultado.correcto
   const esCodigo = tipo === 'codigo'
@@ -163,7 +167,7 @@ export default function FeedbackView({
   const recuerda = resultado.diagnostico?.recuerda ?? []
 
   return (
-    <div className="mx-auto max-w-3xl p-6" aria-live="polite">
+    <div className={enPanel ? '' : 'mx-auto max-w-3xl p-6'} aria-live="polite">
       {/* Banner del resultado */}
       <div
         className="relative mb-6 overflow-hidden rounded-2xl p-6 text-center"
@@ -186,8 +190,8 @@ export default function FeedbackView({
           }}
         />
         <div className="relative z-10">
-          <div style={{ fontSize: 64, marginBottom: 8 }} aria-hidden="true">
-            {ok ? '🎉' : '😅'}
+          <div style={{ fontSize: enPanel ? 48 : 64, marginBottom: 8 }} aria-hidden="true">
+            {ok ? '🎉' : '🧐'}
           </div>
           <h1 className="font-display mb-2 text-3xl font-black" style={{ color: ok ? '#1ed48a' : '#fb7185' }}>
             {ok ? '¡Correcto!' : 'Casi lo logras'}
@@ -195,31 +199,39 @@ export default function FeedbackView({
           <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
             {resultado.feedback}
           </p>
-          {ok && (
-            <div className="mt-4 flex flex-wrap justify-center gap-4">
-              {[
-                {
-                  icon: '⚡',
-                  label: 'XP ganados',
-                  val: resultado.puntos_otorgados > 0 ? `+${formatoXp(resultado.puntos_otorgados)} XP` : 'Ya resuelto',
-                  color: '#fbbf24',
-                },
-                ...(esCodigo
-                  ? [{ icon: '🎯', label: 'Casos', val: `${superados}/${resultado.casos.length}`, color: '#1ed48a' }]
-                  : [{ icon: '🎯', label: 'Intentos', val: String(resultado.intentos), color: '#1ed48a' }]),
-                { icon: '⏱', label: 'Tiempo', val: formatoDuracion(duracionSeg), color: '#7af0b4' },
-              ].map((s) => (
-                <div key={s.label} className="rounded-xl px-4 py-2" style={{ background: `${s.color}18`, border: `1px solid ${s.color}44` }}>
-                  <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                    {s.icon} {s.label}
-                  </p>
-                  <p className="font-display text-lg font-black" style={{ color: s.color }}>
-                    {s.val}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            {(ok
+              ? [
+                  {
+                    icon: '⚡',
+                    label: 'XP ganados',
+                    val: resultado.puntos_otorgados > 0 ? `+${formatoXp(resultado.puntos_otorgados)} XP` : 'Ya resuelto',
+                    color: '#fbbf24',
+                  },
+                  ...(esCodigo
+                    ? [{ icon: '🎯', label: 'Casos', val: `${superados}/${resultado.casos.length}`, color: '#1ed48a' }]
+                    : [{ icon: '🎯', label: 'Intentos', val: String(resultado.intentos), color: '#1ed48a' }]),
+                  { icon: '⏱', label: 'Tiempo', val: formatoDuracion(duracionSeg), color: '#7af0b4' },
+                ]
+              : [
+                  // Al fallar también se muestran: saber en qué intento vas quita la sensación de estar perdido.
+                  { icon: '↻', label: 'Intento', val: String(resultado.intentos), color: '#fbbf24' },
+                  ...(esCodigo && resultado.casos.length
+                    ? [{ icon: '🎯', label: 'Casos superados', val: `${superados}/${resultado.casos.length}`, color: '#7af0b4' }]
+                    : []),
+                  { icon: '⏱', label: 'Tiempo', val: formatoDuracion(duracionSeg), color: '#7af0b4' },
+                ]
+            ).map((s) => (
+              <div key={s.label} className="rounded-xl px-4 py-2" style={{ background: `${s.color}18`, border: `1px solid ${s.color}44` }}>
+                <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
+                  {s.icon} {s.label}
+                </p>
+                <p className="font-display text-lg font-black" style={{ color: s.color }}>
+                  {s.val}
+                </p>
+              </div>
+            ))}
+          </div>
           <LogrosNuevos logros={resultado.logros_nuevos ?? []} />
           {ok && resultado.ya_resuelto && (
             <p className="mt-3 text-xs" style={{ color: 'var(--color-muted)' }}>
@@ -319,18 +331,27 @@ export default function FeedbackView({
         </div>
       )}
 
+      {/* Al fallar, lo que se espera del estudiante es volver a intentarlo: ese es el botón principal,
+          y repasar la lección queda como alternativa. Al acertar, seguir adelante. */}
       <div className="flex flex-wrap gap-3">
-        <button className="font-display flex-1 rounded-xl py-3 text-sm font-bold" style={BOTON_SECUNDARIO} onClick={onReintentar}>
-          {ok ? `← Volver al ${nombre}` : '↺ Intentar de nuevo'}
-        </button>
         {ok ? (
-          <button className="btn-primary flex-1 py-3 text-sm" onClick={accionExito.onClick}>
-            {accionExito.texto}
-          </button>
+          <>
+            <button className="font-display flex-1 rounded-xl py-3 text-sm font-bold" style={BOTON_SECUNDARIO} onClick={onReintentar}>
+              ← Volver al {nombre}
+            </button>
+            <button className="btn-primary flex-1 py-3 text-sm" onClick={accionExito.onClick}>
+              {accionExito.texto}
+            </button>
+          </>
         ) : (
-          <button className="btn-lime flex-1 py-3 text-sm" onClick={accionFallo.onClick}>
-            {accionFallo.texto}
-          </button>
+          <>
+            <button className="font-display flex-1 rounded-xl py-3 text-sm font-bold" style={BOTON_SECUNDARIO} onClick={accionFallo.onClick}>
+              {accionFallo.texto}
+            </button>
+            <button className="btn-primary flex-1 py-3 text-sm" onClick={onReintentar}>
+              ↺ Intentar de nuevo
+            </button>
+          </>
         )}
       </div>
     </div>

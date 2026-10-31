@@ -13,9 +13,9 @@ import {
 } from '@/utils/retroalimentacion'
 
 const ESTADO: Record<EstadoEjercicio, { texto: string; color: string; icono: string; accion: string }> = {
-  resuelto: { texto: 'Resuelto', color: '#1ed48a', icono: '✓', accion: 'Ver' },
-  intentado: { texto: 'Por corregir', color: '#fbbf24', icono: '↻', accion: 'Reintentar' },
-  pendiente: { texto: 'Sin intentar', color: '#84b9a2', icono: '○', accion: 'Empezar' },
+  resuelto: { texto: 'Resuelto', color: '#1ed48a', icono: '✓', accion: 'Ver mi respuesta →' },
+  intentado: { texto: 'Por corregir', color: '#fbbf24', icono: '↻', accion: 'Seguir intentando →' },
+  pendiente: { texto: 'Sin intentar', color: '#84b9a2', icono: '○', accion: 'Empezar →' },
 }
 
 const TIPO_TEXTO = { seleccion: 'Selección', respuesta_corta: 'Respuesta corta', salida: 'Predecir salida', codigo: 'Código Java' } as const
@@ -242,9 +242,15 @@ export default function ModuleSummaryScreen() {
                           {TIPO_TEXTO[e.tipo]} · <span style={{ color: dif.color }}>{dif.etiqueta}</span> · {e.puntos} XP
                         </span>
                       </span>
-                      <span className="shrink-0 text-xs font-bold" style={{ color: est.color }}>
-                        {est.texto}
-                        <span className="sr-only">. {est.accion}</span>
+                      <span className="shrink-0 text-right">
+                        <span className="block text-xs font-bold" style={{ color: est.color }}>
+                          {est.texto}
+                        </span>
+                        {/* Visible, no solo para lectores de pantalla: desde aquí se vuelve al
+                            ejercicio y, si ya está resuelto, se ve la respuesta que diste. */}
+                        <span className="block text-[11px]" style={{ color: '#7af0b4' }}>
+                          {est.accion}
+                        </span>
                       </span>
                     </Link>
                   </li>

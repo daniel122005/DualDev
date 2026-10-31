@@ -158,30 +158,10 @@ export default function PracticeScreen() {
   }
   if (!ejercicio) return <div className="mx-auto max-w-5xl p-6" style={{ color: 'var(--color-muted)' }}>Cargando…</div>
 
-  if (resultado) {
-    const lista = ejercicio.ejercicios_del_modulo
-    const idx = lista.findIndex((e) => e.id_ejercicio === idEjercicio)
-    const siguiente = [...lista.slice(idx + 1), ...lista.slice(0, idx)].find((e) => !e.resuelto)
-    return (
-      <FeedbackView
-        resultado={resultado}
-        tipo={ejercicio.tipo}
-        nombre="ejercicio"
-        respuestaEnviada={enviado.texto}
-        duracionSeg={enviado.segundos}
-        onReintentar={() => setResultado(null)}
-        accionExito={
-          siguiente
-            ? { texto: 'Siguiente ejercicio →', onClick: () => navigate(`/practica/${siguiente.id_ejercicio}`) }
-            : { texto: 'Ver resumen del módulo 🎉', onClick: () => navigate(`/modulos/${ejercicio.modulo.id_modulo}/resumen`) }
-        }
-        accionFallo={{
-          texto: 'Repasar la lección →',
-          onClick: () => navigate(ejercicio.primera_leccion ? `/lecciones/${ejercicio.primera_leccion}` : '/modulos'),
-        }}
-      />
-    )
-  }
+  // El siguiente ejercicio sin resolver, empezando por el que sigue a este (da la vuelta a la lista).
+  const lista = ejercicio.ejercicios_del_modulo
+  const idxActual = lista.findIndex((e) => e.id_ejercicio === idEjercicio)
+  const siguiente = [...lista.slice(idxActual + 1), ...lista.slice(0, idxActual)].find((e) => !e.resuelto)
 
   const dif = DIFICULTAD_EJERCICIO[ejercicio.dificultad]
   const esCodigo = ejercicio.tipo === 'codigo'
@@ -272,59 +252,84 @@ export default function PracticeScreen() {
                 ))}
               </div>
             )}
-            {esCodigo && ejercicio.total_casos > ejercicio.ejemplos.length && (
+            {esCodigo && ejercicio.total_casos > ejercicio.ejemplos.length && !resultado && (
               <p className="mt-3 text-xs" style={{ color: 'var(--color-muted)' }}>
                 Al enviar, tu programa se probará con {ejercicio.total_casos} casos (algunos ocultos).
               </p>
             )}
           </div>
 
-          {ejercicio.resuelto && ejercicio.mi_respuesta && (
-            <MiRespuesta
+          {/* La retroalimentación va AQUÍ, no en una pantalla aparte: el enunciado, la lista de
+              ejercicios y el avance del módulo siguen a la vista mientras la lees. */}
+          {resultado ? (
+            <FeedbackView
+              enPanel
+              resultado={resultado}
               tipo={ejercicio.tipo}
-              respuesta={ejercicio.mi_respuesta}
-              explicacion={ejercicio.explicacion}
-              onCargar={esCodigo ? () => cambiarCodigo(ejercicio.mi_respuesta ?? '') : undefined}
-            />
-          )}
-
-          {esCodigo ? (
-            <CodeEditor
-              valor={codigo}
-              onChange={cambiarCodigo}
-              onReset={reiniciarCodigo}
-              archivo={archivoJava(codigo)}
-              lineasError={erroresEnEditor}
-              deshabilitado={ocupado}
+              nombre="ejercicio"
+              respuestaEnviada={enviado.texto}
+              duracionSeg={enviado.segundos}
+              onReintentar={() => setResultado(null)}
+              accionExito={
+                siguiente
+                  ? { texto: 'Siguiente ejercicio →', onClick: () => navigate(`/practica/${siguiente.id_ejercicio}`) }
+                  : { texto: 'Ver resumen del módulo 🎉', onClick: () => navigate(`/modulos/${ejercicio.modulo.id_modulo}/resumen`) }
+              }
+              accionFallo={{
+                texto: 'Repasar la lección →',
+                onClick: () => navigate(ejercicio.primera_leccion ? `/lecciones/${ejercicio.primera_leccion}` : '/modulos'),
+              }}
             />
           ) : (
-            <RespuestaSimple
-              tipo={ejercicio.tipo}
-              opciones={ejercicio.opciones}
-              grupo={`ejercicio-${ejercicio.id_ejercicio}`}
-              valor={respuesta}
-              onChange={setRespuesta}
-            />
+            <>
+              {ejercicio.resuelto && ejercicio.mi_respuesta && (
+                <MiRespuesta
+                  tipo={ejercicio.tipo}
+                  respuesta={ejercicio.mi_respuesta}
+                  explicacion={ejercicio.explicacion}
+                  onCargar={esCodigo ? () => cambiarCodigo(ejercicio.mi_respuesta ?? '') : undefined}
+                />
+              )}
+
+              {esCodigo ? (
+                <CodeEditor
+                  valor={codigo}
+                  onChange={cambiarCodigo}
+                  onReset={reiniciarCodigo}
+                  archivo={archivoJava(codigo)}
+                  lineasError={erroresEnEditor}
+                  deshabilitado={ocupado}
+                />
+              ) : (
+                <RespuestaSimple
+                  tipo={ejercicio.tipo}
+                  opciones={ejercicio.opciones}
+                  grupo={`ejercicio-${ejercicio.id_ejercicio}`}
+                  valor={respuesta}
+                  onChange={setRespuesta}
+                />
+              )}
+
+              {error && (
+                <p role="alert" className="text-sm" style={{ color: 'var(--color-red)' }}>
+                  {error}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-3">
+                {esCodigo && (
+                  <button className="btn-lime flex flex-1 items-center justify-center gap-2 py-3 text-sm" onClick={ejecutar} disabled={ocupado || !listoParaEnviar}>
+                    {ejecutando ? <span className="font-mono">Ejecutando...</span> : <>▶ Ejecutar código</>}
+                  </button>
+                )}
+                <button className="btn-primary flex-1 py-3 text-sm" onClick={enviar} disabled={ocupado || !listoParaEnviar}>
+                  {enviando ? 'Evaluando…' : 'Enviar respuesta ✓'}
+                </button>
+              </div>
+
+              {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} archivo={archivoJava(codigo)} onLimpiar={() => setEjecucion(null)} />}
+            </>
           )}
-
-          {error && (
-            <p role="alert" className="text-sm" style={{ color: 'var(--color-red)' }}>
-              {error}
-            </p>
-          )}
-
-          <div className="flex flex-wrap gap-3">
-            {esCodigo && (
-              <button className="btn-lime flex flex-1 items-center justify-center gap-2 py-3 text-sm" onClick={ejecutar} disabled={ocupado || !listoParaEnviar}>
-                {ejecutando ? <span className="font-mono">Ejecutando...</span> : <>▶ Ejecutar código</>}
-              </button>
-            )}
-            <button className="btn-primary flex-1 py-3 text-sm" onClick={enviar} disabled={ocupado || !listoParaEnviar}>
-              {enviando ? 'Evaluando…' : 'Enviar respuesta ✓'}
-            </button>
-          </div>
-
-          {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} archivo={archivoJava(codigo)} onLimpiar={() => setEjecucion(null)} />}
         </div>
       </div>
     </div>
