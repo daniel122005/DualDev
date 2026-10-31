@@ -389,7 +389,7 @@ npm run dev               # http://localhost:5173
 - La protección contra contraseñas filtradas de Supabase requiere el plan Pro.
 
 **Trabajo futuro:**
-- Panel docente: ver el avance del grupo y las autoevaluaciones.
+- Panel docente: ver el avance del grupo (quién va atrasado, qué ejercicios se fallan más) y las autoevaluaciones. **Se evaluó y se dejó fuera del alcance a propósito (2026-10-30)**, por tres razones que conviene explicar en el documento: (1) el curso todavía no empieza, así que el panel se diseñaría adivinando qué necesita ver la docente; (2) lo que ella pidió —ver el avance y la retroalimentación por sección— ya está resuelto en el resumen de módulo; (3) un rol con privilegios sería la única forma de que una cuenta pueda leer los datos de otra, y hoy ni siquiera el ranking expone correos o identificadores, algo que pesa tratándose de estudiantes menores de edad. Mientras tanto, cualquier reporte puntual para la docente se saca directamente de la base de datos.
 - Contenedor aislado por ejecución (VPS con Docker).
 - Más temas (arreglos, métodos) reutilizando la misma estructura de módulos.
 - Recuperación de contraseña y confirmación de correo.
