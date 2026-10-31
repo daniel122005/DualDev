@@ -278,6 +278,22 @@ kbd {
   padding: 4px 10px; border-radius: 8px; background: rgba(251,191,36,0.07); border: 1px dashed rgba(251,191,36,0.25);
   display: inline-block;
 }
+/* Campo donde el estudiante escribe lo que leerá su Scanner antes de ejecutar. */
+.consola-campo-entrada {
+  padding: 10px 16px;
+  background: rgba(251,191,36,0.05);
+  border-bottom: 1px solid rgba(122,240,180,0.1);
+}
+.consola-campo-entrada textarea {
+  display: block; width: 100%; margin-top: 4px; resize: vertical;
+  padding: 8px 10px; border-radius: 10px;
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24;
+  font-size: 13px; line-height: 1.6; white-space: pre; overflow-x: auto;
+}
+.consola-campo-entrada textarea:focus-visible { outline: 2px solid rgba(251,191,36,0.6); outline-offset: 1px; }
+.consola-campo-entrada textarea:disabled { opacity: 0.6; }
+.consola-campo-entrada textarea::placeholder { color: #6b6350; }
+.consola-campo-entrada p { margin-top: 6px; font-family: var(--font-body); }
 .consola-salida { list-style: none; margin: 0; padding: 0; overflow: auto; }
 .consola-salida li { display: flex; gap: 14px; }
 .consola-num { color: #2c5c47; min-width: 18px; text-align: right; user-select: none; font-size: 11px; line-height: 22px; }

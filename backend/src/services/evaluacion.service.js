@@ -182,9 +182,17 @@ export function evaluar(item, respuesta) {
   return item.tipo === 'codigo' ? evaluarCodigo(item, respuesta) : Promise.resolve(evaluarSimple(item, respuesta))
 }
 
-// Corre el programa una vez con la entrada del primer ejemplo visible (botón "Ejecutar código"). No da puntos.
-export async function ejecutarConEjemplo(codigo, casos) {
-  const entrada = casosVisibles(casos)[0]?.entrada ?? ''
+// Qué lee el programa al pulsar "Ejecutar código": lo que el estudiante escribió en la consola
+// (aunque esté vacío: probar sin datos también es una prueba válida) o, si no escribió nada todavía,
+// la entrada del primer ejemplo visible del enunciado.
+export function entradaParaEjecutar(casos, entradaEscrita) {
+  if (typeof entradaEscrita === 'string') return entradaEscrita
+  return casosVisibles(casos)[0]?.entrada ?? ''
+}
+
+// Corre el programa una vez con esa entrada (botón "Ejecutar código"). No da puntos.
+export async function ejecutarConEjemplo(codigo, casos, entradaEscrita) {
+  const entrada = entradaParaEjecutar(casos, entradaEscrita)
   const r = await ejecutarJava(codigo, [{ entrada }])
   const caso = r.casos[0]
   const recuerda =

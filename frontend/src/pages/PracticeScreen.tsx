@@ -57,6 +57,9 @@ export default function PracticeScreen() {
   const [error, setError] = useState<string | null>(null)
   const [resultado, setResultado] = useState<ResultadoEnvio | null>(null)
   const [enviado, setEnviado] = useState({ texto: '', segundos: 0 })
+  // Lo que leerá el Scanner al pulsar "Ejecutar código": empieza con el ejemplo del enunciado y el
+  // estudiante puede cambiarlo para probar con sus propios datos.
+  const [entradaConsola, setEntradaConsola] = useState('')
   // Momento en que se abrió el ejercicio (se fija al cargarlo) para medir la duración del intento.
   const inicio = useRef(0)
 
@@ -69,6 +72,7 @@ export default function PracticeScreen() {
         const miCodigo = ej.tipo === 'codigo' ? ej.mi_respuesta : null
         setCodigo(leerBorrador(ej.id_ejercicio) ?? miCodigo ?? ej.codigo_inicial ?? '')
         setRespuesta(ej.tipo !== 'codigo' ? (ej.mi_respuesta ?? '') : '')
+        setEntradaConsola(ej.ejemplos[0]?.entrada ?? '')
         setEjecucion(null)
         setResultado(null)
         setError(null)
@@ -100,7 +104,7 @@ export default function PracticeScreen() {
       setEjecucion(
         await api<ResultadoEjecucion>('/code/run', {
           method: 'POST',
-          body: JSON.stringify({ codigo, id_ejercicio: idEjercicio }),
+          body: JSON.stringify({ codigo, id_ejercicio: idEjercicio, entrada: entradaConsola }),
         }),
       )
     } catch (e) {
@@ -327,7 +331,18 @@ export default function PracticeScreen() {
                 </button>
               </div>
 
-              {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} archivo={archivoJava(codigo)} onLimpiar={() => setEjecucion(null)} />}
+              {esCodigo && (
+                <Consola
+                  resultado={ejecucion}
+                  ejecutando={ejecutando}
+                  archivo={archivoJava(codigo)}
+                  onLimpiar={() => setEjecucion(null)}
+                  // Solo los ejercicios que leen datos necesitan el campo de entrada.
+                  pideEntrada={Boolean(ejercicio.ejemplos.some((e) => e.entrada))}
+                  entrada={entradaConsola}
+                  onEntrada={setEntradaConsola}
+                />
+              )}
             </>
           )}
         </div>

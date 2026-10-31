@@ -13,6 +13,8 @@ import {
 import { crearEjecutorLocal } from './javaLocal.js'
 
 export const MAX_CODIGO_BYTES = 20 * 1024
+// Entrada que el estudiante escribe a mano para "Ejecutar código" (lo que leerá su Scanner).
+export const MAX_ENTRADA_BYTES = 2 * 1024
 const MAX_EN_COLA = 20
 
 let ejecutor = null

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { MAX_CODIGO_BYTES } from '../runner/index.js'
+import { MAX_CODIGO_BYTES, MAX_ENTRADA_BYTES } from '../runner/index.js'
 import * as desafioService from '../services/desafio.service.js'
 
 const idParam = z.object({ id: z.coerce.number().int().positive() })
@@ -7,7 +7,10 @@ const envioSchema = z.object({
   respuesta: z.string().max(MAX_CODIGO_BYTES, 'La respuesta es demasiado larga.'),
   duracion_seg: z.coerce.number().int().min(0).max(86400).optional(),
 })
-const ejecucionSchema = z.object({ codigo: z.string().max(MAX_CODIGO_BYTES, 'El código es demasiado largo (máximo 20 KB).') })
+const ejecucionSchema = z.object({
+  codigo: z.string().max(MAX_CODIGO_BYTES, 'El código es demasiado largo (máximo 20 KB).'),
+  entrada: z.string().max(MAX_ENTRADA_BYTES, 'La entrada es demasiado larga (máximo 2 KB).').optional(),
+})
 
 const manejar = (fn) => async (req, res, next) => {
   try {

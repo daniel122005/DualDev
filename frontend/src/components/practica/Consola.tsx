@@ -19,11 +19,19 @@ export default function Consola({
   ejecutando,
   archivo = 'Ejercicio',
   onLimpiar,
+  entrada,
+  onEntrada,
+  pideEntrada = false,
 }: {
   resultado: ResultadoEjecucion | null
   ejecutando: boolean
   archivo?: string
   onLimpiar?: () => void
+  // Lo que leerá el Scanner del programa: el estudiante puede escribirlo aquí. Viene con el
+  // ejemplo del enunciado puesto, para que vea de dónde salen los datos y pueda cambiarlos.
+  entrada?: string
+  onEntrada?: (v: string) => void
+  pideEntrada?: boolean
 }) {
   const [copiado, setCopiado] = useState(false)
   const estado = estadoDe(resultado, ejecutando)
@@ -73,6 +81,29 @@ export default function Consola({
           )}
         </div>
       </header>
+
+      {pideEntrada && onEntrada && (
+        <div className="consola-campo-entrada">
+          <label className="font-mono text-xs" htmlFor="entrada-consola" style={{ color: 'var(--color-green-bright)' }}>
+            entrada ›
+          </label>
+          <textarea
+            id="entrada-consola"
+            className="font-mono"
+            rows={Math.min(4, Math.max(1, (entrada ?? '').split('\n').length))}
+            value={entrada ?? ''}
+            onChange={(e) => onEntrada(e.target.value)}
+            disabled={ejecutando}
+            spellCheck={false}
+            placeholder="Escribe aquí lo que leerá tu programa"
+            aria-describedby="ayuda-entrada"
+          />
+          <p id="ayuda-entrada" className="consola-tenue text-[11px]">
+            Esto es lo que lee tu programa con <span className="font-mono">sc.nextInt()</span>: un dato por línea. Cámbialo y vuelve a
+            ejecutar para probar con otros números.
+          </p>
+        </div>
+      )}
 
       <div className="consola-cuerpo font-mono">
         {ejecutando && (

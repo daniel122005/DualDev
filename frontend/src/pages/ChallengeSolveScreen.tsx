@@ -45,6 +45,8 @@ export default function ChallengeSolveScreen() {
   const [error, setError] = useState<string | null>(null)
   const [resultado, setResultado] = useState<ResultadoEnvio | null>(null)
   const [enviado, setEnviado] = useState({ texto: '', segundos: 0 })
+  // Lo que leerá el Scanner al ejecutar: empieza con el ejemplo del reto y se puede cambiar.
+  const [entradaConsola, setEntradaConsola] = useState('')
   const inicio = useRef(0)
   const ahora = useAhora(Boolean(reto?.termina_en))
 
@@ -55,6 +57,7 @@ export default function ChallengeSolveScreen() {
         if (!vigente) return
         setReto(r)
         setCodigo(leerBorrador(r.id_desafio) ?? r.codigo_inicial ?? '')
+        setEntradaConsola(r.ejemplos[0]?.entrada ?? '')
         inicio.current = Date.now()
       })
       .catch((e: Error) => vigente && setErrorCarga(e.message))
@@ -67,7 +70,7 @@ export default function ChallengeSolveScreen() {
     setEjecutando(true)
     setError(null)
     try {
-      setEjecucion(await api<ResultadoEjecucion>(`/challenges/${idReto}/run`, { method: 'POST', body: JSON.stringify({ codigo }) }))
+      setEjecucion(await api<ResultadoEjecucion>(`/challenges/${idReto}/run`, { method: 'POST', body: JSON.stringify({ codigo, entrada: entradaConsola }) }))
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo ejecutar')
     } finally {
@@ -267,7 +270,17 @@ export default function ChallengeSolveScreen() {
             </button>
           </div>
 
-          {esCodigo && <Consola resultado={ejecucion} ejecutando={ejecutando} archivo={archivoJava(codigo)} onLimpiar={() => setEjecucion(null)} />}
+          {esCodigo && (
+            <Consola
+              resultado={ejecucion}
+              ejecutando={ejecutando}
+              archivo={archivoJava(codigo)}
+              onLimpiar={() => setEjecucion(null)}
+              pideEntrada={Boolean(reto.ejemplos.some((e) => e.entrada))}
+              entrada={entradaConsola}
+              onEntrada={setEntradaConsola}
+            />
+          )}
         </div>
       )}
     </div>

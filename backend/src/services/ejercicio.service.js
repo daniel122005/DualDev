@@ -51,11 +51,12 @@ export async function obtenerEjercicio(idUsuario, idEjercicio) {
   }
 }
 
-// "Ejecutar código": compila y corre con la entrada del primer ejemplo visible. No da puntos.
-export async function ejecutarCodigo(idUsuario, { codigo, idEjercicio }) {
+// "Ejecutar código": compila y corre con la entrada que escribió el estudiante (o la del primer
+// ejemplo visible si no escribió ninguna). No da puntos.
+export async function ejecutarCodigo(idUsuario, { codigo, idEjercicio, entrada }) {
   let casos = []
   if (idEjercicio) casos = (await cargarEjercicioAbierto(idUsuario, idEjercicio)).ejercicio.casos_prueba
-  return ejecutarConEjemplo(codigo, casos)
+  return ejecutarConEjemplo(codigo, casos, entrada)
 }
 
 export async function enviarRespuesta(idUsuario, idEjercicio, { respuesta, duracionSeg }) {

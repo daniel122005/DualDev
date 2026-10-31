@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import * as cursoService from '../services/curso.service.js'
 import * as ejercicioService from '../services/ejercicio.service.js'
-import { MAX_CODIGO_BYTES } from '../runner/index.js'
+import { MAX_CODIGO_BYTES, MAX_ENTRADA_BYTES } from '../runner/index.js'
 
 const idParam = z.object({ id: z.coerce.number().int().positive() })
 
@@ -14,6 +14,8 @@ const envioSchema = z.object({
 const ejecucionSchema = z.object({
   codigo: z.string().max(MAX_CODIGO_BYTES, 'El código es demasiado largo (máximo 20 KB).'),
   id_ejercicio: z.coerce.number().int().positive().optional(),
+  // Lo que el estudiante escribe en la consola para que lo lea su Scanner.
+  entrada: z.string().max(MAX_ENTRADA_BYTES, 'La entrada es demasiado larga (máximo 2 KB).').optional(),
 })
 
 const manejar = (fn) => async (req, res, next) => {
@@ -38,5 +40,5 @@ export const enviarRespuesta = manejar((req) => {
 
 export const ejecutarCodigo = manejar((req) => {
   const body = ejecucionSchema.parse(req.body ?? {})
-  return ejercicioService.ejecutarCodigo(req.user.id, { codigo: body.codigo, idEjercicio: body.id_ejercicio })
+  return ejercicioService.ejecutarCodigo(req.user.id, { codigo: body.codigo, idEjercicio: body.id_ejercicio, entrada: body.entrada })
 })

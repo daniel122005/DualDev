@@ -82,10 +82,10 @@ export async function obtenerReto(idUsuario, idDesafio) {
   }
 }
 
-export async function ejecutarReto(idUsuario, idDesafio, { codigo }) {
+export async function ejecutarReto(idUsuario, idDesafio, { codigo, entrada }) {
   const { desafio } = await cargarReto(idUsuario, idDesafio, { paraEnviar: true })
   if (desafio.tipo !== 'codigo') throw new HttpError(400, 'Este reto no es de código.')
-  return ejecutarConEjemplo(codigo, desafio.casos_prueba)
+  return ejecutarConEjemplo(codigo, desafio.casos_prueba, entrada)
 }
 
 export async function enviarReto(idUsuario, idDesafio, { respuesta, duracionSeg }) {
