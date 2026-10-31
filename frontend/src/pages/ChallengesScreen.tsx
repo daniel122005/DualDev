@@ -12,11 +12,28 @@ const BOTON_SECUNDARIO = {
   color: 'var(--color-muted)',
 } as const
 
-// Primera oración/línea del enunciado como descripción corta de la tarjeta.
-function resumen(enunciado: string) {
-  const primera = enunciado.split('\n')[0]
-  return primera.length > 160 ? `${primera.slice(0, 157)}…` : primera
+const esLineaDeCodigo = (l: string) =>
+  /[;{}]\s*$/.test(l) || /^\s*(int|long|double|boolean|char|String|for|while|do|if|else|System\.)\b/.test(l)
+
+// Separa el enunciado en lo que se cuenta y el código que se muestra. Sin esto, los mini-retos
+// ("¿Qué imprime este código?" + el código) se leían todos iguales en la lista, y los demás se
+// cortaban en la primera línea, justo donde empiezan las reglas.
+function partesDelEnunciado(enunciado: string) {
+  const lineas = enunciado.replace(/\r/g, '').split('\n')
+  // El texto va hasta donde empieza el código o el ejemplo de entrada/salida (eso es útil al
+  // resolver el reto, no al elegirlo en la lista).
+  const corte = lineas.findIndex((l) => esLineaDeCodigo(l) || /^ejemplo\b/i.test(l.trim()))
+  const texto = lineas
+    .slice(0, corte === -1 ? lineas.length : corte)
+    .map((l) => l.trim().replace(/^-\s*/, '· '))
+    .filter(Boolean)
+    .join(' ')
+  const inicioCodigo = lineas.findIndex(esLineaDeCodigo)
+  const codigo = inicioCodigo === -1 ? [] : lineas.slice(inicioCodigo).filter((l) => l.trim() !== '')
+  return { texto: texto.length > 160 ? `${texto.slice(0, 157)}…` : texto, codigo }
 }
+
+const LINEAS_VISIBLES = 4
 
 function TarjetaReto({ reto, abierto, onToggle, ahora }: { reto: RetoResumen; abierto: boolean; onToggle: () => void; ahora: number }) {
   const navigate = useNavigate()
@@ -25,6 +42,7 @@ function TarjetaReto({ reto, abierto, onToggle, ahora }: { reto: RetoResumen; ab
   const dif = DIFICULTAD_RETO[reto.dificultad]
   const restante = formatoRestante(reto.termina_en, ahora)
   const completado = reto.estado === 'completado'
+  const { texto, codigo } = partesDelEnunciado(reto.enunciado)
 
   return (
     <div
@@ -57,8 +75,18 @@ function TarjetaReto({ reto, abierto, onToggle, ahora }: { reto: RetoResumen; ab
             {reto.titulo}
           </p>
           <p className="text-sm" style={{ color: 'var(--color-muted)', lineHeight: 1.5 }}>
-            {resumen(reto.enunciado)}
+            {texto}
           </p>
+          {codigo.length > 0 && (
+            <pre
+              className="code-block mt-2 mb-0 text-xs"
+              style={{ padding: '10px 12px', lineHeight: 1.45, color: '#7af0b4' }}
+              aria-label="Código del reto"
+            >
+              {codigo.slice(0, LINEAS_VISIBLES).join('\n')}
+              {codigo.length > LINEAS_VISIBLES ? '\n…' : ''}
+            </pre>
+          )}
         </div>
         <div className="flex shrink-0 items-baseline gap-3 sm:block sm:text-right">
           <p className="font-display text-xl font-black" style={{ color: '#fbbf24' }}>

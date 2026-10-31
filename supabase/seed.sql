@@ -2225,7 +2225,7 @@ for (int i = 1; i <= 100; i++) {
     s += i;
 }
 System.out.println(s);$t$,
-   'salida', 'media', '5050', '["Es la suma de los primeros 100 números.","Truco: 1 + 100 = 101, 2 + 99 = 101… y hay 50 parejas."]', 50, 'mini', 5, null, null, '[]',
+   'salida', 'facil', '5050', '["Es la suma de los primeros 100 números.","Truco: 1 + 100 = 101, 2 + 99 = 101… y hay 50 parejas."]', 50, 'mini', 5, null, null, '[]',
    $e$[
     {"salida":"4950","mensaje":"Te faltó sumar el 100. Recuerda que i <= 100 incluye el 100: 4950 + 100 = 5050."},
     {"salida":"100","mensaje":"Recuerda que s += i va acumulando: s no termina valiendo el último i, sino la suma de todos."}
@@ -2237,7 +2237,7 @@ for (int i = 0; i < 4; i++) {
     if (i % 2 == 0) c++;
 }
 System.out.println(c);$t$,
-   'salida', 'media', '2', '["Escribe los valores de i: 0, 1, 2 y 3.","¿Cuáles de ellos son pares?"]', 50, 'mini', 5, null, null, '[]',
+   'salida', 'facil', '2', '["Escribe los valores de i: 0, 1, 2 y 3.","¿Cuáles de ellos son pares?"]', 50, 'mini', 5, null, null, '[]',
    $e$[
     {"salida":"1","mensaje":"Recuerda que el 0 también es par: 0 % 2 es 0. Entre 0 y 3 los pares son 0 y 2."},
     {"salida":"4","mensaje":"Recuerda que c++ está dentro del if: solo cuenta cuando i es par."},
@@ -2252,7 +2252,7 @@ while (n > 1) {
     n--;
 }
 System.out.println(f);$t$,
-   'salida', 'dificil', '120', '["f *= n es lo mismo que f = f * n.","Multiplica 5 · 4 · 3 · 2."]', 80, 'mini', 5, null, null, '[]',
+   'salida', 'media', '120', '["f *= n es lo mismo que f = f * n.","Multiplica 5 · 4 · 3 · 2."]', 80, 'mini', 5, null, null, '[]',
    $e$[
     {"salida":"20","mensaje":"Recuerda que el ciclo sigue mientras n > 1: multiplica 5, 4, 3 y 2, no solo los dos primeros."},
     {"salida":"14","mensaje":"Recuerda que f *= n MULTIPLICA, no suma: 5 · 4 · 3 · 2 = 120."},
@@ -2269,7 +2269,7 @@ Ejemplo: si las entradas son 1, 2 y 3, la salida es
 Hola
 Adiós
 Fin$t$,
-   'codigo', 'facil',
+   'codigo', 'media',
    $j$import java.util.Scanner;
 
 public class Reto {
@@ -2694,3 +2694,30 @@ insert into public.logro (codigo, nombre, descripcion, tipo_criterio, valor_requ
 on conflict (codigo) do update
   set nombre = excluded.nombre, descripcion = excluded.descripcion, tipo_criterio = excluded.tipo_criterio,
       valor_requerido = excluded.valor_requerido, icono = excluded.icono;
+
+-- ---------------------------------------------------------------------------
+-- Normalización final de saltos de línea
+-- ---------------------------------------------------------------------------
+-- Al pegar este archivo en el editor SQL de Supabase desde Windows, los saltos de línea de los
+-- textos largos (código de ejemplo, enunciados) llegan como CRLF y el \r se queda guardado dentro
+-- del texto. No rompe la evaluación (las comparaciones de salida ya ignoran \r), pero ensucia el
+-- código que ve el estudiante. Esto lo deja limpio sin importar cómo se haya aplicado el archivo.
+update public.contenido
+   set explicacion = replace(explicacion, chr(13), ''),
+       codigo_ejemplo = replace(codigo_ejemplo, chr(13), ''),
+       salida_ejemplo = replace(salida_ejemplo, chr(13), ''),
+       tip = replace(tip, chr(13), '')
+ where position(chr(13) in coalesce(explicacion, '') || coalesce(codigo_ejemplo, '') || coalesce(salida_ejemplo, '') || coalesce(tip, '')) > 0;
+
+update public.ejercicio
+   set enunciado = replace(enunciado, chr(13), ''),
+       codigo_inicial = replace(codigo_inicial, chr(13), ''),
+       solucion_esperada = replace(solucion_esperada, chr(13), ''),
+       explicacion = replace(explicacion, chr(13), '')
+ where position(chr(13) in coalesce(enunciado, '') || coalesce(codigo_inicial, '') || coalesce(solucion_esperada, '') || coalesce(explicacion, '')) > 0;
+
+update public.desafio
+   set enunciado = replace(enunciado, chr(13), ''),
+       codigo_inicial = replace(codigo_inicial, chr(13), ''),
+       solucion_esperada = replace(solucion_esperada, chr(13), '')
+ where position(chr(13) in coalesce(enunciado, '') || coalesce(codigo_inicial, '') || coalesce(solucion_esperada, '')) > 0;
