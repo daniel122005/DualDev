@@ -7,6 +7,8 @@ const schema = z.object({
   SUPABASE_URL: z.string().optional(),
   SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  // Tiempo máximo de cada llamada HTTP a Supabase (las normales tardan 0,1-0,6 s en producción).
+  SUPABASE_TIMEOUT_MS: z.coerce.number().int().min(1_000).max(60_000).default(8_000),
   // Ejecutor de código Java (ver src/runner/index.js):
   //  - "local": desarrollo en el equipo del programador.
   //  - "contenedor": el backend entero corre dentro de una imagen Docker desechable (Render) y los
