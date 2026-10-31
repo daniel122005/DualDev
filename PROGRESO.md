@@ -1,7 +1,7 @@
 # Progreso de DUALDEV
 
 **Archivo único de progreso y pendientes.** El detalle de arquitectura, stack, reglas y estructura de carpetas vive en `CLAUDE.md`; aquí va todo lo demás: qué se hizo, qué se decidió y qué falta.
-Última actualización: **2026-10-27**.
+Última actualización: **2026-10-30**.
 
 ## Dónde vamos
 
@@ -23,7 +23,7 @@ Hecho en el frontend y en `supabase/seed.sql` (sin cambios de backend, porque Re
 - **Consola nueva** (`Consola.tsx`): estado (compilando / sin errores / error de compilación / tiempo agotado), comando `$ java Clase`, entrada visible, salida numerada, copiar y limpiar.
 - **Lecciones con formato** (`TextoLeccion.tsx`): `**negrita**`, `` `código` ``, viñetas, pasos numerados y tablas (para pruebas de escritorio), sin librerías ni HTML crudo.
 - **Contenido:** las 4 lecciones de "Introducción a ciclos" reescritas con ese formato + lección nueva "Prueba de escritorio"; **23 ejercicios nuevos** de más complejidad (33 → 56): factorial con `long`, divisores, mayor/menor con negativos, invertir número, Collatz, palíndromo, adivina el número, centinela -1, cajero con menú, primos, pirámide, tablero, etc. Todas las soluciones se verificaron con el ejecutor Java real (casos visibles y ocultos, código inicial que compila y no resuelve, patrones de error que no se activan con la solución) y el seed completo se aplicó dos veces en PGlite sin error.
-- **Pendiente:** cargar el `seed.sql` en Supabase producción (hasta entonces la app muestra el contenido viejo). Al cargarlo, a 1 módulo del único estudiante real le baja el % por debajo del 50 % y vuelve a bloquear el siguiente hasta que resuelva un par de ejercicios más (medido el 2026-10-27).
+- **Seed aplicado en producción** (verificado el 2026-10-30: 56 ejercicios, 16 lecciones, 5 módulos, 12 retos en Supabase). Al cargarlo, a 1 módulo del único estudiante real le bajó el % por debajo del 50 % y volvió a bloquear el siguiente hasta que resuelva un par de ejercicios más (medido el 2026-10-27).
 
 ### Segunda ronda (2026-10-28)
 - **Ver la respuesta correcta ya dada:** `GET /exercises/:id` devuelve `mi_respuesta` (la última respuesta correcta del propio estudiante, de `intento_ejercicio.respuesta`; nunca la de otro). En Práctica aparece la tarjeta "✓ Tu respuesta correcta" (código resaltado, salida o la opción elegida, con la explicación); en código el editor arranca con ese código (si no hay borrador) y hay botón "Cargar mi código en el editor"; en selección queda marcada la opción.
@@ -31,6 +31,12 @@ Hecho en el frontend y en `supabase/seed.sql` (sin cambios de backend, porque Re
 - **Pruebas:** recorrido de TODO el curso por la API real con un estudiante temporal (5 lecciones por módulo completadas, y en los 56 ejercicios: respuesta incorrecta con retroalimentación, "Ejecutar código" con la solución, acierto con puntos, re-envío sin puntos, `mi_respuesta` correcta) → **56/56, 0 problemas, los 5 módulos al 100 %**. `test:e2e` **37/37**. Barrido en el navegador de Dashboard, Módulos, resúmenes, Práctica, Lecciones, Retos (con editor y consola), Ranking y Perfil: **0 errores de la app en consola**.
 - **Formato en todas las lecciones:** las 11 lecciones de los módulos 2 a 5 también usan pasos, viñetas y tablas (pruebas de escritorio, tabla de `%`, comparativas while/for y while/do-while, break/continue). Código y salida de los ejemplos sin cambios. Aplicado en producción y verificado con huella md5 idéntica al repo en los 5 módulos. Celdas de tabla con letra normal (el código va como chip).
 - Nota de desarrollo: `node --watch` a veces reinicia el backend local en medio de una prueba (solo en desarrollo); si una prueba dice "el backend no responde", repetirla.
+
+### Tercera ronda (2026-10-30)
+- **Pruebas de punta a punta contra PRODUCCIÓN** (`API_URL=https://dualdev-api.onrender.com/api npm run test:e2e`): **37/37 correctas**, 3 estudiantes temporales creados y borrados. Tiempos reales en Render (plan gratis, 0,1 CPU): cargas 0,16–0,59 s (RNF-02 < 3 s, holgado); envío de código **máx 6,1 s** (compilar + casos ocultos), error de compilación 3,3 s, corte de la bomba de hilos 5,8 s. O sea: la navegación va rápida, pero la retroalimentación de código no baja de ~3–6 s en el plan gratis (es la CPU de 0,1; bajarlo exige plan de pago o un VPS).
+- **Tiempo máximo en las llamadas a Supabase** (`backend/src/utils/tiempoLimite.js`, variable `SUPABASE_TIMEOUT_MS`, 8 s por defecto): ninguna petición se queda colgada; al agotarse, el backend responde **503** con un mensaje claro en vez de esperar sin fin, y `authenticate` ya no lo confunde con "sesión inválida" (401). Verificado con 4 pruebas nuevas y contra el propio supabase-js apuntando a una base que no responde (se reconoce tanto en consultas como en auth). Backend: **102 pruebas pasan, 0 fallan, 2 en skip** (las de Linux).
+- **Fuentes servidas desde el propio sitio** (paquetes `@fontsource` importados en `src/index.css`; se quitaron los `<link>` a Google de `index.html`): Sora 700/800, Plus Jakarta Sans 400/500/600/700 y JetBrains Mono 400/500, solo subconjunto latino (~110 KB en woff2). Verificado en el navegador sobre el build: las 8 fuentes se registran, las de la pantalla cargan y **0 peticiones a terceros**. Ya no salen datos de menores hacia Google.
+- **Performance Advisor de Supabase revisado**: limpio; solo 3 avisos `INFO` de índices nunca usados (`logro_usuario_logro_idx`, `progreso_nivel_idx`, `contenido_completado_contenido_idx`), normal con un solo estudiante real. No se borran: sirven cuando haya un curso completo.
 
 ## Lo que falta por mejorar (pendiente)
 
@@ -42,11 +48,11 @@ Hecho en el frontend y en `supabase/seed.sql` (sin cambios de backend, porque Re
    - poner **Minimum password length = 8**;
    - restringir el registro a un dominio institucional: **decidido NO hacerlo por ahora** (2026-10-25; proyecto semillero, no todos tienen correo institucional todavía) — si se revierte esta decisión, Supabase tiene un "Before User Created" Auth Hook con función SQL lista para esto (ver la sección de decisiones);
    - protección de contraseñas filtradas (HaveIBeenPwned): **no se puede activar**, es función del plan Pro y el proyecto está en el plan Free. Limitación aceptada.
-3. **Vigilar en producción** una petición que se colgó en 2 de 8 corridas locales de `test:e2e` (62 s y 8,4 s); no se reprodujo con traza de llamadas a Supabase. Si aparece en producción, poner un tiempo máximo (timeout) a las llamadas a Supabase.
-4. Medir tiempos reales de envío de código bajo más carga en Render (se esperaban 4–5 s por envío, por la CPU de 0,1 del plan gratis) y correr `npm run test:e2e` contra la URL de producción (`API_URL`).
-5. Revisar el Performance Advisor de Supabase (el Security Advisor ya se revisó, ver más abajo).
+3. ✅ **Resuelto (2026-10-30):** la petición que se colgaba ya no puede quedarse esperando: todas las llamadas a Supabase se cortan a los `SUPABASE_TIMEOUT_MS` (8 s) y responden 503. Si en producción aparece algún 503 de estos en el log (`[bd] tiempo agotado`), es la señal de que Supabase se puso lento, no de un error del código.
+4. ✅ **Medido en producción (2026-10-30):** `test:e2e` contra la URL de Render dio 37/37; cargas 0,16–0,59 s y envío de código máx 6,1 s (ver "Tercera ronda"). Falta solo, si se quiere, medir con varios estudiantes enviando código a la vez (el curso real todavía no empieza).
+5. ✅ **Performance Advisor revisado (2026-10-30):** limpio, 3 avisos `INFO` de índices sin usar.
 6. El limitador de uso y la caché del backend son por instancia; si el proyecto llegara a escalar a varias instancias de Render, hay que moverlos a un almacén compartido (Redis o similar).
-7. Google Fonts se carga desde Google en `index.html`; si se quiere evitar esa petición a terceros con datos de menores, servir las fuentes localmente.
+7. ✅ **Resuelto (2026-10-30):** las fuentes se sirven desde el propio sitio, ya no se piden a Google.
 
 ## Pendiente de más largo plazo (sin fecha, requiere decisión o infraestructura)
 
