@@ -11,12 +11,6 @@ type Pestana = 'explain' | 'code' | 'output'
 
 const PAUSA_PREMIO_MS = 1200
 
-const AUTOVERIFICACION = [
-  '¿Entendí la explicación?',
-  '¿Puedo leer el código del ejemplo línea por línea?',
-  '¿Sé qué imprime el programa y por qué?',
-]
-
 const BOTON_SECUNDARIO = {
   background: 'var(--color-card2)',
   border: '1px solid var(--color-border)',
@@ -205,23 +199,6 @@ export default function LessonScreen() {
 
         {/* Derecha: verificación, recompensa y navegación */}
         <div className="flex flex-col gap-4">
-          {/* Pedido por la profesora (2026-10-28): sin auto-verificación en Introducción a ciclos. */}
-          {leccion.modulo.orden !== 1 && (
-            <div className="card-border p-4">
-              <p className="font-display mb-3 text-xs font-bold" style={{ color: '#7af0b4' }}>
-                ✅ AUTO-VERIFICACIÓN
-              </p>
-              <div className="flex flex-col gap-2">
-                {AUTOVERIFICACION.map((q) => (
-                  <label key={q} className="flex cursor-pointer items-center gap-2 text-xs">
-                    <input type="checkbox" style={{ accentColor: '#1ed48a' }} />
-                    <span style={{ color: 'var(--color-muted)' }}>{q}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div
             className="rounded-2xl p-4 text-center"
             style={{ background: 'linear-gradient(135deg, rgba(22,163,74,0.18), rgba(122,240,180,0.12))', border: '1px solid rgba(30,212,138,0.3)' }}
