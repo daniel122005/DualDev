@@ -10,7 +10,8 @@ const rankingQuery = z.object({
 const perfilBody = z
   .object({
     nombre: z.string().trim().min(2, 'El nombre debe tener al menos 2 letras.').max(80, 'El nombre es demasiado largo.').optional(),
-    grado: z.string().trim().max(20, 'El grado es demasiado largo (máx. 20).').optional(),
+    // Vacío = sin especificar.
+    grado: z.enum(['', '6°', '7°', '8°', '9°', '10°', '11°'], { error: 'El grado debe estar entre 6° y 11°.' }).optional(),
   })
   .strict()
 

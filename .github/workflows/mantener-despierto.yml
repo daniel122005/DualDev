@@ -1,0 +1,19 @@
+# Render (plan gratis) apaga el backend tras 15 min sin visitas y despertarlo tarda ~50 s.
+# Este ping lo mantiene despierto en horario de clase: lunes a viernes de 6:00 a 18:59, hora de Bogotá
+# (11:00 a 23:59 UTC). Son ~290 h al mes, lejos del tope gratis de 750 h.
+# GitHub puede retrasar las tareas programadas: de vez en cuando puede colarse un arranque en frío.
+name: Mantener despierto el backend
+
+on:
+  schedule:
+    - cron: '*/10 11-23 * * 1-5'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: curl --silent --show-error --max-time 120 https://dualdev-api.onrender.com/api/health

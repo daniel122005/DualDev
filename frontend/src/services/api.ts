@@ -27,6 +27,12 @@ export function asignarDueñoCache(idUsuario: string | null) {
   dueñoCache = idUsuario
 }
 
+// Al abrir la página: si el backend está dormido (Render lo apaga sin visitas), empieza a despertar
+// mientras el estudiante escribe su correo y contraseña, en vez de esperar a después de entrar.
+export function despertarServidor() {
+  void fetch(`${API_URL}/health`).catch(() => {})
+}
+
 // "Ejecutar código" no cambia nada guardado: no hace falta vaciar la caché.
 const NO_CAMBIA_DATOS = /\/(code\/)?run$/
 

@@ -270,6 +270,12 @@ export default function ChallengeSolveScreen() {
             </button>
           </div>
 
+          {enviando && esCodigo && (
+            <p role="status" className="text-center text-xs" style={{ color: '#7af0b4' }}>
+              ⚙️ Compilando y probando tu programa con {reto.total_casos} casos. Suele tardar unos segundos…
+            </p>
+          )}
+
           {esCodigo && (
             <Consola
               resultado={ejecucion}

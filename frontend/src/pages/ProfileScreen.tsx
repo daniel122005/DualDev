@@ -8,6 +8,9 @@ import { api, leerCache } from '@/services/api'
 import type { PerfilCompleto } from '@/types/api'
 import { estiloModulo, formatoXp, iniciales, LOGRO_ICONO, LOGRO_ICONO_POR_DEFECTO, haceCuanto } from '@/utils/disenio'
 
+// Los mismos que acepta el backend (PATCH /profile) y la base de datos: bachillerato del colegio.
+const GRADOS = ['6°', '7°', '8°', '9°', '10°', '11°']
+
 function formatoTiempo(seg: number) {
   if (seg < 60) return `${seg} s`
   const min = Math.round(seg / 60)
@@ -17,7 +20,7 @@ function formatoTiempo(seg: number) {
 
 function EditarPerfil({ perfil, onCerrar, onGuardado }: { perfil: PerfilCompleto; onCerrar: () => void; onGuardado: () => void }) {
   const [nombre, setNombre] = useState(perfil.nombre)
-  const [grado, setGrado] = useState(perfil.grado ?? '')
+  const [grado, setGrado] = useState(GRADOS.includes(perfil.grado ?? '') ? (perfil.grado as string) : '')
   const [error, setError] = useState<string | null>(null)
   const [guardando, setGuardando] = useState(false)
 
@@ -48,14 +51,14 @@ function EditarPerfil({ perfil, onCerrar, onGuardado }: { perfil: PerfilCompleto
           <label htmlFor="ed-grado" className="font-display mb-2 block text-xs font-bold" style={{ color: 'var(--color-muted)' }}>
             GRADO
           </label>
-          <input
-            id="ed-grado"
-            className="w-full px-4 py-3 text-sm"
-            placeholder="Ej: 10°"
-            value={grado}
-            maxLength={20}
-            onChange={(e) => setGrado(e.target.value)}
-          />
+          <select id="ed-grado" className="w-full px-4 py-3 text-sm" value={grado} onChange={(e) => setGrado(e.target.value)}>
+            <option value="">Sin especificar</option>
+            {GRADOS.map((g) => (
+              <option key={g} value={g}>
+                {g}
+              </option>
+            ))}
+          </select>
         </div>
         <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
           Tu correo ({perfil.correo}) no se puede cambiar.

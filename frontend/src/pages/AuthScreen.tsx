@@ -15,10 +15,12 @@ export default function AuthScreen({ modo }: { modo: Modo }) {
   const [correo, setCorreo] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [aviso, setAviso] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
 
   function cambiarModo(nuevo: Modo) {
     setError(null)
+    setAviso(null)
     navigate(nuevo === 'login' ? '/login' : '/register')
   }
 
@@ -36,6 +38,12 @@ export default function AuthScreen({ modo }: { modo: Modo }) {
       modo === 'login' ? await login(correo.trim(), password) : await register(nombre.trim(), correo.trim(), password)
     setEnviando(false)
     if (msg) return setError(msg)
+    if (modo === 'register') {
+      // La cuenta ya existe: el correo queda escrito y falta entrar con la contraseña.
+      setPassword('')
+      setAviso('¡Cuenta creada! Ahora inicia sesión con tu correo y contraseña.')
+      return navigate('/login', { replace: true })
+    }
     navigate('/dashboard', { replace: true })
   }
 
@@ -175,6 +183,12 @@ export default function AuthScreen({ modo }: { modo: Modo }) {
               >
                 🎓 Plataforma para estudiantes del <strong>Instituto Técnico Industrial</strong> — Semillero de Programación Java
               </div>
+            )}
+
+            {aviso && !error && (
+              <p role="status" className="rounded-xl p-3 text-sm" style={{ background: 'rgba(30,212,138,0.1)', border: '1px solid rgba(30,212,138,0.3)', color: '#7af0b4' }}>
+                {aviso}
+              </p>
             )}
 
             {error && (

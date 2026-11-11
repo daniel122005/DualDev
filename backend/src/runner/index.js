@@ -57,6 +57,7 @@ function crearEjecutor(conSandbox) {
       ejecucionMs: env.RUNNER_EJECUCION_MS,
     },
     usuarioSandbox: conSandbox ? { uid: env.RUNNER_SANDBOX_UID, gid: env.RUNNER_SANDBOX_GID } : null,
+    archivoCdsJavac: env.RUNNER_JAVAC_CDS,
   })
 }
 

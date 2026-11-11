@@ -37,6 +37,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends libcap2-bin gcc
   && groupadd --gid 10001 sandbox \
   && useradd --uid 10001 --gid sandbox --no-create-home --shell /usr/sbin/nologin sandbox
 
+# Clases de javac ya preparadas: en 0,1 CPU, arrancar el compilador es buena parte de la espera al
+# enviar código. Los -J deben coincidir con ARGS_JVM_CORTA de runner/javaLocal.js. De solo lectura
+# (lo usa también el usuario sandbox). Si esto falla no se detiene el despliegue: se compila sin él.
+ENV RUNNER_JAVAC_CDS=/opt/dualdev/javac.jsa
+RUN mkdir -p /opt/dualdev /tmp/cds \
+  && printf 'import java.util.Scanner;\npublic class Cds { public static void main(String[] a) { Scanner s = new Scanner(System.in); for (int i = 0; i < s.nextInt(); i++) { System.out.println("n " + i); } } }\n' > /tmp/cds/Cds.java \
+  && { /opt/java/openjdk/bin/javac -J-Xmx256m -J-XX:TieredStopAtLevel=1 -J-XX:CICompilerCount=1 -J-XX:+UseSerialGC \
+       -J-XX:ArchiveClassesAtExit=/opt/dualdev/javac.jsa -encoding UTF-8 -proc:none -nowarn -d /tmp/cds /tmp/cds/Cds.java \
+       && chmod 0444 /opt/dualdev/javac.jsa || echo "Sin archivo CDS de javac: se compilará sin él"; } \
+  && rm -rf /tmp/cds
+
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force

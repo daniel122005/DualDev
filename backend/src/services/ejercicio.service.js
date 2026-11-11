@@ -60,7 +60,11 @@ export async function ejecutarCodigo(idUsuario, { codigo, idEjercicio, entrada }
 }
 
 export async function enviarRespuesta(idUsuario, idEjercicio, { respuesta, duracionSeg }) {
-  const { ejercicio } = await cargarEjercicioAbierto(idUsuario, idEjercicio, { paraEvaluar: true })
+  // Los intentos previos se piden junto con el ejercicio: contar el de ahora evita otro viaje a la BD al final.
+  const [{ ejercicio }, previos] = await Promise.all([
+    cargarEjercicioAbierto(idUsuario, idEjercicio, { paraEvaluar: true }),
+    curso.obtenerIntentosDeEjercicio(idUsuario, idEjercicio),
+  ])
   const evaluacion = await evaluar(ejercicio, respuesta)
 
   const registro = await curso.registrarIntento({
@@ -74,12 +78,9 @@ export async function enviarRespuesta(idUsuario, idEjercicio, { respuesta, durac
   })
 
   // RF-11: solo un acierto que dio puntos puede desbloquear logros nuevos.
-  const [intentos, logrosNuevos] = await Promise.all([
-    curso.obtenerIntentosDeEjercicio(idUsuario, idEjercicio),
-    registro.primer_acierto ? sincronizarLogros(idUsuario, { puntos: registro.puntos_totales }) : Promise.resolve([]),
-  ])
-  const fallidos = intentos.filter((i) => !i.es_correcto).length
-  const resuelto = intentos.some((i) => i.es_correcto)
+  const logrosNuevos = registro.primer_acierto ? await sincronizarLogros(idUsuario, { puntos: registro.puntos_totales }) : []
+  const fallidos = previos.filter((i) => !i.es_correcto).length + (evaluacion.correcto ? 0 : 1)
+  const resuelto = evaluacion.correcto || previos.some((i) => i.es_correcto)
 
   return {
     correcto: evaluacion.correcto,
@@ -92,7 +93,7 @@ export async function enviarRespuesta(idUsuario, idEjercicio, { respuesta, durac
     ya_resuelto: evaluacion.correcto && !registro.primer_acierto,
     puntos_totales: registro.puntos_totales,
     nivel: registro.nivel,
-    intentos: intentos.length,
+    intentos: previos.length + 1,
     intentos_fallidos: fallidos,
     pista: evaluacion.correcto ? null : pistaTrasFallos(ejercicio.pistas, fallidos),
     explicacion: evaluacion.correcto ? ejercicio.explicacion : null,

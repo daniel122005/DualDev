@@ -2,7 +2,7 @@ import type { Session } from '@supabase/supabase-js'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { AuthContext, type AuthContextValue } from '@/contexts/auth-context'
 import { asignarDueñoCache } from '@/services/api'
-import { supabase } from '@/services/supabaseClient'
+import { crearClienteRegistro, supabase } from '@/services/supabaseClient'
 import { mensajeErrorAuth } from '@/utils/authErrors'
 
 // Cada método devuelve null si salió bien, o el mensaje de error para mostrar.
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       loading,
       async register(nombre, correo, password) {
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await crearClienteRegistro().auth.signUp({
           email: correo,
           password,
           options: { data: { nombre } },

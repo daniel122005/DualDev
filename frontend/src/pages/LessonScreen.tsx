@@ -26,6 +26,7 @@ export default function LessonScreen() {
   const [leccion, setLeccion] = useState<Leccion | null>(() => leerCache<Leccion>(`/lessons/${idLeccion}`))
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<Pestana>('explain')
+  const [salidaRevelada, setSalidaRevelada] = useState(false)
   const [guardando, setGuardando] = useState(false)
   const [premio, setPremio] = useState<number | null>(null)
   const [logros, setLogros] = useState<LogroNuevo[]>([])
@@ -187,7 +188,18 @@ export default function LessonScreen() {
             </div>
           )}
           {tab === 'code' && leccion.codigo_ejemplo && <CodeBlock codigo={leccion.codigo_ejemplo} />}
-          {tab === 'output' && leccion.salida_ejemplo && (
+          {tab === 'output' && leccion.salida_ejemplo && !salidaRevelada && !leccion.completada && (
+            <div className="card-border flex flex-col items-center gap-3 p-6 text-center">
+              <p className="font-display font-bold">🤔 ¿Qué crees que imprime?</p>
+              <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+                Mira la pestaña Código y piensa la salida línea por línea antes de verla.
+              </p>
+              <button className="btn-primary px-5 py-2 text-sm" onClick={() => setSalidaRevelada(true)}>
+                Ver la salida
+              </button>
+            </div>
+          )}
+          {tab === 'output' && leccion.salida_ejemplo && (salidaRevelada || leccion.completada) && (
             <div className="code-block" style={{ color: '#7af0b4' }}>
               <p className="mb-2 text-xs" style={{ color: 'var(--color-muted)' }}>
                 ▶ Resultado de ejecución:

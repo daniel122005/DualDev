@@ -173,7 +173,8 @@ h1, h2, h3, .font-display { letter-spacing: -0.02em; }
   overflow-x: auto;
 }
 
-input, textarea {
+select option { background: var(--color-surface); color: var(--color-text); }
+input, textarea, select {
   background: rgba(2,11,8,0.6);
   border: 1px solid var(--color-border);
   border-radius: 14px;
@@ -183,7 +184,7 @@ input, textarea {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 input::placeholder, textarea::placeholder { color: #4f7f6b; }
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
   border-color: #1ed48a;
   box-shadow: 0 0 0 4px rgba(30,212,138,0.15);
 }
@@ -339,6 +340,25 @@ kbd {
 .texto-leccion td:first-child { font-weight: 600; color: var(--color-green-pale); }
 .texto-leccion tr:nth-child(even) td { background: rgba(122,240,180,0.03); }
 .tabla-scroll { overflow-x: auto; }
+.texto-leccion tr.fila-actual td { background: rgba(182,255,60,0.1); }
+.paso-a-paso-controles { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; font-size: 12px; color: var(--color-muted); }
+.boton-leccion {
+  min-height: 36px; padding: 6px 12px; border-radius: 10px; cursor: pointer;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  background: rgba(30,212,138,0.12); border: 1px solid rgba(30,212,138,0.35); color: #7af0b4;
+}
+.boton-leccion:hover:not(:disabled) { background: rgba(30,212,138,0.2); }
+.boton-leccion:disabled { opacity: 0.45; cursor: not-allowed; }
+.pregunta-rapida { padding: 14px; border-radius: 14px; background: rgba(182,255,60,0.05); border: 1px solid rgba(182,255,60,0.22); }
+.pregunta-rapida-opciones { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.opcion-rapida {
+  min-height: 40px; padding: 8px 12px; border-radius: 10px; cursor: pointer; text-align: left; font-size: 13.5px;
+  background: rgba(2,11,8,0.45); border: 1px solid var(--color-border); color: var(--color-text);
+}
+.opcion-rapida:hover:not(:disabled) { border-color: #1ed48a; }
+.opcion-rapida:disabled { cursor: default; }
+.opcion-rapida.acierto { border-color: #1ed48a; background: rgba(30,212,138,0.14); }
+.opcion-rapida.fallo { border-color: var(--color-red); opacity: 0.75; }
 
 .fila-ejercicio { background: rgba(2,11,8,0.35); color: var(--color-text); text-decoration: none; min-height: 44px; }
 .fila-ejercicio:hover { background: rgba(30,212,138,0.08); }

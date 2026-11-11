@@ -28,6 +28,8 @@ const schema = z.object({
   RUNNER_CASOS_EN_PARALELO: z.coerce.number().int().min(1).max(8).default(3),
   RUNNER_COMPILACION_MS: z.coerce.number().int().min(1_000).max(60_000).default(10_000),
   RUNNER_EJECUCION_MS: z.coerce.number().int().min(500).max(30_000).default(3_000),
+  // Archivo con las clases de javac ya preparadas (lo genera el Dockerfile). Sin él se compila igual.
+  RUNNER_JAVAC_CDS: z.string().optional(),
 })
 
 export const env = schema.parse(process.env)

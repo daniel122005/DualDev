@@ -46,7 +46,13 @@ from (values
 
 En el ejemplo, los dos bloques hacen lo mismo y por eso "Hola" sale **seis** veces: tres del bloque sin ciclo y tres del ciclo `for`.
 
-Los ciclos están en todas partes: un reloj que cuenta segundos, un juego que se repite hasta que pierdes, un cajero que muestra el menú hasta que eliges salir.$t$,
+Los ciclos están en todas partes: un reloj que cuenta segundos, un juego que se repite hasta que pierdes, un cajero que muestra el menú hasta que eliges salir.
+
+? Debes imprimir 500 líneas iguales. ¿Qué te conviene?
+- Copiar y pegar la línea 500 veces
++ Escribir un ciclo
+- Java no permite imprimir tanto
+> El ciclo escribe la instrucción una sola vez y repite las veces que le digas.$t$,
    $j$// Sin ciclo: una línea por cada "Hola"
 System.out.println("Hola");
 System.out.println("Hola");
@@ -68,7 +74,13 @@ for (int i = 0; i < 3; i++) {
 
 El orden en que se ejecutan es: inicialización (una sola vez) → condición → cuerpo → actualización → condición → cuerpo… hasta que la condición sea **falsa**.
 
-Si falta la actualización, la condición nunca cambia y el ciclo **no termina nunca**: eso se llama ciclo infinito.$t$,
+Si falta la actualización, la condición nunca cambia y el ciclo **no termina nunca**: eso se llama ciclo infinito.
+
+? ¿Qué pasa si a un ciclo le falta la **actualización**?
+- Da una sola vuelta
++ La condición no cambia y el ciclo no termina
+- Se salta el cuerpo
+> Sin actualización, la variable de la condición se queda igual: es un ciclo infinito.$t$,
    $j$int i = 1;                 // inicialización
 while (i <= 3) {           // condición
     System.out.println(i); // cuerpo
@@ -85,7 +97,13 @@ while (i <= 3) {           // condición
 
 Cada vez que llamas a `sc.nextInt()` se toma el **siguiente** número de la entrada, en orden. Si la entrada es `5 3 0`, el primer `nextInt()` da 5, el segundo 3 y el tercero 0.
 
-En DualDev la entrada la escribe el sistema cuando prueba tu programa: tú solo la lees y la usas. Por eso tu programa debe funcionar con **cualquier** número, no solo con el del ejemplo.$t$,
+En DualDev la entrada la escribe el sistema cuando prueba tu programa: tú solo la lees y la usas. Por eso tu programa debe funcionar con **cualquier** número, no solo con el del ejemplo.
+
+? Si la entrada es `8 2` y el programa hace `int a = sc.nextInt();` y luego `int b = sc.nextInt();`, ¿cuánto vale `b`?
+- 8
++ 2
+- 10
+> Cada `nextInt()` toma el **siguiente** número: el primero fue 8 y el segundo, 2.$t$,
    $j$import java.util.Scanner;
 
 public class Saludo {
@@ -110,7 +128,13 @@ En el ejemplo, los tres cuentan del 1 al 3. Fíjate dónde va cada parte:
 
 - En el `for` las tres partes van juntas en una sola línea.
 - En el `while` y el `do-while` la inicialización va **antes** y la actualización va **dentro** del cuerpo.
-- El `do-while` revisa la condición al **final** y termina con punto y coma.$t$,
+- El `do-while` revisa la condición al **final** y termina con punto y coma.
+
+? ¿Qué ciclo da siempre al menos una vuelta?
+- `for`
+- `while`
++ `do-while`
+> `do-while` revisa la condición al final, después de ejecutar el cuerpo.$t$,
    $j$for (int i = 1; i <= 3; i++) {
     System.out.println("for " + i);
 }
@@ -145,7 +169,13 @@ Así queda la prueba de escritorio del ejemplo:
 | 3 | 3 | sí | 3 + 3 = 6 | 6 |
 | — | 4 | no | 6 | (termina) |
 
-Cuando un ejercicio te pida "predecir la salida", haz esta tabla antes de responder: casi todos los errores de una vuelta de más o de menos aparecen enseguida.$t$,
+Cuando un ejercicio te pida "predecir la salida", haz esta tabla antes de responder: casi todos los errores de una vuelta de más o de menos aparecen enseguida.
+
+? En la tabla de esta lección, ¿por qué con `i = 4` no se imprime nada?
++ Porque `4 <= 3` es falso y el ciclo termina
+- Porque `suma` llegó a 6
+- Porque `println` solo funciona tres veces
+> La condición se revisa antes del cuerpo: si es falsa, el cuerpo ya no se ejecuta.$t$,
    $j$int suma = 0;
 for (int i = 1; i <= 3; i++) {
     suma = suma + i;   // agrega i a lo que ya había
@@ -167,7 +197,13 @@ Así se ejecuta el ejemplo, paso a paso:
 3. Se ejecuta el cuerpo (imprime el número).
 4. Se hace `i++` y se vuelve al paso 2.
 
-Cuando `i` llega a 6, la condición `6 <= 5` es **falsa**: el ciclo termina y el programa sigue con lo que está después (imprime "¡Ciclo terminado!").$t$,
+Cuando `i` llega a 6, la condición `6 <= 5` es **falsa**: el ciclo termina y el programa sigue con lo que está después (imprime "¡Ciclo terminado!").
+
+? En `for (int i = 1; i <= 5; i++)`, ¿cuántas veces se ejecuta `int i = 1`?
++ Una
+- Cinco
+- Seis
+> La inicialización se hace una sola vez, al empezar el ciclo.$t$,
    $j$public class ContadorFor {
     public static void main(String[] args) {
         for (int i = 1; i <= 5; i++) {
@@ -190,7 +226,13 @@ Cuando `i` llega a 6, la condición `6 <= 5` es **falsa**: el ciclo termina y el
 
 `i += 2` es lo mismo que `i = i + 2`.
 
-La regla de oro: la condición debe ir en la **misma dirección** que la actualización. Si la variable **baja**, la condición usa `>=` o `>`; si **sube**, usa `<=` o `<`.$t$,
+La regla de oro: la condición debe ir en la **misma dirección** que la actualización. Si la variable **baja**, la condición usa `>=` o `>`; si **sube**, usa `<=` o `<`.
+
+? ¿Qué condición completa `for (int i = 10; ___; i--)` para contar hasta 1?
++ `i >= 1`
+- `i <= 1`
+- `i == 1`
+> Si la variable baja, la condición usa `>=` o `>`. Con las otras dos, el ciclo ni siquiera empieza porque 10 no las cumple.$t$,
    $j$for (int i = 10; i >= 0; i -= 2) {
     System.out.println(i);
 }$j$,
@@ -216,7 +258,13 @@ Prueba de escritorio del ejemplo:
 | 2 | 2 | 1 + 2 = 3 |
 | 3 | 3 | 3 + 3 = 6 |
 | … | … | … |
-| 10 | 10 | 45 + 10 = 55 |$t$,
+| 10 | 10 | 45 + 10 = 55 |
+
+? Si un acumulador va a **multiplicar**, ¿con qué valor debe empezar?
+- 0
++ 1
+- El primer número leído, siempre
+> Cualquier número multiplicado por 0 da 0; el 1 no altera el resultado.$t$,
    $j$int suma = 0;                  // antes del ciclo
 for (int i = 1; i <= 10; i++) {
     suma += i;                 // igual a: suma = suma + i;
@@ -240,7 +288,13 @@ Dentro de un ciclo sirve para **escoger** en qué vueltas se hace algo:
 | ¿n es múltiplo de 3? | `n % 3 == 0` |
 | ¿d divide a n? | `n % d == 0` |
 
-En el ejemplo, el `if` dentro del ciclo solo deja imprimir los múltiplos de 3.$t$,
+En el ejemplo, el `if` dentro del ciclo solo deja imprimir los múltiplos de 3.
+
+? ¿Cuánto vale `17 % 5`?
+- 3
++ 2
+- 5
+> 17 = 5·3 + 2: el residuo es 2.$t$,
    $j$for (int i = 1; i <= 10; i++) {
     if (i % 3 == 0) {
         System.out.println(i + " es múltiplo de 3");
@@ -266,7 +320,13 @@ Prueba de escritorio del ejemplo:
 | 1 | 3 | sí | 3 |
 | 2 | 2 | sí | 2 |
 | 3 | 1 | sí | 1 |
-| — | 0 | no | (termina) |$t$,
+| — | 0 | no | (termina) |
+
+? Con `int n = 0;`, ¿cuántas veces entra a `while (n > 0)`?
++ Ninguna
+- Una
+- Infinitas
+> `0 > 0` es falso desde el inicio y `while` revisa antes de la primera vuelta.$t$,
    $j$int n = 3;           // inicialización
 while (n > 0) {      // condición
     System.out.println(n);
@@ -281,7 +341,13 @@ while (n > 0) {      // condición
 2. **Actualizar en la dirección contraria**: `n++` cuando la condición espera que `n` baje.
 3. **Poner punto y coma** justo después de `while (...)`: el ciclo queda vacío y repite "nada" para siempre.
 
-En DualDev, si tu programa tarda demasiado se detiene solo y te mostramos **qué variable no está cambiando**.$t$,
+En DualDev, si tu programa tarda demasiado se detiene solo y te mostramos **qué variable no está cambiando**.
+
+? ¿Qué línea dentro del cuerpo hace que `while (n > 0)` pueda terminar?
+- `System.out.println(n);`
++ `n--;`
+- `int m = n;`
+> Solo cambiar `n` acerca la condición a ser falsa.$t$,
    $j$int n = 3;
 while (n > 0) {
     System.out.println(n);
@@ -305,7 +371,13 @@ Ejemplo clásico de `while`: contar los dígitos de un número. Cada vuelta hace
 | 3 | 4 | 3 |
 | 4 | 0 | 4 |
 
-No sabías que serían 4 vueltas hasta hacerlo: por eso es un `while`.$t$,
+No sabías que serían 4 vueltas hasta hacerlo: por eso es un `while`.
+
+? Quieres quitar dígitos de un número hasta que llegue a 0. ¿Qué ciclo encaja mejor?
+- `for`, porque siempre son 10 vueltas
++ `while`, porque las vueltas dependen del número
+- Ninguno, no se puede con ciclos
+> No sabes cuántas vueltas darás hasta hacerlo: ese es el caso típico de `while`.$t$,
    $j$int numero = 4096;
 int digitos = 0;
 while (numero > 0) {
@@ -330,7 +402,13 @@ Piensa en probar la sopa: primero la pruebas (cuerpo) y después decides si le f
 | | `while` | `do-while` |
 |---|---|---|
 | Revisa la condición | antes del cuerpo | después del cuerpo |
-| Vueltas mínimas | 0 | 1 |$t$,
+| Vueltas mínimas | 0 | 1 |
+
+? Con `int x = 10;`, ¿cuántas veces se ejecuta el cuerpo de `do { x++; } while (x < 10);`?
+- Ninguna
++ Una
+- Diez
+> El cuerpo va primero. Al revisar, `11 < 10` es falso y el ciclo termina.$t$,
    $j$int x = 10;
 do {
     System.out.println(x);
@@ -353,7 +431,13 @@ Prueba de escritorio con la entrada 5, 3 y 0:
 |---|---|---|---|
 | 1 | 5 | 5 | sí, repite |
 | 2 | 3 | 8 | sí, repite |
-| 3 | 0 | 8 | no, termina |$t$,
+| 3 | 0 | 8 | no, termina |
+
+? ¿Dónde se declara la variable que usa la condición del `do-while`?
++ Antes del `do`
+- Dentro de las llaves
+- Después del `while`
+> Lo que se declara dentro de las llaves no existe en el `while` del final.$t$,
    $j$Scanner sc = new Scanner(System.in);
 int numero;            // declarada antes del do
 int suma = 0;
@@ -380,7 +464,13 @@ En el ejemplo:
 
 - `continue` salta los pares (2, 4, 6…).
 - `break` corta el ciclo cuando `i` pasa de 7.
-- Por eso solo se imprimen 1, 3, 5 y 7.$t$,
+- Por eso solo se imprimen 1, 3, 5 y 7.
+
+? En un `for` de 1 a 5 con `if (i == 3) continue;` antes del `println(i)`, ¿qué se imprime?
+- 1 2
++ 1 2 4 5
+- 1 2 3 4 5
+> `continue` salta solo la vuelta del 3; con `break` se habría detenido ahí.$t$,
    $j$for (int i = 1; i <= 10; i++) {
     if (i % 2 == 0) continue; // salta los pares
     if (i > 7) break;         // termina el ciclo al pasar de 7
@@ -401,7 +491,13 @@ Prueba de escritorio del ejemplo:
 |---|---|---|
 | 1 | 1 | `*` |
 | 2 | 1, 2 | `**` |
-| 3 | 1, 2, 3 | `***` |$t$,
+| 3 | 1, 2, 3 | `***` |
+
+? Si el ciclo externo da 3 vueltas y el interno 4 en cada una, ¿cuántas veces se ejecuta el cuerpo del interno?
+- 7
++ 12
+- 4
+> Por cada vuelta externa, el interno da todas las suyas: 3 × 4 = 12.$t$,
    $j$for (int fila = 1; fila <= 3; fila++) {
     for (int col = 1; col <= fila; col++) {
         System.out.print("*");
@@ -2262,7 +2358,514 @@ public class Ejercicio {
    $t$[{"entrada":"4","salida":"1\n2\n3\n4","visible":true},{"entrada":"1","salida":"1","visible":false},{"entrada":"7","salida":"1\n2\n3\n4\n5\n6\n7","visible":false}]$t$,
    $t$["while"]$t$,
    $t$[{"patron":"while\\s*\\(\\s*i\\s*<\\s*n\\s*\\)","mensaje":"Con i < n no se imprime el último número: para n = 4 llegarías hasta el 3. Recuerda que la condición es i <= n."},{"salida":"0\n1\n2\n3","mensaje":"Empezaste en 0. Recuerda que la cuenta empieza en 1: int i = 1;"},{"patron":"i\\s*<=?\\s*4\\s*\\)","mensaje":"Usaste el 4 del ejemplo en la condición. Recuerda que n cambia en cada prueba: hay que comparar con n, no con 4."}]$t$,
-   4),
+   4)
+) as e(modulo_orden, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion, pistas, explicacion,
+       codigo_inicial, casos, requiere, errores, orden)
+join public.modulo m on m.orden = e.modulo_orden
+on conflict (id_modulo, orden) do update
+  set titulo = excluded.titulo, enunciado = excluded.enunciado, tipo = excluded.tipo,
+      dificultad = excluded.dificultad, puntos = excluded.puntos, opciones = excluded.opciones,
+      solucion_esperada = excluded.solucion_esperada, pistas = excluded.pistas,
+      explicacion = excluded.explicacion, codigo_inicial = excluded.codigo_inicial,
+      casos_prueba = excluded.casos_prueba, requiere = excluded.requiere,
+      errores_comunes = excluded.errores_comunes;
+
+-- ---------------------------------------------------------------------------
+-- Ejercicios agregados el 2026-11-10: mayor complejidad, a pedido de quienes probaron la plataforma
+-- (Fibonacci, número perfecto, Euclides, binario, raíz digital, planilla de notas, rombo, primos
+-- gemelos, Pascal). Van al final de cada módulo. Cada solución se verificó con el ejecutor Java real.
+-- ---------------------------------------------------------------------------
+insert into public.ejercicio
+  (id_modulo, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion_esperada,
+   pistas, explicacion, codigo_inicial, casos_prueba, requiere, errores_comunes, orden)
+select m.id_modulo, e.titulo, e.enunciado, e.tipo, e.dificultad, e.puntos, e.opciones::jsonb, e.solucion,
+       e.pistas::jsonb, e.explicacion, e.codigo_inicial, e.casos::jsonb, coalesce(e.requiere, '[]')::jsonb,
+       coalesce(e.errores, '[]')::jsonb, e.orden
+from (values
+  (1,
+   $t$Dos variables que se persiguen$t$,
+   $t$Haz la prueba de escritorio con cuidado: en cada vuelta cambian a y b, y c solo existe dentro del ciclo. Escribe lo que imprime, una línea por vuelta.
+
+int a = 1;
+int b = 2;
+for (int i = 1; i <= 4; i++) {
+    int c = a + b;
+    a = b;
+    b = c;
+    System.out.println(i + ": " + a + " " + b);
+}$t$,
+   'salida',
+   'dificil',
+   100,
+   null,
+   $t$1: 2 3
+2: 3 5
+3: 5 8
+4: 8 13$t$,
+   $t$["Haz una tabla con columnas i, c, a y b.","a toma el valor VIEJO de b, y b toma el valor de c."]$t$,
+   $t$Cada vuelta calcula c con los valores actuales y luego corre las variables: a recibe b y b recibe c. Por eso los pares son (2,3), (3,5), (5,8) y (8,13).$t$,
+   null,
+   null,
+   null,
+   $t$[{"salida":"1: 1 2\n2: 2 3\n3: 3 5\n4: 5 8","mensaje":"Anotaste los valores de antes de actualizar. Recuerda que el println va DESPUÉS de a = b y b = c: imprime los valores ya cambiados."},{"salida":"1: 2 3\n2: 3 5\n3: 5 8","mensaje":"Te faltó una vuelta. Recuerda que <= incluye el límite: con i = 4 todavía se imprime."}]$t$,
+   10),
+  (2,
+   $t$Serie de Fibonacci$t$,
+   $t$Lee un número n e imprime los primeros n términos de la serie de Fibonacci, uno por línea. La serie empieza en 0 y 1, y cada término es la suma de los dos anteriores.
+
+Ejemplo: si la entrada es 7, la salida es
+0
+1
+1
+2
+3
+5
+8$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int a = 0;
+        int b = 1;
+        for (int i = 1; i <= n; i++) {
+            System.out.println(a);
+            int siguiente = a + b;
+            a = b;
+            b = siguiente;
+        }
+    }
+}$t$,
+   $t$["Guarda la suma en una variable aparte antes de cambiar a y b.","En cada vuelta: imprime a, calcula siguiente = a + b, luego a = b y b = siguiente."]$t$,
+   $t$La serie necesita recordar dos valores. La variable auxiliar evita perder el valor de a cuando se reemplaza: es el mismo movimiento de "correr" variables de la prueba de escritorio.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int a = 0;
+        int b = 1;
+        // TODO: con un for, imprime a y avanza la serie n veces
+
+    }
+}$t$,
+   $t$[{"entrada":"7","salida":"0\n1\n1\n2\n3\n5\n8","visible":true},{"entrada":"1","salida":"0","visible":false},{"entrada":"2","salida":"0\n1","visible":false},{"entrada":"15","salida":"0\n1\n1\n2\n3\n5\n8\n13\n21\n34\n55\n89\n144\n233\n377","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"patron":"a\\s*=\\s*b\\s*;\\s*b\\s*=\\s*a\\s*\\+\\s*b","mensaje":"Después de a = b, el valor viejo de a ya se perdió y a + b suma b consigo mismo. Recuerda guardar la suma en una variable aparte ANTES de cambiar a."},{"salida":"1\n1\n2\n3\n5\n8\n13","mensaje":"Tu serie empieza en 1. Recuerda que aquí el primer término es 0: imprime a antes de avanzar."}]$t$,
+   15),
+  (2,
+   $t$Número perfecto$t$,
+   $t$Un número es perfecto si es igual a la suma de sus divisores menores que él. Por ejemplo, 6 = 1 + 2 + 3.
+
+Lee un número n. Imprime la suma de sus divisores menores que n y, en la línea siguiente, "Perfecto" o "No perfecto".
+
+Ejemplo: si la entrada es 28, la salida es
+Suma: 28
+Perfecto$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int suma = 0;
+        for (int i = 1; i < n; i++) {
+            if (n % i == 0) {
+                suma += i;
+            }
+        }
+        System.out.println("Suma: " + suma);
+        if (suma == n) {
+            System.out.println("Perfecto");
+        } else {
+            System.out.println("No perfecto");
+        }
+    }
+}$t$,
+   $t$["i divide a n cuando n % i == 0.","El ciclo llega hasta n - 1: n no cuenta como su propio divisor."]$t$,
+   $t$Es un acumulador con filtro: el for recorre los candidatos, el if escoge los divisores y, cuando el ciclo termina, se compara la suma con n.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int suma = 0;
+        // TODO: suma los divisores de n menores que n e imprime el resultado
+
+    }
+}$t$,
+   $t$[{"entrada":"28","salida":"Suma: 28\nPerfecto","visible":true},{"entrada":"6","salida":"Suma: 6\nPerfecto","visible":false},{"entrada":"12","salida":"Suma: 16\nNo perfecto","visible":false},{"entrada":"1","salida":"Suma: 0\nNo perfecto","visible":false},{"entrada":"496","salida":"Suma: 496\nPerfecto","visible":false}]$t$,
+   $t$["for","if"]$t$,
+   $t$[{"patron":"i\\s*<=\\s*n\\s*;","mensaje":"Con i <= n también sumas el propio n, y entonces la suma nunca coincide. Recuerda que solo cuentan los divisores MENORES que n: i < n."}]$t$,
+   16),
+  (3,
+   $t$Máximo común divisor$t$,
+   $t$Lee dos números positivos a y b, e imprime su máximo común divisor con el algoritmo de Euclides: mientras b no sea 0, calcula el residuo de a entre b; a toma el valor de b y b toma el valor del residuo. Al terminar, la respuesta queda en a.
+
+Ejemplo: si la entrada es 48 y 18, la salida es
+6$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int a = sc.nextInt();
+        int b = sc.nextInt();
+        while (b != 0) {
+            int residuo = a % b;
+            a = b;
+            b = residuo;
+        }
+        System.out.println(a);
+    }
+}$t$,
+   $t$["La condición es while (b != 0).","Calcula el residuo ANTES de cambiar a."]$t$,
+   $t$No se sabe de antemano cuántas vueltas hacen falta, por eso es un while. Con 48 y 18: (48,18) → (18,12) → (12,6) → (6,0), y la respuesta es 6.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int a = sc.nextInt();
+        int b = sc.nextInt();
+        // TODO: aplica el algoritmo de Euclides con un while e imprime el resultado
+
+    }
+}$t$,
+   $t$[{"entrada":"48\n18","salida":"6","visible":true},{"entrada":"17\n5","salida":"1","visible":false},{"entrada":"100\n25","salida":"25","visible":false},{"entrada":"7\n7","salida":"7","visible":false},{"entrada":"18\n48","salida":"6","visible":false}]$t$,
+   $t$["while"]$t$,
+   $t$[{"patron":"a\\s*=\\s*b\\s*;\\s*b\\s*=\\s*a\\s*%\\s*b","mensaje":"Después de a = b, a % b siempre da 0 porque ya son iguales. Recuerda guardar el residuo en una variable ANTES de cambiar a."}]$t$,
+   14),
+  (3,
+   $t$De decimal a binario$t$,
+   $t$Lee un número n (0 o mayor) e imprime su representación en binario, sin usar funciones ya hechas de Java. Divide n entre 2 repetidamente: los residuos, leídos del último al primero, forman el número binario. Si n es 0, imprime 0.
+
+Ejemplo: si la entrada es 10, la salida es
+1010$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        String binario = "";
+        if (n == 0) {
+            binario = "0";
+        }
+        while (n > 0) {
+            binario = (n % 2) + binario;
+            n = n / 2;
+        }
+        System.out.println(binario);
+    }
+}$t$,
+   $t$["n % 2 da el dígito y n / 2 quita ese dígito.","Para que queden en orden, cada residuo nuevo va a la IZQUIERDA: binario = (n % 2) + binario."]$t$,
+   $t$Cada división entre 2 descubre el dígito de la derecha. Como aparecen de derecha a izquierda, cada residuo nuevo se pone delante de lo que ya había.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        String binario = "";
+        // TODO: con un while, agrega cada residuo a binario e imprime el resultado (ojo con n = 0)
+
+    }
+}$t$,
+   $t$[{"entrada":"10","salida":"1010","visible":true},{"entrada":"0","salida":"0","visible":false},{"entrada":"1","salida":"1","visible":false},{"entrada":"255","salida":"11111111","visible":false},{"entrada":"64","salida":"1000000","visible":false}]$t$,
+   $t$["while"]$t$,
+   $t$[{"patron":"toBinaryString","mensaje":"Esa función ya hace todo el trabajo. El objetivo aquí es construirlo tú con un while, n % 2 y n / 2."},{"patron":"binario\\s*(=\\s*binario\\s*\\+|\\+=)","mensaje":"Así los dígitos quedan al revés. Recuerda que el residuo nuevo va a la izquierda: binario = (n % 2) + binario."}]$t$,
+   15),
+  (4,
+   $t$Raíz digital$t$,
+   $t$Lee un número positivo n. Suma sus dígitos e imprime el resultado; si ese resultado tiene más de un dígito, repite con él. Termina cuando quede un número de un solo dígito. La suma siempre se hace al menos una vez.
+
+Ejemplo: si la entrada es 9875, la salida es
+29
+11
+2$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        do {
+            int suma = 0;
+            while (n > 0) {
+                suma += n % 10;
+                n = n / 10;
+            }
+            System.out.println(suma);
+            n = suma;
+        } while (n >= 10);
+    }
+}$t$,
+   $t$["Dentro del do va un while que suma los dígitos: n % 10 y n / 10.","Al terminar la suma, n toma su valor. La suma debe volver a 0 en cada vuelta del do."]$t$,
+   $t$Son dos ciclos con trabajos distintos: el while interno recorre los dígitos y el do-while externo repite el proceso. Es do-while porque aun con un solo dígito la suma se hace una vez.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: con un do-while, suma los dígitos de n, imprime la suma y repite mientras n >= 10
+
+    }
+}$t$,
+   $t$[{"entrada":"9875","salida":"29\n11\n2","visible":true},{"entrada":"7","salida":"7","visible":false},{"entrada":"10","salida":"1","visible":false},{"entrada":"999","salida":"27\n9","visible":false},{"entrada":"123456789","salida":"45\n9","visible":false}]$t$,
+   $t$["do-while"]$t$,
+   $t$[{"salida":"29","mensaje":"Hiciste una sola pasada. Recuerda repetir mientras el resultado tenga más de un dígito: while (n >= 10), con n igual a la suma."}]$t$,
+   10),
+  (4,
+   $t$Planilla de notas$t$,
+   $t$Lee notas enteras, una por línea, hasta que llegue -1 (el -1 no es una nota). Solo son válidas las notas de 0 a 5: cualquier otra se ignora. Una nota aprueba si es 3 o más.
+
+Al terminar imprime, en este orden, las notas válidas, las aprobadas y la mayor. Si no hubo ninguna válida, imprime solo "Sin notas".
+
+Ejemplo: si la entrada es 4, 7, 2, 5 y -1, la salida es
+Válidas: 3
+Aprobadas: 2
+Mayor: 5$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int nota;
+        int validas = 0;
+        int aprobadas = 0;
+        int mayor = -1;
+        do {
+            nota = sc.nextInt();
+            if (nota >= 0 && nota <= 5) {
+                validas++;
+                if (nota >= 3) {
+                    aprobadas++;
+                }
+                if (nota > mayor) {
+                    mayor = nota;
+                }
+            }
+        } while (nota != -1);
+        if (validas == 0) {
+            System.out.println("Sin notas");
+        } else {
+            System.out.println("Válidas: " + validas);
+            System.out.println("Aprobadas: " + aprobadas);
+            System.out.println("Mayor: " + mayor);
+        }
+    }
+}$t$,
+   $t$["Para saber si está en el rango se necesitan las dos condiciones a la vez: nota >= 0 && nota <= 5.","El -1 queda fuera del rango, así que no hay que tratarlo aparte dentro del ciclo."]$t$,
+   $t$El centinela controla el do-while y el if filtra las notas. Empezar mayor en -1 funciona porque cualquier nota válida es mayor; y como -1 está fuera del rango, nunca se cuenta.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int nota;
+        int validas = 0;
+        int aprobadas = 0;
+        int mayor = -1;
+        // TODO: con un do-while, lee cada nota y actualiza los contadores; luego imprime el resultado
+
+    }
+}$t$,
+   $t$[{"entrada":"4\n7\n2\n5\n-1","salida":"Válidas: 3\nAprobadas: 2\nMayor: 5","visible":true},{"entrada":"-1","salida":"Sin notas","visible":false},{"entrada":"9\n-3\n-1","salida":"Sin notas","visible":false},{"entrada":"3\n3\n-1","salida":"Válidas: 2\nAprobadas: 2\nMayor: 3","visible":false},{"entrada":"0\n-1","salida":"Válidas: 1\nAprobadas: 0\nMayor: 0","visible":false}]$t$,
+   $t$["do-while"]$t$,
+   $t$[{"patron":"nota\\s*>=\\s*0\\s*\\|\\|\\s*nota\\s*<=\\s*5","mensaje":"Con || cualquier número cumple al menos una de las dos condiciones. Recuerda que para estar en el rango deben cumplirse ambas: &&."}]$t$,
+   11),
+  (5,
+   $t$Rombo de asteriscos$t$,
+   $t$Lee un número impar n (el ancho de la fila central) e imprime un rombo de asteriscos. Antes de los asteriscos van los espacios necesarios para centrarlos, y después no va ningún espacio.
+
+Ejemplo: si la entrada es 5, la salida es
+  *
+ ***
+*****
+ ***
+  *$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for (int ancho = 1; ancho <= n; ancho += 2) {
+            for (int e = 0; e < (n - ancho) / 2; e++) {
+                System.out.print(" ");
+            }
+            for (int a = 0; a < ancho; a++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+        for (int ancho = n - 2; ancho >= 1; ancho -= 2) {
+            for (int e = 0; e < (n - ancho) / 2; e++) {
+                System.out.print(" ");
+            }
+            for (int a = 0; a < ancho; a++) {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+    }
+}$t$,
+   $t$["Piensa en el ancho de cada fila: sube de 2 en 2 hasta n y baja de 2 en 2 desde n - 2.","Los espacios de una fila son (n - ancho) / 2."]$t$,
+   $t$El rombo son dos triángulos. Cada fila tiene dos ciclos internos: uno para los espacios y otro para los asteriscos. La mitad de abajo empieza en n - 2 para no repetir la fila central.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: dibuja la mitad de arriba (1, 3, ... n asteriscos) y la de abajo (n - 2, ... 1)
+
+    }
+}$t$,
+   $t$[{"entrada":"5","salida":"  *\n ***\n*****\n ***\n  *","visible":true},{"entrada":"1","salida":"*","visible":false},{"entrada":"3","salida":" *\n***\n *","visible":false},{"entrada":"7","salida":"   *\n  ***\n *****\n*******\n *****\n  ***\n   *","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"salida":"  *\n ***\n*****","mensaje":"Ya tienes la mitad de arriba. Recuerda agregar otro ciclo para la de abajo, que empieza en n - 2 y baja de 2 en 2."},{"salida":"  *\n ***\n*****\n*****\n ***\n  *","mensaje":"La fila central salió repetida. Recuerda que la mitad de abajo empieza en n - 2, no en n."}]$t$,
+   14),
+  (5,
+   $t$Primos gemelos$t$,
+   $t$Dos primos son gemelos si se diferencian en 2, como 11 y 13. Lee un número n e imprime todas las parejas de primos gemelos en las que ambos sean menores o iguales que n, una pareja por línea y de menor a mayor. Si no hay ninguna, imprime "Ninguno".
+
+Ejemplo: si la entrada es 20, la salida es
+3 5
+5 7
+11 13
+17 19$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        boolean hayPareja = false;
+        for (int p = 3; p + 2 <= n; p += 2) {
+            boolean gemelos = true;
+            for (int d = 2; d < p + 2; d++) {
+                if ((d < p && p % d == 0) || (p + 2) % d == 0) {
+                    gemelos = false;
+                    break;
+                }
+            }
+            if (gemelos) {
+                System.out.println(p + " " + (p + 2));
+                hayPareja = true;
+            }
+        }
+        if (!hayPareja) {
+            System.out.println("Ninguno");
+        }
+    }
+}$t$,
+   $t$["Los gemelos son impares: p puede avanzar de 2 en 2 empezando en 3.","Usa un boolean que empiece en true y pase a false si encuentras un divisor de p o de p + 2."]$t$,
+   $t$Por cada candidato p, un ciclo interno busca divisores de p y de p + 2. Con el primer divisor ya se sabe que no sirve y break ahorra el resto de las vueltas.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        boolean hayPareja = false;
+        // TODO: recorre p desde 3 mientras p + 2 <= n y revisa si p y p + 2 son primos
+
+    }
+}$t$,
+   $t$[{"entrada":"20","salida":"3 5\n5 7\n11 13\n17 19","visible":true},{"entrada":"4","salida":"Ninguno","visible":false},{"entrada":"5","salida":"3 5","visible":false},{"entrada":"7","salida":"3 5\n5 7","visible":false},{"entrada":"50","salida":"3 5\n5 7\n11 13\n17 19\n29 31\n41 43","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"patron":"p\\s*<=\\s*n\\s*;","mensaje":"Con p <= n la pareja p + 2 se puede pasar de n. Recuerda que los dos deben ser menores o iguales que n: p + 2 <= n."}]$t$,
+   15),
+  (5,
+   $t$Triángulo de Pascal$t$,
+   $t$Lee un número n e imprime las primeras n filas del triángulo de Pascal, con los números separados por un espacio y sin espacio al final.
+
+No necesitas guardar las filas: numerando filas y columnas desde 0, cada fila empieza en 1 y el siguiente valor se calcula así:
+valor = valor * (fila - col) / (col + 1)
+
+Ejemplo: si la entrada es 5, la salida es
+1
+1 1
+1 2 1
+1 3 3 1
+1 4 6 4 1$t$,
+   'codigo',
+   'dificil',
+   100,
+   null,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        for (int fila = 0; fila < n; fila++) {
+            int valor = 1;
+            for (int col = 0; col <= fila; col++) {
+                if (col > 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(valor);
+                valor = valor * (fila - col) / (col + 1);
+            }
+            System.out.println();
+        }
+    }
+}$t$,
+   $t$["valor vuelve a 1 al empezar cada fila.","Multiplica primero y divide después, en ese orden. El espacio se imprime antes de cada número, salvo el primero."]$t$,
+   $t$Cada valor se obtiene del anterior, así que basta una variable. El orden importa: valor * (fila - col) siempre es divisible entre (col + 1), pero dividir primero perdería decimales.$t$,
+   $t$import java.util.Scanner;
+
+public class Ejercicio {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        // TODO: un for para las filas y, dentro, otro para las columnas (col va de 0 hasta fila)
+
+    }
+}$t$,
+   $t$[{"entrada":"5","salida":"1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1","visible":true},{"entrada":"1","salida":"1","visible":false},{"entrada":"2","salida":"1\n1 1","visible":false},{"entrada":"8","salida":"1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1\n1 5 10 10 5 1\n1 6 15 20 15 6 1\n1 7 21 35 35 21 7 1","visible":false}]$t$,
+   $t$["for"]$t$,
+   $t$[{"patron":"valor\\s*\\*=","mensaje":"Con valor *= (fila - col) / (col + 1), la división entera se hace primero y pierde decimales. Recuerda escribir valor = valor * (fila - col) / (col + 1)."}]$t$,
+   16)
 ) as e(modulo_orden, titulo, enunciado, tipo, dificultad, puntos, opciones, solucion, pistas, explicacion,
        codigo_inicial, casos, requiere, errores, orden)
 join public.modulo m on m.orden = e.modulo_orden
